@@ -508,6 +508,26 @@
             text-decoration: underline;
         }
 
+        /* Alert Styles */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         /* Footer */
         footer {
             background: var(--dark);
@@ -606,10 +626,6 @@
             nav ul {
                 display: none;
             }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
         }
 
         @media (max-width: 768px) {
@@ -652,8 +668,8 @@
                     </ul>
                 </nav>
                 <div class="auth-buttons">
-                    <button class="btn btn-outline">Login</button>
-                    <button class="btn btn-primary">Get Started</button>
+                    <button class="btn btn-outline" id="headerLoginBtn">Login</button>
+                    <button class="btn btn-primary" id="headerSignupBtn">Get Started</button>
                 </div>
             </div>
         </div>
@@ -667,7 +683,7 @@
                     <h1>All Your <span>Tasks & Attendance</span> in One Place</h1>
                     <p>Streamline your workflow, track attendance, and boost productivity with our all-in-one management platform designed for individuals and companies.</p>
                     <div class="hero-buttons">
-                        <button class="btn btn-primary">Start Free Trial</button>
+                        <button class="btn btn-primary" id="heroSignupBtn">Start Free Trial</button>
                         <button class="btn btn-outline">Watch Demo</button>
                     </div>
                 </div>
@@ -752,6 +768,14 @@
                     </ul>
                 </div>
                 <div class="login-form-container">
+                    <!-- Alert Messages -->
+                    <div class="alert alert-success" id="successAlert">
+                        <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
+                    </div>
+                    <div class="alert alert-error" id="errorAlert">
+                        <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
+                    </div>
+
                     <div class="user-type-selector">
                         <div class="user-type individual active" id="individualBtn">
                             Individual
@@ -812,7 +836,7 @@
                         </div>
                         <div class="form-group">
                             <label for="individualPasswordSignUp">Password</label>
-                            <input type="password" id="individualPasswordSignUp" class="form-control" placeholder="Create a password" required>
+                            <input type="password" id="individualPasswordSignUp" class="form-control" placeholder="Create a password (min. 6 characters)" required minlength="6">
                         </div>
                         <button type="submit" class="submit-btn">Sign Up</button>
                     </form>
@@ -857,7 +881,7 @@
                         </div>
                         <div class="form-group">
                             <label for="companyPasswordSignUp">Password</label>
-                            <input type="password" id="companyPasswordSignUp" class="form-control" placeholder="Create a password" required>
+                            <input type="password" id="companyPasswordSignUp" class="form-control" placeholder="Create a password (min. 6 characters)" required minlength="6">
                         </div>
                         <button type="submit" class="submit-btn">Sign Up</button>
                     </form>
@@ -963,6 +987,13 @@
         const approvalMessage = document.getElementById('approvalMessage');
         const emailCreator = document.getElementById('emailCreator');
         const contactEmail = document.getElementById('contactEmail');
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const headerSignupBtn = document.getElementById('headerSignupBtn');
+        const heroSignupBtn = document.getElementById('heroSignupBtn');
 
         // Current state
         let isIndividual = true;
@@ -989,6 +1020,25 @@
             updateUI();
         });
 
+        // Header button events
+        headerLoginBtn.addEventListener('click', () => {
+            document.getElementById('login').scrollIntoView({ behavior: 'smooth' });
+            isSignIn = true;
+            updateUI();
+        });
+
+        headerSignupBtn.addEventListener('click', () => {
+            document.getElementById('login').scrollIntoView({ behavior: 'smooth' });
+            isSignIn = false;
+            updateUI();
+        });
+
+        heroSignupBtn.addEventListener('click', () => {
+            document.getElementById('login').scrollIntoView({ behavior: 'smooth' });
+            isSignIn = false;
+            updateUI();
+        });
+
         // Form submission handlers
         individualSignIn.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1009,27 +1059,44 @@
             // Create user in Firebase Auth
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Save user data to Firestore
-                    return db.collection('individuals').doc(userCredential.user.uid).set({
+                    // User created successfully in Firebase Auth
+                    const user = userCredential.user;
+                    
+                    // Save additional user data to Firestore
+                    return db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
                         name: name,
                         address: address,
                         phone: phone,
                         purpose: purpose,
                         email: email,
-                        type: 'individual',
+                        userType: 'individual',
                         status: 'pending',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
                 .then(() => {
+                    // Show success message
+                    showAlert('Account created successfully! Please check your email for verification.', 'success');
+                    
+                    // Send email verification
+                    auth.currentUser.sendEmailVerification()
+                        .then(() => {
+                            console.log('Email verification sent');
+                        });
+                    
                     // Show approval message
                     showApprovalMessage();
+                    
                     // Prepare email draft
                     prepareEmailDraft('individual', {name, address, phone, purpose, email});
+                    
+                    // Clear form
+                    individualSignUp.reset();
                 })
                 .catch((error) => {
                     console.error("Error creating user: ", error);
-                    alert("Error creating account: " + error.message);
+                    showAlert("Error creating account: " + error.message, 'error');
                 });
         });
 
@@ -1052,21 +1119,35 @@
             // Create user in Firebase Auth
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    // User created successfully in Firebase Auth
+                    const user = userCredential.user;
+                    
                     // Save company data to Firestore
-                    return db.collection('companies').doc(userCredential.user.uid).set({
+                    return db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
                         companyName: companyName,
                         companyAddress: companyAddress,
                         adminName: adminName,
                         adminPhone: adminPhone,
                         email: email,
-                        type: 'company',
+                        userType: 'company',
                         status: 'pending',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
                 .then(() => {
+                    // Show success message
+                    showAlert('Company account created successfully! Please check your email for verification.', 'success');
+                    
+                    // Send email verification
+                    auth.currentUser.sendEmailVerification()
+                        .then(() => {
+                            console.log('Email verification sent');
+                        });
+                    
                     // Show approval message
                     showApprovalMessage();
+                    
                     // Prepare email draft
                     prepareEmailDraft('company', {
                         companyName, 
@@ -1075,10 +1156,13 @@
                         adminPhone, 
                         email
                     });
+                    
+                    // Clear form
+                    companySignUp.reset();
                 })
                 .catch((error) => {
                     console.error("Error creating company: ", error);
-                    alert("Error creating account: " + error.message);
+                    showAlert("Error creating account: " + error.message, 'error');
                 });
         });
 
@@ -1111,38 +1195,44 @@
             
             // Hide approval message when switching forms
             approvalMessage.style.display = 'none';
+            
+            // Hide alerts
+            hideAlerts();
         }
 
         function signInUser(email, password, userType) {
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Check user type and status
-                    const userRef = userType === 'individual' 
-                        ? db.collection('individuals').doc(userCredential.user.uid)
-                        : db.collection('companies').doc(userCredential.user.uid);
+                    // Check if email is verified
+                    if (!userCredential.user.emailVerified) {
+                        showAlert('Please verify your email address before logging in.', 'error');
+                        auth.signOut();
+                        return;
+                    }
                     
-                    return userRef.get();
+                    // Check user type and status in Firestore
+                    return db.collection('users').doc(userCredential.user.uid).get();
                 })
                 .then((doc) => {
                     if (doc.exists) {
                         const userData = doc.data();
                         if (userData.status === 'approved') {
                             // Redirect to dashboard or main application
-                            alert('Login successful! Redirecting to dashboard...');
+                            showAlert('Login successful! Redirecting to dashboard...', 'success');
                             // In a real app, you would redirect here
                             // window.location.href = '/dashboard';
                         } else {
-                            alert('Your account is still pending approval. Please wait for administrator approval.');
+                            showAlert('Your account is still pending approval. Please wait for administrator approval.', 'error');
                             auth.signOut();
                         }
                     } else {
-                        alert('User data not found. Please contact support.');
+                        showAlert('User data not found. Please contact support.', 'error');
                         auth.signOut();
                     }
                 })
                 .catch((error) => {
                     console.error("Error signing in: ", error);
-                    alert("Error signing in: " + error.message);
+                    showAlert("Error signing in: " + error.message, 'error');
                 });
         }
 
@@ -1190,8 +1280,38 @@
             window.location.href = mailtoLink;
         }
 
+        function showAlert(message, type) {
+            hideAlerts();
+            
+            if (type === 'success') {
+                successMessage.textContent = message;
+                successAlert.style.display = 'block';
+            } else {
+                errorMessage.textContent = message;
+                errorAlert.style.display = 'block';
+            }
+            
+            // Auto hide after 5 seconds
+            setTimeout(hideAlerts, 5000);
+        }
+
+        function hideAlerts() {
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+        }
+
         // Initialize the UI
         updateUI();
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User is logged in:', user.email);
+                // You can update UI to show user is logged in
+            } else {
+                console.log('User is logged out');
+            }
+        });
     </script>
 </body>
-                          </html>
+</html>
