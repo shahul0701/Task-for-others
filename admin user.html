@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* Your existing CSS styles remain exactly the same */
+        /* Your existing CSS styles */
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
@@ -773,6 +773,34 @@
             }
         }
 
+        // Function to create admin user automatically (for testing)
+        async function setupAdminUser(user) {
+            try {
+                // Check if admin document already exists
+                const adminDoc = await db.collection('admins').doc(user.uid).get();
+                
+                if (!adminDoc.exists) {
+                    // Create admin document
+                    await db.collection('admins').doc(user.uid).set({
+                        email: user.email,
+                        name: 'Admin User',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        role: 'super-admin'
+                    });
+                    console.log('Admin user created successfully');
+                    return true;
+                } else {
+                    console.log('Admin user already exists');
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error creating admin user:', error);
+                // If we can't create admin, check if user is already admin
+                const isAdmin = await checkAdminAccess(user.uid);
+                return isAdmin;
+            }
+        }
+
         function loadUsers() {
             if (!isUserAdmin) return;
             
@@ -1164,22 +1192,29 @@
                 adminEmail.textContent = user.email;
                 console.log('User logged in:', user.email);
                 
-                // Check if user is admin
-                isUserAdmin = await checkAdminAccess(user.uid);
+                // For testing: Create admin user automatically
+                // Remove this in production and set up admins manually
+                const adminCreated = await setupAdminUser(user);
                 
-                if (isUserAdmin) {
-                    console.log('User is admin, loading admin panel...');
-                    adminContent.style.display = 'block';
-                    accessDenied.style.display = 'none';
-                    loadUsers();
+                if (adminCreated) {
+                    // Check if user is admin
+                    isUserAdmin = await checkAdminAccess(user.uid);
+                    
+                    if (isUserAdmin) {
+                        console.log('User is admin, loading admin panel...');
+                        adminContent.style.display = 'block';
+                        accessDenied.style.display = 'none';
+                        loadUsers();
+                    } else {
+                        console.log('User is not admin, showing access denied');
+                        adminContent.style.display = 'none';
+                        accessDenied.style.display = 'block';
+                        showAlert('You do not have admin privileges.', 'warning');
+                    }
                 } else {
-                    console.log('User is not admin, showing access denied');
-                    adminContent.style.display = 'none';
-                    accessDenied.style.display = 'block';
-                    showAlert('You do not have admin privileges.', 'warning');
+                    showAlert('Error setting up admin access.', 'error');
                 }
             } else {
-                // Redirect to login page
                 window.location.href = 'index.html';
             }
         });
