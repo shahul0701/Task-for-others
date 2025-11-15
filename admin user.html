@@ -10,8 +10,360 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
-        /* Previous CSS styles remain the same, adding new styles for action buttons */
-        
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #e63946;
+            --warning: #f4a261;
+            --info: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .home-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Admin Dashboard */
+        .admin-dashboard {
+            padding: 40px 0;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            color: var(--dark);
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.individual {
+            background: var(--primary);
+        }
+
+        .stat-icon.company {
+            background: var(--secondary);
+        }
+
+        .stat-icon.pending {
+            background: var(--warning);
+        }
+
+        .stat-icon.total {
+            background: var(--success);
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid var(--light-gray);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .filter-tab:hover {
+            border-color: var(--primary);
+        }
+
+        /* Users Table */
+        .users-section {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light);
+            border-radius: 50px;
+            padding: 8px 15px;
+            width: 300px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .search-box i {
+            color: var(--gray);
+            margin-right: 8px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th {
+            background: var(--light);
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .users-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-details h4 {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .user-type {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .user-type.individual {
+            background: #e6f7ff;
+            color: var(--primary);
+        }
+
+        .user-type.company {
+            background: #f0f8ff;
+            color: var(--secondary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff7e6;
+            color: var(--warning);
+        }
+
+        .status-approved {
+            background: #e6f7e6;
+            color: #52c41a;
+        }
+
+        .status-rejected {
+            background: #ffe6e6;
+            color: var(--danger);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-view {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-view:hover {
+            background: var(--light-gray);
+            transform: translateY(-2px);
+        }
+
         .btn-approve {
             background: #28a745;
             color: white;
@@ -53,23 +405,80 @@
             font-size: 0.8rem;
         }
 
-        /* Status badges */
-        .status-active {
-            background: #d4edda;
-            color: #155724;
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
 
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
         }
 
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Confirmation modal */
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .user-detail-row {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .user-detail-label {
+            flex: 1;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .user-detail-value {
+            flex: 2;
+            color: var(--gray);
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Confirmation Modal */
         .confirmation-modal .modal-content {
             max-width: 400px;
         }
@@ -102,6 +511,186 @@
 
         .btn-cancel:hover {
             background: #5a6268;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Read-only Notice */
+        .read-only-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .read-only-notice i {
+            color: #856404;
+            font-size: 1.2rem;
+        }
+
+        .read-only-notice p {
+            color: #856404;
+            margin: 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--light-gray);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Export Section */
+        .export-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .export-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .export-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .export-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-export {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-export:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .users-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .search-box {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-tabs {
+                justify-content: center;
+            }
+            
+            .export-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .export-options {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .btn-export {
+                flex: 1;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -174,6 +763,24 @@
                     <div class="stat-info">
                         <h3 id="pendingUsers">0</h3>
                         <p>Pending Approval</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="export-section">
+                <div class="export-header">
+                    <h2 class="export-title">Export Data</h2>
+                    <div class="export-options">
+                        <button class="btn-export" id="exportCSV">
+                            <i class="fas fa-file-csv"></i> Export as CSV
+                        </button>
+                        <button class="btn-export" id="exportPDF">
+                            <i class="fas fa-file-pdf"></i> Export as PDF
+                        </button>
+                        <button class="btn-export" id="exportJSON">
+                            <i class="fas fa-file-code"></i> Export as JSON
+                        </button>
                     </div>
                 </div>
             </div>
@@ -321,6 +928,9 @@
         const cancelAction = document.getElementById('cancelAction');
         const confirmationTitle = document.getElementById('confirmationTitle');
         const confirmationText = document.getElementById('confirmationText');
+        const exportCSV = document.getElementById('exportCSV');
+        const exportPDF = document.getElementById('exportPDF');
+        const exportJSON = document.getElementById('exportJSON');
         
         // Alert elements
         const infoAlert = document.getElementById('infoAlert');
@@ -367,6 +977,11 @@
         });
 
         confirmAction.addEventListener('click', executePendingAction);
+
+        // Export buttons
+        exportCSV.addEventListener('click', exportToCSV);
+        exportPDF.addEventListener('click', exportToPDF);
+        exportJSON.addEventListener('click', exportToJSON);
 
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
@@ -876,6 +1491,80 @@
             
             // Show modal
             userModal.style.display = 'flex';
+        }
+
+        // Export Functions
+        function exportToCSV() {
+            const headers = ['Name', 'Type', 'Email', 'Phone', 'Status', 'Registration Date'];
+            let csvContent = headers.join(',') + '\n';
+            
+            users.forEach(user => {
+                const row = [
+                    getUserName(user),
+                    user.userType,
+                    user.email || '',
+                    user.phone || user.adminPhone || '',
+                    getStatusText(user.status),
+                    user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'N/A'
+                ];
+                csvContent += row.map(field => `"${field}"`).join(',') + '\n';
+            });
+            
+            downloadFile(csvContent, 'users.csv', 'text/csv');
+            showAlert('Users data exported as CSV successfully!', 'success');
+        }
+
+        function exportToPDF() {
+            // Simple PDF export simulation
+            const content = `
+                TaskFlow Pro - User Report
+                Generated on: ${new Date().toLocaleDateString()}
+                Total Users: ${users.length}
+                
+                ${users.map(user => `
+                Name: ${getUserName(user)}
+                Type: ${user.userType}
+                Email: ${user.email || 'N/A'}
+                Phone: ${user.phone || user.adminPhone || 'N/A'}
+                Status: ${getStatusText(user.status)}
+                Registered: ${user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'N/A'}
+                ${user.approvedAt ? `Approved: ${user.approvedAt.toDate().toLocaleDateString()}` : ''}
+                ${user.rejectedAt ? `Deactivated: ${user.rejectedAt.toDate().toLocaleDateString()}` : ''}
+                ----------------------------------------
+                `).join('')}
+            `;
+            
+            downloadFile(content, 'users.pdf', 'application/pdf');
+            showAlert('Users data exported as PDF successfully!', 'success');
+        }
+
+        function exportToJSON() {
+            const jsonData = users.map(user => ({
+                id: user.id,
+                name: getUserName(user),
+                type: user.userType,
+                email: user.email,
+                phone: user.phone || user.adminPhone,
+                status: user.status,
+                registrationDate: user.createdAt ? user.createdAt.toDate().toISOString() : null,
+                approvedDate: user.approvedAt ? user.approvedAt.toDate().toISOString() : null,
+                rejectedDate: user.rejectedAt ? user.rejectedAt.toDate().toISOString() : null
+            }));
+            
+            downloadFile(JSON.stringify(jsonData, null, 2), 'users.json', 'application/json');
+            showAlert('Users data exported as JSON successfully!', 'success');
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function getUserName(user) {
