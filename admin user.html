@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow Pro | Admin Panel</title>
+    <title>TaskFlow Pro | All-in-One Task & Attendance Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -19,6 +19,8 @@
             --warning: #f4a261;
             --light: #f8f9fa;
             --dark: #212529;
+            --individual: #4cc9f0;
+            --company: #7209b7;
             --gray: #6c757d;
             --light-gray: #e9ecef;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -41,7 +43,7 @@
 
         .container {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -75,25 +77,519 @@
             font-size: 2rem;
         }
 
-        .admin-nav {
+        nav ul {
             display: flex;
-            gap: 20px;
+            list-style: none;
+            gap: 30px;
         }
 
-        .admin-nav a {
+        nav a {
             color: white;
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition);
-            padding: 8px 16px;
+            padding: 8px 0;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--success);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--success);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 24px;
             border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.95rem;
         }
 
-        .admin-nav a:hover, .admin-nav a.active {
-            background: rgba(255, 255, 255, 0.2);
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
         }
 
-        .user-info {
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3aa8d0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 201, 240, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e9f7 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 30px;
+            max-width: 90%;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .dashboard-preview {
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            transition: var(--transition);
+        }
+
+        .dashboard-preview:hover {
+            transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--gray);
+        }
+
+        /* Login Section */
+        .login-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e9f7 100%);
+        }
+
+        .login-container {
+            display: flex;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .login-info {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-info h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .login-info p {
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .login-benefits {
+            list-style: none;
+        }
+
+        .login-benefits li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .login-benefits i {
+            color: var(--success);
+        }
+
+        .login-form-container {
+            flex: 1;
+            padding: 50px;
+        }
+
+        .user-type-selector {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 50px;
+            background: var(--light-gray);
+            padding: 5px;
+        }
+
+        .user-type {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .user-type.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .individual.active {
+            color: var(--individual);
+        }
+
+        .company.active {
+            color: var(--company);
+        }
+
+        .toggle-form {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 50px;
+            background: var(--light-gray);
+            padding: 5px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            background: transparent;
+            border: none;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .approval-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--light);
+            border-radius: var(--radius);
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .success-icon {
+            font-size: 3.5rem;
+            color: #4BB543;
+            margin-bottom: 20px;
+        }
+
+        .approval-message h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .approval-message p {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .contact-info p {
+            margin: 8px 0;
+            color: var(--gray);
+        }
+
+        .contact-info a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-config {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .dashboard-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 0;
+            position: relative;
+        }
+
+        .dashboard-nav a:hover, .dashboard-nav a.active {
+            color: var(--success);
+        }
+
+        .dashboard-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--success);
+            transition: var(--transition);
+        }
+
+        .dashboard-nav a:hover::after, .dashboard-nav a.active::after {
+            width: 100%;
+        }
+
+        .user-menu {
             display: flex;
             align-items: center;
             gap: 15px;
@@ -111,84 +607,35 @@
             font-weight: 600;
         }
 
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
+        .dashboard-content {
+            padding: 40px 0;
         }
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .dashboard-section {
+            display: none;
         }
 
-        /* Main Content */
-        .main-content {
-            display: flex;
-            min-height: calc(100vh - 80px);
+        .dashboard-section.active {
+            display: block;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
+        .dashboard-card {
             background: white;
-            box-shadow: var(--shadow);
-            padding: 30px 0;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 5px;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 25px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: var(--light);
-            border-left: 4px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .sidebar-menu i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Content Area */
-        .content {
-            flex: 1;
+            border-radius: var(--radius);
             padding: 30px;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            box-shadow: var(--shadow);
             margin-bottom: 30px;
         }
 
-        .content-header h1 {
-            font-size: 2rem;
+        .dashboard-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
             color: var(--dark);
         }
 
-        .stats-cards {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -240,7 +687,6 @@
             font-size: 0.9rem;
         }
 
-        /* Table Styles */
         .table-container {
             background: white;
             border-radius: var(--radius);
@@ -259,23 +705,6 @@
         .table-header h2 {
             font-size: 1.5rem;
             color: var(--dark);
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: var(--light);
-            border-radius: 50px;
-            padding: 10px 15px;
-            width: 300px;
-        }
-
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            margin-left: 10px;
         }
 
         table {
@@ -304,25 +733,6 @@
             border-bottom: none;
         }
 
-        .user-cell {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-avatar-small {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
         .status-badge {
             padding: 5px 12px;
             border-radius: 50px;
@@ -330,17 +740,17 @@
             font-weight: 600;
         }
 
-        .status-active {
-            background: rgba(76, 201, 240, 0.2);
-            color: var(--success);
-        }
-
         .status-pending {
             background: rgba(244, 162, 97, 0.2);
             color: var(--warning);
         }
 
-        .status-inactive {
+        .status-completed {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .status-overdue {
             background: rgba(230, 57, 70, 0.2);
             color: var(--danger);
         }
@@ -350,28 +760,9 @@
             gap: 10px;
         }
 
-        .btn {
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            font-size: 0.85rem;
-        }
-
         .btn-sm {
             padding: 5px 10px;
             font-size: 0.8rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
         }
 
         .btn-success {
@@ -401,371 +792,1221 @@
             background: #e76f51;
         }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: var(--radius);
-            width: 500px;
-            max-width: 90%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            font-size: 1.3rem;
-            color: var(--dark);
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-        }
-
-        /* Alert Styles */
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        /* Admin Panel Styles */
+        .admin-panel {
             display: none;
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        /* Pagination */
-        .pagination {
+        .admin-content {
             display: flex;
-            justify-content: center;
-            padding: 20px;
-            gap: 10px;
+            min-height: calc(100vh - 80px);
         }
 
-        .pagination button {
-            padding: 8px 15px;
-            border: 1px solid var(--light-gray);
+        .admin-sidebar {
+            width: 250px;
             background: white;
-            border-radius: 5px;
-            cursor: pointer;
+            box-shadow: var(--shadow);
+            padding: 30px 0;
+        }
+
+        .admin-sidebar-menu {
+            list-style: none;
+        }
+
+        .admin-sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .admin-sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            color: var(--dark);
+            text-decoration: none;
             transition: var(--transition);
         }
 
-        .pagination button.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .pagination button:hover:not(.active) {
+        .admin-sidebar-menu a:hover, .admin-sidebar-menu a.active {
             background: var(--light);
+            border-left: 4px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .admin-sidebar-menu i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #adb5bd;
+            font-size: 0.9rem;
         }
 
         /* Responsive Styles */
         @media (max-width: 992px) {
-            .main-content {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero p {
+                max-width: 100%;
+            }
+            
+            .login-container {
                 flex-direction: column;
             }
             
-            .sidebar {
+            nav ul {
+                display: none;
+            }
+            
+            .admin-content {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
                 width: 100%;
                 padding: 20px 0;
             }
             
-            .sidebar-menu {
+            .admin-sidebar-menu {
                 display: flex;
                 overflow-x: auto;
                 padding: 0 20px;
             }
             
-            .sidebar-menu li {
+            .admin-sidebar-menu li {
                 margin-bottom: 0;
                 margin-right: 10px;
             }
             
-            .sidebar-menu a {
+            .admin-sidebar-menu a {
                 white-space: nowrap;
                 border-left: none;
                 border-bottom: 4px solid transparent;
             }
             
-            .sidebar-menu a:hover, .sidebar-menu a.active {
+            .admin-sidebar-menu a:hover, .admin-sidebar-menu a.active {
                 border-left: none;
                 border-bottom: 4px solid var(--primary);
             }
         }
 
         @media (max-width: 768px) {
-            .header-content {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-nav {
                 flex-direction: column;
                 gap: 15px;
             }
             
-            .admin-nav {
+            .dashboard-nav ul {
                 order: 3;
                 width: 100%;
                 justify-content: center;
                 margin-top: 10px;
             }
-            
-            .stats-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .table-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .search-box {
-                width: 100%;
-            }
-            
-            table {
-                display: block;
-                overflow-x: auto;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-tasks"></i>
-                    <span>TaskFlow Pro</span>
+    <!-- Landing Page -->
+    <div id="landingPage">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-tasks"></i>
+                        <span>TaskFlow Pro</span>
+                    </div>
+                    <nav>
+                        <ul>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#solutions">Solutions</a></li>
+                            <li><a href="#pricing">Pricing</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                    <div class="auth-buttons">
+                        <button class="btn btn-outline" id="headerLoginBtn">Login</button>
+                        <button class="btn btn-primary" id="headerSignupBtn">Get Started</button>
+                    </div>
                 </div>
-                <div class="admin-nav">
-                    <a href="#" class="active">Dashboard</a>
-                    <a href="#">Users</a>
-                    <a href="#">Reports</a>
-                    <a href="#">Settings</a>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>All Your <span>Tasks & Attendance</span> in One Place</h1>
+                        <p>Streamline your workflow, track attendance, and boost productivity with our all-in-one management platform designed for individuals and companies.</p>
+                        <div class="hero-buttons">
+                            <button class="btn btn-primary" id="heroSignupBtn">Start Free Trial</button>
+                            <button class="btn btn-outline">Watch Demo</button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="TaskFlow Dashboard" class="dashboard-preview">
+                    </div>
                 </div>
-                <div class="user-info">
-                    <div class="user-avatar">A</div>
-                    <div>Admin User</div>
-                    <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Powerful Features for Better Management</h2>
+                    <p>Everything you need to manage tasks, track attendance, and optimize productivity</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3>Task Management</h3>
+                        <p>Create, assign, and track tasks with deadlines, priorities, and progress tracking.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <h3>Attendance Tracking</h3>
+                        <p>Monitor employee attendance, leaves, and working hours with detailed reports.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Analytics & Reports</h3>
+                        <p>Gain insights with comprehensive analytics on productivity and attendance patterns.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h3>Team Collaboration</h3>
+                        <p>Enable seamless collaboration with shared tasks, comments, and file sharing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Mobile App</h3>
+                        <p>Access your tasks and track attendance on the go with our mobile application.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Secure & Compliant</h3>
+                        <p>Enterprise-grade security with data encryption and compliance standards.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section class="login-section" id="login">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Join Thousands of Productive Teams</h2>
+                    <p>Sign up today and transform how you manage tasks and attendance</p>
+                </div>
+                <div class="login-container">
+                    <div class="login-info">
+                        <h2>Why Choose TaskFlow Pro?</h2>
+                        <p>Join over 10,000 companies and individuals who have transformed their productivity with our platform.</p>
+                        <ul class="login-benefits">
+                            <li><i class="fas fa-check-circle"></i> Increase team productivity by up to 40%</li>
+                            <li><i class="fas fa-check-circle"></i> Reduce administrative work by 60%</li>
+                            <li><i class="fas fa-check-circle"></i> Real-time tracking and reporting</li>
+                            <li><i class="fas fa-check-circle"></i> 24/7 customer support</li>
+                            <li><i class="fas fa-check-circle"></i> Free 30-day trial with all features</li>
+                        </ul>
+                    </div>
+                    <div class="login-form-container">
+                        <!-- Alert Messages -->
+                        <div class="alert alert-success" id="successAlert">
+                            <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
+                        </div>
+                        <div class="alert alert-error" id="errorAlert">
+                            <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
+                        </div>
+                        <div class="alert alert-config" id="configAlert">
+                            <i class="fas fa-cog"></i> <span id="configMessage"></span>
+                        </div>
+
+                        <div class="user-type-selector">
+                            <div class="user-type individual active" id="individualBtn">
+                                Individual
+                            </div>
+                            <div class="user-type company" id="companyBtn">
+                                Company
+                            </div>
+                        </div>
+                        
+                        <div class="toggle-form">
+                            <button class="toggle-btn active" id="signinBtn">Sign In</button>
+                            <button class="toggle-btn" id="signupBtn">Sign Up</button>
+                        </div>
+                        
+                        <!-- Individual Sign In Form -->
+                        <form class="form active" id="individualSignIn">
+                            <div class="form-group">
+                                <label for="individualEmail">Email Address</label>
+                                <input type="email" id="individualEmail" class="form-control" placeholder="Enter your email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="individualPassword">Password</label>
+                                <input type="password" id="individualPassword" class="form-control" placeholder="Enter your password" required>
+                            </div>
+                            <div class="forgot-password">
+                                <a href="#" id="forgotPassword">Forgot Password?</a>
+                            </div>
+                            <button type="submit" class="submit-btn">Sign In</button>
+                        </form>
+                        
+                        <!-- Individual Sign Up Form -->
+                        <form class="form" id="individualSignUp">
+                            <div class="form-group">
+                                <label for="individualName">Full Name</label>
+                                <input type="text" id="individualName" class="form-control" placeholder="Enter your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="individualAddress">Address</label>
+                                <input type="text" id="individualAddress" class="form-control" placeholder="Enter your address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="individualPhone">Phone Number</label>
+                                <input type="tel" id="individualPhone" class="form-control" placeholder="Enter your phone number" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="individualPurpose">Purpose of Use</label>
+                                <select id="individualPurpose" class="form-control" required>
+                                    <option value="">Select purpose</option>
+                                    <option value="personal">Personal</option>
+                                    <option value="business">Business</option>
+                                    <option value="education">Education</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="individualEmailSignUp">Email Address</label>
+                                <input type="email" id="individualEmailSignUp" class="form-control" placeholder="Enter your email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="individualPasswordSignUp">Password</label>
+                                <input type="password" id="individualPasswordSignUp" class="form-control" placeholder="Create a password (min. 6 characters)" required minlength="6">
+                            </div>
+                            <button type="submit" class="submit-btn">Sign Up</button>
+                        </form>
+                        
+                        <!-- Company Sign In Form -->
+                        <form class="form" id="companySignIn">
+                            <div class="form-group">
+                                <label for="companyEmail">Company Email</label>
+                                <input type="email" id="companyEmail" class="form-control" placeholder="Enter company email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyPassword">Password</label>
+                                <input type="password" id="companyPassword" class="form-control" placeholder="Enter your password" required>
+                            </div>
+                            <div class="forgot-password">
+                                <a href="#" id="companyForgotPassword">Forgot Password?</a>
+                            </div>
+                            <button type="submit" class="submit-btn">Sign In</button>
+                        </form>
+                        
+                        <!-- Company Sign Up Form -->
+                        <form class="form" id="companySignUp">
+                            <div class="form-group">
+                                <label for="companyName">Company Name</label>
+                                <input type="text" id="companyName" class="form-control" placeholder="Enter company name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyAddress">Company Address</label>
+                                <input type="text" id="companyAddress" class="form-control" placeholder="Enter company address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminName">Admin Name</label>
+                                <input type="text" id="adminName" class="form-control" placeholder="Enter admin name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminPhone">Admin Phone Number</label>
+                                <input type="tel" id="adminPhone" class="form-control" placeholder="Enter admin phone number" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyEmailSignUp">Company Email</label>
+                                <input type="email" id="companyEmailSignUp" class="form-control" placeholder="Enter company email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyPasswordSignUp">Password</label>
+                                <input type="password" id="companyPasswordSignUp" class="form-control" placeholder="Create a password (min. 6 characters)" required minlength="6">
+                            </div>
+                            <button type="submit" class="submit-btn">Sign Up</button>
+                        </form>
+                        
+                        <!-- Approval Message -->
+                        <div class="approval-message" id="approvalMessage">
+                            <div class="success-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h3>Waiting for Approval</h3>
+                            <p>Your account has been submitted for approval.</p>
+                            <p>We will review your details and notify you once your account is activated.</p>
+                            <p>For any queries, please contact us:</p>
+                            <p>Phone: <a href="tel:7550124452">7550124452</a></p>
+                            <p>Email: <a href="#" id="emailCreator">testtocreateapp@gmail.com</a></p>
+                        </div>
+                        
+                        <!-- Contact Information -->
+                        <div class="contact-info">
+                            <p>Need help? Contact us:</p>
+                            <p><i class="fas fa-phone"></i> <a href="tel:7550124452">7550124452</a></p>
+                            <p><i class="fas fa-envelope"></i> <a href="#" id="contactEmail">testtocreateapp@gmail.com</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-column">
+                        <h3>TaskFlow Pro</h3>
+                        <p>The all-in-one platform for task management and attendance tracking.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Product</h3>
+                        <ul>
+                            <li><a href="#">Features</a></li>
+                            <li><a href="#">Solutions</a></li>
+                            <li><a href="#">Pricing</a></li>
+                            <li><a href="#">Updates</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Press</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <ul>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2023 TaskFlow Pro. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Individual User Dashboard -->
+    <div class="dashboard" id="individualDashboard">
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="dashboard-nav">
+                    <div class="logo">
+                        <i class="fas fa-tasks"></i>
+                        <span>TaskFlow Pro</span>
+                    </div>
+                    <ul>
+                        <li><a href="#" class="dashboard-nav-link active" data-section="individualOverview">Overview</a></li>
+                        <li><a href="#" class="dashboard-nav-link" data-section="individualTasks">My Tasks</a></li>
+                        <li><a href="#" class="dashboard-nav-link" data-section="individualAttendance">Attendance</a></li>
+                        <li><a href="#" class="dashboard-nav-link" data-section="individualProfile">Profile</a></li>
+                    </ul>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="individualUserAvatar">U</div>
+                        <span id="individualUserName">User</span>
+                        <button class="btn btn-outline btn-sm" id="individualLogoutBtn">Logout</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> User Management</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> System Settings</a></li>
-                <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
-                <li><a href="#"><i class="fas fa-question-circle"></i> Help & Support</a></li>
-            </ul>
-        </div>
-
-        <!-- Content Area -->
-        <div class="content">
-            <div class="content-header">
-                <h1>User Management</h1>
-                <button class="btn btn-primary" id="addUserBtn">Add New User</button>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="stats-cards">
-                <div class="stat-card">
-                    <div class="stat-icon primary">
-                        <i class="fas fa-users"></i>
+        <div class="dashboard-content">
+            <div class="container">
+                <!-- Overview Section -->
+                <div class="dashboard-section active" id="individualOverview">
+                    <h1>Dashboard Overview</h1>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="individualTotalTasks">0</h3>
+                                <p>Total Tasks</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="individualCompletedTasks">0</h3>
+                                <p>Completed Tasks</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="individualPendingTasks">0</h3>
+                                <p>Pending Tasks</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="individualOverdueTasks">0</h3>
+                                <p>Overdue Tasks</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-info">
-                        <h3 id="totalUsers">0</h3>
-                        <p>Total Users</p>
+
+                    <div class="dashboard-card">
+                        <h2>Recent Tasks</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Task Name</th>
+                                        <th>Due Date</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="individualRecentTasks">
+                                    <!-- Tasks will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon success">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="activeUsers">0</h3>
-                        <p>Active Users</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon warning">
-                        <i class="fas fa-user-clock"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="pendingUsers">0</h3>
-                        <p>Pending Users</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon danger">
-                        <i class="fas fa-user-times"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="inactiveUsers">0</h3>
-                        <p>Inactive Users</p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Alerts -->
-            <div class="alert alert-success" id="successAlert">
-                <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
-            </div>
-            <div class="alert alert-error" id="errorAlert">
-                <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
-            </div>
-
-            <!-- Users Table -->
-            <div class="table-container">
-                <div class="table-header">
-                    <h2>All Users</h2>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search users...">
+                <!-- Tasks Section -->
+                <div class="dashboard-section" id="individualTasks">
+                    <div class="dashboard-card">
+                        <h2>My Tasks</h2>
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h2>All Tasks</h2>
+                                <button class="btn btn-primary" id="individualAddTaskBtn">Add New Task</button>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Task Name</th>
+                                        <th>Description</th>
+                                        <th>Due Date</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="individualAllTasks">
+                                    <!-- Tasks will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Registration Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <!-- Users will be populated here -->
-                    </tbody>
-                </table>
-                <div class="pagination" id="pagination">
-                    <!-- Pagination will be generated here -->
+
+                <!-- Attendance Section -->
+                <div class="dashboard-section" id="individualAttendance">
+                    <div class="dashboard-card">
+                        <h2>My Attendance</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon primary">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="individualPresentDays">0</h3>
+                                    <p>Present Days</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon warning">
+                                    <i class="fas fa-calendar-times"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="individualAbsentDays">0</h3>
+                                    <p>Absent Days</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon success">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="individualAttendancePercent">0%</h3>
+                                    <p>Attendance %</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Hours Worked</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="individualAttendanceRecords">
+                                    <!-- Attendance records will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div class="dashboard-section" id="individualProfile">
+                    <div class="dashboard-card">
+                        <h2>My Profile</h2>
+                        <div class="form-group">
+                            <label for="individualProfileName">Full Name</label>
+                            <input type="text" id="individualProfileName" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="individualProfileEmail">Email</label>
+                            <input type="email" id="individualProfileEmail" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="individualProfileAddress">Address</label>
+                            <textarea id="individualProfileAddress" class="form-control" rows="3" readonly></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="individualProfilePhone">Phone</label>
+                            <input type="text" id="individualProfilePhone" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="individualProfilePurpose">Purpose of Use</label>
+                            <input type="text" id="individualProfilePurpose" class="form-control" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- User Details Modal -->
-    <div class="modal" id="userModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">User Details</h3>
-                <button class="close-modal" id="closeModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="modalUserName">Name</label>
-                    <input type="text" id="modalUserName" class="form-control" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="modalUserEmail">Email</label>
-                    <input type="email" id="modalUserEmail" class="form-control" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="modalUserType">User Type</label>
-                    <input type="text" id="modalUserType" class="form-control" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="modalUserStatus">Status</label>
-                    <select id="modalUserStatus" class="form-control">
-                        <option value="pending">Pending</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="modalUserAddress">Address</label>
-                    <textarea id="modalUserAddress" class="form-control" rows="3" readonly></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="modalUserPhone">Phone</label>
-                    <input type="text" id="modalUserPhone" class="form-control" readonly>
-                </div>
-                <div class="form-group" id="companyInfoGroup" style="display: none;">
-                    <label for="modalCompanyName">Company Name</label>
-                    <input type="text" id="modalCompanyName" class="form-control" readonly>
+    <!-- Company User Dashboard -->
+    <div class="dashboard" id="companyDashboard">
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="dashboard-nav">
+                    <div class="logo">
+                        <i class="fas fa-tasks"></i>
+                        <span>TaskFlow Pro</span>
+                    </div>
+                    <ul>
+                        <li><a href="#" class="dashboard-nav-link active" data-section="companyOverview">Overview</a></li>
+                        <li><a href="#" class="dashboard-nav-link" data-section="companyTasks">Tasks</a></li>
+                        <li><a href="#" class="dashboard-nav-link" data-section="companyTeam">Team</a></li>
+                        <li><a href="#" class="dashboard-nav-link" data-section="companyAttendance">Attendance</a></li>
+                        <li><a href="#" class="dashboard-nav-link" data-section="companyProfile">Profile</a></li>
+                    </ul>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="companyUserAvatar">A</div>
+                        <span id="companyUserName">Admin</span>
+                        <button class="btn btn-outline btn-sm" id="companyLogoutBtn">Logout</button>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="saveUserBtn">Save Changes</button>
-                <button class="btn" id="cancelModalBtn">Cancel</button>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="container">
+                <!-- Overview Section -->
+                <div class="dashboard-section active" id="companyOverview">
+                    <h1>Company Dashboard</h1>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="companyTotalEmployees">0</h3>
+                                <p>Total Employees</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="companyTotalTasks">0</h3>
+                                <p>Total Tasks</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="companyPendingTasks">0</h3>
+                                <p>Pending Tasks</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="companyOverdueTasks">0</h3>
+                                <p>Overdue Tasks</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h2>Team Performance</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Tasks Assigned</th>
+                                        <th>Tasks Completed</th>
+                                        <th>Completion Rate</th>
+                                        <th>Attendance %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="companyTeamPerformance">
+                                    <!-- Team performance will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks Section -->
+                <div class="dashboard-section" id="companyTasks">
+                    <div class="dashboard-card">
+                        <h2>Company Tasks</h2>
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h2>All Tasks</h2>
+                                <button class="btn btn-primary" id="companyAddTaskBtn">Add New Task</button>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Task Name</th>
+                                        <th>Assigned To</th>
+                                        <th>Due Date</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="companyAllTasks">
+                                    <!-- Tasks will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Section -->
+                <div class="dashboard-section" id="companyTeam">
+                    <div class="dashboard-card">
+                        <h2>Team Management</h2>
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h2>All Employees</h2>
+                                <button class="btn btn-primary" id="companyAddEmployeeBtn">Add Employee</button>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Tasks Assigned</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="companyAllEmployees">
+                                    <!-- Employees will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Section -->
+                <div class="dashboard-section" id="companyAttendance">
+                    <div class="dashboard-card">
+                        <h2>Team Attendance</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Hours Worked</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="companyAllAttendance">
+                                    <!-- Attendance records will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div class="dashboard-section" id="companyProfile">
+                    <div class="dashboard-card">
+                        <h2>Company Profile</h2>
+                        <div class="form-group">
+                            <label for="companyProfileName">Company Name</label>
+                            <input type="text" id="companyProfileName" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyProfileEmail">Company Email</label>
+                            <input type="email" id="companyProfileEmail" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyProfileAddress">Company Address</label>
+                            <textarea id="companyProfileAddress" class="form-control" rows="3" readonly></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyProfileAdmin">Admin Name</label>
+                            <input type="text" id="companyProfileAdmin" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyProfilePhone">Admin Phone</label>
+                            <input type="text" id="companyProfilePhone" class="form-control" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="dashboard-nav">
+                    <div class="logo">
+                        <i class="fas fa-tasks"></i>
+                        <span>TaskFlow Pro Admin</span>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="adminUserAvatar">SA</div>
+                        <span>Super Admin</span>
+                        <button class="btn btn-outline btn-sm" id="adminLogoutBtn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-sidebar">
+                <ul class="admin-sidebar-menu">
+                    <li><a href="#" class="admin-nav-link active" data-section="adminDashboard">Dashboard</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="adminUsers">User Management</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="adminCompanies">Company Management</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="adminTasks">All Tasks</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="adminAttendance">All Attendance</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="adminReports">Reports</a></li>
+                    <li><a href="#" class="admin-nav-link" data-section="adminSettings">System Settings</a></li>
+                </ul>
+            </div>
+
+            <div class="admin-main">
+                <!-- Admin Dashboard -->
+                <div class="dashboard-section active" id="adminDashboard">
+                    <h1>Admin Dashboard</h1>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="adminTotalUsers">0</h3>
+                                <p>Total Users</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="adminTotalCompanies">0</h3>
+                                <p>Total Companies</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="adminPendingApprovals">0</h3>
+                                <p>Pending Approvals</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="adminTotalTasks">0</h3>
+                                <p>Total Tasks</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h2>Recent Registrations</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Type</th>
+                                        <th>Registration Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRecentRegistrations">
+                                    <!-- Recent registrations will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="dashboard-section" id="adminUsers">
+                    <div class="dashboard-card">
+                        <h2>User Management</h2>
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h2>All Individual Users</h2>
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="adminUserSearch" placeholder="Search users...">
+                                </div>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Purpose</th>
+                                        <th>Registration Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminAllUsers">
+                                    <!-- Users will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company Management -->
+                <div class="dashboard-section" id="adminCompanies">
+                    <div class="dashboard-card">
+                        <h2>Company Management</h2>
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h2>All Companies</h2>
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="adminCompanySearch" placeholder="Search companies...">
+                                </div>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Company Name</th>
+                                        <th>Admin Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Employees</th>
+                                        <th>Registration Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminAllCompanies">
+                                    <!-- Companies will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Tasks -->
+                <div class="dashboard-section" id="adminTasks">
+                    <div class="dashboard-card">
+                        <h2>All Tasks</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Task Name</th>
+                                        <th>Assigned To</th>
+                                        <th>User Type</th>
+                                        <th>Due Date</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminAllTasks">
+                                    <!-- Tasks will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Attendance -->
+                <div class="dashboard-section" id="adminAttendance">
+                    <div class="dashboard-card">
+                        <h2>All Attendance Records</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>User Type</th>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Hours Worked</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminAllAttendance">
+                                    <!-- Attendance records will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports -->
+                <div class="dashboard-section" id="adminReports">
+                    <div class="dashboard-card">
+                        <h2>System Reports</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon primary">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="adminActiveUsers">0</h3>
+                                    <p>Active Users</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="adminCompletedTasks">0</h3>
+                                    <p>Completed Tasks</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon warning">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="adminNewRegistrations">0</h3>
+                                    <p>New Registrations (30 days)</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon danger">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="adminSystemIssues">0</h3>
+                                    <p>System Issues</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Settings -->
+                <div class="dashboard-section" id="adminSettings">
+                    <div class="dashboard-card">
+                        <h2>System Settings</h2>
+                        <div class="form-group">
+                            <label for="adminSystemName">System Name</label>
+                            <input type="text" id="adminSystemName" class="form-control" value="TaskFlow Pro">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminSupportEmail">Support Email</label>
+                            <input type="email" id="adminSupportEmail" class="form-control" value="support@taskflowpro.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminSupportPhone">Support Phone</label>
+                            <input type="text" id="adminSupportPhone" class="form-control" value="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminAutoApprove">Auto-approve new registrations</label>
+                            <select id="adminAutoApprove" class="form-control">
+                                <option value="yes">Yes</option>
+                                <option value="no" selected>No</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="adminSaveSettings">Save Settings</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -797,392 +2038,955 @@
         }
 
         // DOM Elements
-        const logoutBtn = document.getElementById('logoutBtn');
-        const addUserBtn = document.getElementById('addUserBtn');
-        const usersTableBody = document.getElementById('usersTableBody');
-        const searchInput = document.getElementById('searchInput');
-        const userModal = document.getElementById('userModal');
-        const closeModal = document.getElementById('closeModal');
-        const cancelModalBtn = document.getElementById('cancelModalBtn');
-        const saveUserBtn = document.getElementById('saveUserBtn');
+        const landingPage = document.getElementById('landingPage');
+        const individualDashboard = document.getElementById('individualDashboard');
+        const companyDashboard = document.getElementById('companyDashboard');
+        const adminPanel = document.getElementById('adminPanel');
+
+        // Landing page elements
+        const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const headerSignupBtn = document.getElementById('headerSignupBtn');
+        const heroSignupBtn = document.getElementById('heroSignupBtn');
+        const individualBtn = document.getElementById('individualBtn');
+        const companyBtn = document.getElementById('companyBtn');
+        const signinBtn = document.getElementById('signinBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const individualSignIn = document.getElementById('individualSignIn');
+        const individualSignUp = document.getElementById('individualSignUp');
+        const companySignIn = document.getElementById('companySignIn');
+        const companySignUp = document.getElementById('companySignUp');
+        const approvalMessage = document.getElementById('approvalMessage');
+        const emailCreator = document.getElementById('emailCreator');
+        const contactEmail = document.getElementById('contactEmail');
         const successAlert = document.getElementById('successAlert');
         const errorAlert = document.getElementById('errorAlert');
+        const configAlert = document.getElementById('configAlert');
+        const configMessage = document.getElementById('configMessage');
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
-        const totalUsers = document.getElementById('totalUsers');
-        const activeUsers = document.getElementById('activeUsers');
-        const pendingUsers = document.getElementById('pendingUsers');
-        const inactiveUsers = document.getElementById('inactiveUsers');
-        const pagination = document.getElementById('pagination');
+        const forgotPassword = document.getElementById('forgotPassword');
+        const companyForgotPassword = document.getElementById('companyForgotPassword');
 
-        // Modal form fields
-        const modalTitle = document.getElementById('modalTitle');
-        const modalUserName = document.getElementById('modalUserName');
-        const modalUserEmail = document.getElementById('modalUserEmail');
-        const modalUserType = document.getElementById('modalUserType');
-        const modalUserStatus = document.getElementById('modalUserStatus');
-        const modalUserAddress = document.getElementById('modalUserAddress');
-        const modalUserPhone = document.getElementById('modalUserPhone');
-        const modalCompanyName = document.getElementById('modalCompanyName');
-        const companyInfoGroup = document.getElementById('companyInfoGroup');
+        // Individual dashboard elements
+        const individualLogoutBtn = document.getElementById('individualLogoutBtn');
+        const individualUserAvatar = document.getElementById('individualUserAvatar');
+        const individualUserName = document.getElementById('individualUserName');
+        const individualTotalTasks = document.getElementById('individualTotalTasks');
+        const individualCompletedTasks = document.getElementById('individualCompletedTasks');
+        const individualPendingTasks = document.getElementById('individualPendingTasks');
+        const individualOverdueTasks = document.getElementById('individualOverdueTasks');
+        const individualRecentTasks = document.getElementById('individualRecentTasks');
+        const individualAllTasks = document.getElementById('individualAllTasks');
+        const individualAddTaskBtn = document.getElementById('individualAddTaskBtn');
+        const individualPresentDays = document.getElementById('individualPresentDays');
+        const individualAbsentDays = document.getElementById('individualAbsentDays');
+        const individualAttendancePercent = document.getElementById('individualAttendancePercent');
+        const individualAttendanceRecords = document.getElementById('individualAttendanceRecords');
+        const individualProfileName = document.getElementById('individualProfileName');
+        const individualProfileEmail = document.getElementById('individualProfileEmail');
+        const individualProfileAddress = document.getElementById('individualProfileAddress');
+        const individualProfilePhone = document.getElementById('individualProfilePhone');
+        const individualProfilePurpose = document.getElementById('individualProfilePurpose');
 
-        // Global variables
-        let users = [];
-        let filteredUsers = [];
-        let currentPage = 1;
-        const usersPerPage = 10;
-        let currentEditingUserId = null;
+        // Company dashboard elements
+        const companyLogoutBtn = document.getElementById('companyLogoutBtn');
+        const companyUserAvatar = document.getElementById('companyUserAvatar');
+        const companyUserName = document.getElementById('companyUserName');
+        const companyTotalEmployees = document.getElementById('companyTotalEmployees');
+        const companyTotalTasks = document.getElementById('companyTotalTasks');
+        const companyPendingTasks = document.getElementById('companyPendingTasks');
+        const companyOverdueTasks = document.getElementById('companyOverdueTasks');
+        const companyTeamPerformance = document.getElementById('companyTeamPerformance');
+        const companyAllTasks = document.getElementById('companyAllTasks');
+        const companyAddTaskBtn = document.getElementById('companyAddTaskBtn');
+        const companyAllEmployees = document.getElementById('companyAllEmployees');
+        const companyAddEmployeeBtn = document.getElementById('companyAddEmployeeBtn');
+        const companyAllAttendance = document.getElementById('companyAllAttendance');
+        const companyProfileName = document.getElementById('companyProfileName');
+        const companyProfileEmail = document.getElementById('companyProfileEmail');
+        const companyProfileAddress = document.getElementById('companyProfileAddress');
+        const companyProfileAdmin = document.getElementById('companyProfileAdmin');
+        const companyProfilePhone = document.getElementById('companyProfilePhone');
+
+        // Admin panel elements
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+        const adminUserAvatar = document.getElementById('adminUserAvatar');
+        const adminTotalUsers = document.getElementById('adminTotalUsers');
+        const adminTotalCompanies = document.getElementById('adminTotalCompanies');
+        const adminPendingApprovals = document.getElementById('adminPendingApprovals');
+        const adminTotalTasks = document.getElementById('adminTotalTasks');
+        const adminRecentRegistrations = document.getElementById('adminRecentRegistrations');
+        const adminAllUsers = document.getElementById('adminAllUsers');
+        const adminUserSearch = document.getElementById('adminUserSearch');
+        const adminAllCompanies = document.getElementById('adminAllCompanies');
+        const adminCompanySearch = document.getElementById('adminCompanySearch');
+        const adminAllTasks = document.getElementById('adminAllTasks');
+        const adminAllAttendance = document.getElementById('adminAllAttendance');
+        const adminActiveUsers = document.getElementById('adminActiveUsers');
+        const adminCompletedTasks = document.getElementById('adminCompletedTasks');
+        const adminNewRegistrations = document.getElementById('adminNewRegistrations');
+        const adminSystemIssues = document.getElementById('adminSystemIssues');
+        const adminSaveSettings = document.getElementById('adminSaveSettings');
+
+        // Current state
+        let isIndividual = true;
+        let isSignIn = true;
+        let currentUser = null;
+        let currentUserData = null;
 
         // Event Listeners
-        logoutBtn.addEventListener('click', handleLogout);
-        addUserBtn.addEventListener('click', showAddUserModal);
-        closeModal.addEventListener('click', () => userModal.style.display = 'none');
-        cancelModalBtn.addEventListener('click', () => userModal.style.display = 'none');
-        saveUserBtn.addEventListener('click', saveUserChanges);
-        searchInput.addEventListener('input', filterUsers);
-
-        // Initialize the admin panel
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUsers();
+        individualBtn.addEventListener('click', () => {
+            isIndividual = true;
+            updateUI();
         });
 
+        companyBtn.addEventListener('click', () => {
+            isIndividual = false;
+            updateUI();
+        });
+
+        signinBtn.addEventListener('click', () => {
+            isSignIn = true;
+            updateUI();
+        });
+
+        signupBtn.addEventListener('click', () => {
+            isSignIn = false;
+            updateUI();
+        });
+
+        headerLoginBtn.addEventListener('click', () => {
+            document.getElementById('login').scrollIntoView({ behavior: 'smooth' });
+            isSignIn = true;
+            updateUI();
+        });
+
+        headerSignupBtn.addEventListener('click', () => {
+            document.getElementById('login').scrollIntoView({ behavior: 'smooth' });
+            isSignIn = false;
+            updateUI();
+        });
+
+        heroSignupBtn.addEventListener('click', () => {
+            document.getElementById('login').scrollIntoView({ behavior: 'smooth' });
+            isSignIn = false;
+            updateUI();
+        });
+
+        // Forgot password handlers
+        forgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('individualEmail').value;
+            handleForgotPassword(email, 'individual');
+        });
+
+        companyForgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('companyEmail').value;
+            handleForgotPassword(email, 'company');
+        });
+
+        // Form submission handlers
+        individualSignIn.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('individualEmail').value;
+            const password = document.getElementById('individualPassword').value;
+            signInUser(email, password, 'individual');
+        });
+
+        individualSignUp.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('individualName').value;
+            const address = document.getElementById('individualAddress').value;
+            const phone = document.getElementById('individualPhone').value;
+            const purpose = document.getElementById('individualPurpose').value;
+            const email = document.getElementById('individualEmailSignUp').value;
+            const password = document.getElementById('individualPasswordSignUp').value;
+            
+            createUserWithEmail(name, address, phone, purpose, email, password, 'individual');
+        });
+
+        companySignIn.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('companyEmail').value;
+            const password = document.getElementById('companyPassword').value;
+            signInUser(email, password, 'company');
+        });
+
+        companySignUp.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const companyName = document.getElementById('companyName').value;
+            const companyAddress = document.getElementById('companyAddress').value;
+            const adminName = document.getElementById('adminName').value;
+            const adminPhone = document.getElementById('adminPhone').value;
+            const email = document.getElementById('companyEmailSignUp').value;
+            const password = document.getElementById('companyPasswordSignUp').value;
+            
+            createCompanyUser(companyName, companyAddress, adminName, adminPhone, email, password);
+        });
+
+        // Email draft functionality
+        emailCreator.addEventListener('click', (e) => {
+            e.preventDefault();
+            prepareEmailDraft();
+        });
+
+        contactEmail.addEventListener('click', (e) => {
+            e.preventDefault();
+            prepareEmailDraft();
+        });
+
+        // Dashboard navigation
+        document.querySelectorAll('.dashboard-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = e.target.getAttribute('data-section');
+                
+                // Update active nav link
+                document.querySelectorAll('.dashboard-nav-link').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Show corresponding section
+                document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+            });
+        });
+
+        // Admin navigation
+        document.querySelectorAll('.admin-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = e.target.getAttribute('data-section');
+                
+                // Update active nav link
+                document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Show corresponding section
+                document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+            });
+        });
+
+        // Logout handlers
+        individualLogoutBtn.addEventListener('click', handleLogout);
+        companyLogoutBtn.addEventListener('click', handleLogout);
+        adminLogoutBtn.addEventListener('click', handleLogout);
+
         // Functions
-        function loadUsers() {
-            if (!db) {
-                showAlert("Database not available. Please check Firebase configuration.", "error");
+        function updateUI() {
+            // Update user type buttons
+            individualBtn.classList.toggle('active', isIndividual);
+            companyBtn.classList.toggle('active', !isIndividual);
+            
+            // Update form toggle buttons
+            signinBtn.classList.toggle('active', isSignIn);
+            signupBtn.classList.toggle('active', !isSignIn);
+            
+            // Show/hide forms
+            individualSignIn.classList.toggle('active', isIndividual && isSignIn);
+            individualSignUp.classList.toggle('active', isIndividual && !isSignIn);
+            companySignIn.classList.toggle('active', !isIndividual && isSignIn);
+            companySignUp.classList.toggle('active', !isIndividual && !isSignIn);
+            
+            // Hide approval message when switching forms
+            approvalMessage.style.display = 'none';
+            
+            // Hide alerts
+            hideAlerts();
+        }
+
+        function createUserWithEmail(name, address, phone, purpose, email, password, userType) {
+            showAlert('Creating your account...', 'success');
+            
+            if (!auth) {
+                showAlert('Authentication service not available. Please refresh the page.', 'error');
                 return;
             }
 
-            db.collection('users').orderBy('createdAt', 'desc').get()
-                .then((querySnapshot) => {
-                    users = [];
-                    querySnapshot.forEach((doc) => {
-                        const user = doc.data();
-                        user.id = doc.id;
-                        users.push(user);
-                    });
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
                     
-                    updateUserStats();
-                    filterUsers();
+                    // Save user data to Firestore
+                    return db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        name: name,
+                        address: address,
+                        phone: phone,
+                        purpose: purpose,
+                        email: email,
+                        userType: userType,
+                        status: 'pending',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    showAlert('Account created successfully! Please check your email for verification.', 'success');
+                    
+                    // Send email verification
+                    return auth.currentUser.sendEmailVerification();
+                })
+                .then(() => {
+                    console.log('Email verification sent');
+                    showApprovalMessage();
+                    prepareEmailDraft('individual', {name, address, phone, purpose, email});
+                    individualSignUp.reset();
                 })
                 .catch((error) => {
-                    console.error("Error loading users:", error);
-                    showAlert("Failed to load users. Please try again.", "error");
+                    console.error("Error creating user:", error);
+                    handleAuthError(error, 'signup');
                 });
         }
 
-        function updateUserStats() {
-            const total = users.length;
-            const active = users.filter(user => user.status === 'active').length;
-            const pending = users.filter(user => user.status === 'pending').length;
-            const inactive = users.filter(user => user.status === 'inactive').length;
+        function createCompanyUser(companyName, companyAddress, adminName, adminPhone, email, password) {
+            showAlert('Creating company account...', 'success');
             
-            totalUsers.textContent = total;
-            activeUsers.textContent = active;
-            pendingUsers.textContent = pending;
-            inactiveUsers.textContent = inactive;
-        }
-
-        function filterUsers() {
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            if (searchTerm) {
-                filteredUsers = users.filter(user => 
-                    user.name?.toLowerCase().includes(searchTerm) || 
-                    user.email?.toLowerCase().includes(searchTerm) ||
-                    user.companyName?.toLowerCase().includes(searchTerm)
-                );
-            } else {
-                filteredUsers = [...users];
-            }
-            
-            renderUsersTable();
-            renderPagination();
-        }
-
-        function renderUsersTable() {
-            usersTableBody.innerHTML = '';
-            
-            const startIndex = (currentPage - 1) * usersPerPage;
-            const endIndex = startIndex + usersPerPage;
-            const usersToShow = filteredUsers.slice(startIndex, endIndex);
-            
-            if (usersToShow.length === 0) {
-                usersTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px;">
-                            No users found
-                        </td>
-                    </tr>
-                `;
+            if (!auth) {
+                showAlert('Authentication service not available. Please refresh the page.', 'error');
                 return;
             }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    return db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        companyName: companyName,
+                        companyAddress: companyAddress,
+                        adminName: adminName,
+                        adminPhone: adminPhone,
+                        email: email,
+                        userType: 'company',
+                        status: 'pending',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    showAlert('Company account created successfully! Please check your email for verification.', 'success');
+                    return auth.currentUser.sendEmailVerification();
+                })
+                .then(() => {
+                    console.log('Email verification sent');
+                    showApprovalMessage();
+                    prepareEmailDraft('company', {companyName, companyAddress, adminName, adminPhone, email});
+                    companySignUp.reset();
+                })
+                .catch((error) => {
+                    console.error("Error creating company:", error);
+                    handleAuthError(error, 'signup');
+                });
+        }
+
+        function signInUser(email, password, userType) {
+            showAlert('Signing in...', 'success');
             
-            usersToShow.forEach(user => {
-                const row = document.createElement('tr');
-                
-                // Get initials for avatar
-                const initials = user.name ? 
-                    user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 
-                    'U';
-                
-                // Format date
-                const regDate = user.createdAt ? 
-                    new Date(user.createdAt.toDate()).toLocaleDateString() : 
-                    'N/A';
-                
-                // Status badge
-                let statusClass = '';
-                let statusText = '';
-                
-                switch(user.status) {
-                    case 'active':
-                        statusClass = 'status-active';
-                        statusText = 'Active';
-                        break;
-                    case 'pending':
-                        statusClass = 'status-pending';
-                        statusText = 'Pending';
-                        break;
-                    case 'inactive':
-                        statusClass = 'status-inactive';
-                        statusText = 'Inactive';
-                        break;
-                    default:
-                        statusClass = 'status-pending';
-                        statusText = 'Pending';
-                }
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="user-cell">
-                            <div class="user-avatar-small">${initials}</div>
-                            <div>${user.name || user.adminName || 'N/A'}</div>
-                        </div>
-                    </td>
-                    <td>${user.email}</td>
-                    <td>${user.userType === 'company' ? 'Company' : 'Individual'}</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    <td>${regDate}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}">View</button>
-                            ${user.status === 'active' ? 
-                                `<button class="btn btn-warning btn-sm deactivate-user" data-id="${user.id}">Deactivate</button>` : 
-                                `<button class="btn btn-success btn-sm activate-user" data-id="${user.id}">Activate</button>`
+            if (!auth) {
+                showAlert('Authentication service not available. Please refresh the page.', 'error');
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    if (!user.emailVerified) {
+                        showAlert('Please verify your email address before logging in. Check your inbox.', 'error');
+                        user.sendEmailVerification();
+                        auth.signOut();
+                        return;
+                    }
+                    
+                    return db.collection('users').doc(user.uid).get();
+                })
+                .then((doc) => {
+                    if (doc && doc.exists) {
+                        const userData = doc.data();
+                        if (userData.status === 'approved') {
+                            showAlert('Login successful! Redirecting to dashboard...', 'success');
+                            currentUser = auth.currentUser;
+                            currentUserData = userData;
+                            
+                            // Redirect to appropriate dashboard
+                            if (userData.userType === 'individual') {
+                                showIndividualDashboard();
+                            } else if (userData.userType === 'company') {
+                                showCompanyDashboard();
+                            } else if (userData.userType === 'admin') {
+                                showAdminPanel();
                             }
-                            <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}">Delete</button>
-                        </div>
-                    </td>
-                `;
-                
-                usersTableBody.appendChild(row);
-            });
-            
-            // Add event listeners to action buttons
-            document.querySelectorAll('.view-user').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    viewUser(userId);
+                        } else {
+                            showAlert('Your account is pending approval. We will notify you once approved.', 'error');
+                            auth.signOut();
+                        }
+                    } else {
+                        showAlert('User profile not found. Please contact support.', 'error');
+                        auth.signOut();
+                    }
+                })
+                .catch((error) => {
+                    console.error("Sign-in error:", error);
+                    handleAuthError(error, 'signin');
                 });
-            });
-            
-            document.querySelectorAll('.activate-user').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    activateUser(userId);
-                });
-            });
-            
-            document.querySelectorAll('.deactivate-user').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    deactivateUser(userId);
-                });
-            });
-            
-            document.querySelectorAll('.delete-user').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    deleteUser(userId);
-                });
-            });
         }
 
-        function renderPagination() {
-            pagination.innerHTML = '';
-            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-            
-            if (totalPages <= 1) return;
-            
-            // Previous button
-            const prevButton = document.createElement('button');
-            prevButton.innerHTML = '&laquo;';
-            prevButton.disabled = currentPage === 1;
-            prevButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderUsersTable();
-                    renderPagination();
-                }
-            });
-            pagination.appendChild(prevButton);
-            
-            // Page buttons
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = i;
-                pageButton.classList.toggle('active', i === currentPage);
-                pageButton.addEventListener('click', () => {
-                    currentPage = i;
-                    renderUsersTable();
-                    renderPagination();
-                });
-                pagination.appendChild(pageButton);
-            }
-            
-            // Next button
-            const nextButton = document.createElement('button');
-            nextButton.innerHTML = '&raquo;';
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderUsersTable();
-                    renderPagination();
-                }
-            });
-            pagination.appendChild(nextButton);
-        }
-
-        function viewUser(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user) return;
-            
-            currentEditingUserId = userId;
-            modalTitle.textContent = 'User Details';
-            
-            // Fill form with user data
-            modalUserName.value = user.name || user.adminName || 'N/A';
-            modalUserEmail.value = user.email || 'N/A';
-            modalUserType.value = user.userType === 'company' ? 'Company' : 'Individual';
-            modalUserStatus.value = user.status || 'pending';
-            modalUserAddress.value = user.address || user.companyAddress || 'N/A';
-            modalUserPhone.value = user.phone || user.adminPhone || 'N/A';
-            
-            // Show company info if it's a company user
-            if (user.userType === 'company') {
-                companyInfoGroup.style.display = 'block';
-                modalCompanyName.value = user.companyName || 'N/A';
-            } else {
-                companyInfoGroup.style.display = 'none';
-            }
-            
-            userModal.style.display = 'flex';
-        }
-
-        function showAddUserModal() {
-            currentEditingUserId = null;
-            modalTitle.textContent = 'Add New User';
-            
-            // Clear form
-            modalUserName.value = '';
-            modalUserEmail.value = '';
-            modalUserType.value = 'individual';
-            modalUserStatus.value = 'pending';
-            modalUserAddress.value = '';
-            modalUserPhone.value = '';
-            modalCompanyName.value = '';
-            companyInfoGroup.style.display = 'none';
-            
-            userModal.style.display = 'flex';
-        }
-
-        function saveUserChanges() {
-            if (!currentEditingUserId) {
-                // This is a new user
-                showAlert("Adding new users directly from admin panel is not implemented in this version.", "error");
+        function handleForgotPassword(email, userType) {
+            if (!email) {
+                showAlert('Please enter your email address first.', 'error');
                 return;
             }
             
-            const user = users.find(u => u.id === currentEditingUserId);
-            if (!user) return;
-            
-            const newStatus = modalUserStatus.value;
-            
-            db.collection('users').doc(currentEditingUserId).update({
-                status: newStatus
-            })
-            .then(() => {
-                showAlert(`User status updated to ${newStatus} successfully.`, "success");
-                userModal.style.display = 'none';
-                loadUsers(); // Reload users to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error updating user:", error);
-                showAlert("Failed to update user. Please try again.", "error");
-            });
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showAlert('Password reset email sent! Check your inbox.', 'success');
+                })
+                .catch((error) => {
+                    console.error("Password reset error:", error);
+                    let errorMsg = "Error sending reset email: ";
+                    
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMsg += 'No account found with this email.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMsg += 'Invalid email address.';
+                            break;
+                        default:
+                            errorMsg += error.message;
+                    }
+                    
+                    showAlert(errorMsg, 'error');
+                });
         }
 
-        function activateUser(userId) {
-            if (!confirm("Are you sure you want to activate this user?")) return;
+        function handleAuthError(error, action) {
+            let errorMsg = "";
             
-            db.collection('users').doc(userId).update({
-                status: 'active'
-            })
-            .then(() => {
-                showAlert("User activated successfully.", "success");
-                loadUsers(); // Reload users to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error activating user:", error);
-                showAlert("Failed to activate user. Please try again.", "error");
-            });
+            switch (error.code) {
+                case 'auth/operation-not-allowed':
+                    errorMsg = "Email/password authentication is disabled. Please enable it in Firebase Console under Authentication > Sign-in method.";
+                    showConfigAlert(errorMsg);
+                    break;
+                case 'auth/email-already-in-use':
+                    errorMsg = "This email is already registered. Please use a different email or try signing in.";
+                    break;
+                case 'auth/invalid-email':
+                    errorMsg = "Invalid email address format.";
+                    break;
+                case 'auth/weak-password':
+                    errorMsg = "Password is too weak. Please use at least 6 characters.";
+                    break;
+                case 'auth/network-request-failed':
+                    errorMsg = "Network error. Please check your internet connection.";
+                    break;
+                case 'auth/configuration-not-found':
+                    errorMsg = "Firebase configuration error. Please check your Firebase setup.";
+                    showConfigAlert(errorMsg);
+                    break;
+                default:
+                    errorMsg = `${action} failed: ${error.message}`;
+            }
+            
+            showAlert(errorMsg, 'error');
         }
 
-        function deactivateUser(userId) {
-            if (!confirm("Are you sure you want to deactivate this user?")) return;
+        function showApprovalMessage() {
+            // Hide all forms
+            individualSignIn.style.display = 'none';
+            individualSignUp.style.display = 'none';
+            companySignIn.style.display = 'none';
+            companySignUp.style.display = 'none';
             
-            db.collection('users').doc(userId).update({
-                status: 'inactive'
-            })
-            .then(() => {
-                showAlert("User deactivated successfully.", "success");
-                loadUsers(); // Reload users to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error deactivating user:", error);
-                showAlert("Failed to deactivate user. Please try again.", "error");
-            });
+            // Show approval message
+            approvalMessage.style.display = 'block';
         }
 
-        function deleteUser(userId) {
-            if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
+        function prepareEmailDraft(userType = null, userData = null) {
+            let subject = "User Registration Details";
+            let body = "";
             
-            db.collection('users').doc(userId).delete()
-            .then(() => {
-                showAlert("User deleted successfully.", "success");
-                loadUsers(); // Reload users to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error deleting user:", error);
-                showAlert("Failed to delete user. Please try again.", "error");
-            });
+            if (userType && userData) {
+                if (userType === 'individual') {
+                    body = `Individual User Registration Details:\n\nName: ${userData.name}\nAddress: ${userData.address}\nPhone: ${userData.phone}\nPurpose: ${userData.purpose}\nEmail: ${userData.email}\n\nPlease review and approve this user account.`;
+                } else if (userType === 'company') {
+                    body = `Company Registration Details:\n\nCompany Name: ${userData.companyName}\nCompany Address: ${userData.companyAddress}\nAdmin Name: ${userData.adminName}\nAdmin Phone: ${userData.adminPhone}\nCompany Email: ${userData.email}\n\nPlease review and approve this company account.`;
+                }
+            } else {
+                body = "I would like to inquire about my account status or other information.";
+            }
+            
+            const mailtoLink = `mailto:testtocreateapp@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
+        }
+
+        function showIndividualDashboard() {
+            landingPage.style.display = 'none';
+            individualDashboard.style.display = 'block';
+            companyDashboard.style.display = 'none';
+            adminPanel.style.display = 'none';
+            
+            // Update user info
+            individualUserName.textContent = currentUserData.name;
+            individualUserAvatar.textContent = currentUserData.name.charAt(0).toUpperCase();
+            
+            // Load individual user data
+            loadIndividualData();
+        }
+
+        function showCompanyDashboard() {
+            landingPage.style.display = 'none';
+            individualDashboard.style.display = 'none';
+            companyDashboard.style.display = 'block';
+            adminPanel.style.display = 'none';
+            
+            // Update user info
+            companyUserName.textContent = currentUserData.adminName;
+            companyUserAvatar.textContent = currentUserData.adminName.charAt(0).toUpperCase();
+            
+            // Load company data
+            loadCompanyData();
+        }
+
+        function showAdminPanel() {
+            landingPage.style.display = 'none';
+            individualDashboard.style.display = 'none';
+            companyDashboard.style.display = 'none';
+            adminPanel.style.display = 'block';
+            
+            // Load admin data
+            loadAdminData();
         }
 
         function handleLogout() {
             if (auth) {
                 auth.signOut()
                     .then(() => {
-                        window.location.href = 'index.html'; // Redirect to login page
+                        currentUser = null;
+                        currentUserData = null;
+                        landingPage.style.display = 'block';
+                        individualDashboard.style.display = 'none';
+                        companyDashboard.style.display = 'none';
+                        adminPanel.style.display = 'none';
                     })
                     .catch((error) => {
                         console.error("Logout error:", error);
                         showAlert("Failed to logout. Please try again.", "error");
                     });
             } else {
-                window.location.href = 'index.html';
+                landingPage.style.display = 'block';
+                individualDashboard.style.display = 'none';
+                companyDashboard.style.display = 'none';
+                adminPanel.style.display = 'none';
             }
+        }
+
+        function loadIndividualData() {
+            // Load tasks
+            db.collection('tasks').where('userId', '==', currentUser.uid).get()
+                .then((querySnapshot) => {
+                    let total = 0;
+                    let completed = 0;
+                    let pending = 0;
+                    let overdue = 0;
+                    
+                    individualRecentTasks.innerHTML = '';
+                    individualAllTasks.innerHTML = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const task = doc.data();
+                        total++;
+                        
+                        if (task.status === 'completed') {
+                            completed++;
+                        } else if (task.status === 'pending') {
+                            pending++;
+                        }
+                        
+                        // Check if task is overdue
+                        if (task.dueDate && new Date(task.dueDate.toDate()) < new Date() && task.status !== 'completed') {
+                            overdue++;
+                        }
+                        
+                        // Create table row for recent tasks (limit to 5)
+                        if (individualRecentTasks.children.length < 5) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${task.name}</td>
+                                <td>${task.dueDate ? task.dueDate.toDate().toLocaleDateString() : 'N/A'}</td>
+                                <td>${task.priority || 'Medium'}</td>
+                                <td><span class="status-badge status-${task.status || 'pending'}">${task.status || 'Pending'}</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-success btn-sm">Complete</button>
+                                        <button class="btn btn-danger btn-sm">Delete</button>
+                                    </div>
+                                </td>
+                            `;
+                            individualRecentTasks.appendChild(row);
+                        }
+                        
+                        // Create table row for all tasks
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${task.name}</td>
+                            <td>${task.description || 'No description'}</td>
+                            <td>${task.dueDate ? task.dueDate.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>${task.priority || 'Medium'}</td>
+                            <td><span class="status-badge status-${task.status || 'pending'}">${task.status || 'Pending'}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm">Complete</button>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </div>
+                            </td>
+                        `;
+                        individualAllTasks.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    individualTotalTasks.textContent = total;
+                    individualCompletedTasks.textContent = completed;
+                    individualPendingTasks.textContent = pending;
+                    individualOverdueTasks.textContent = overdue;
+                })
+                .catch((error) => {
+                    console.error("Error loading tasks:", error);
+                });
+            
+            // Load attendance
+            db.collection('attendance').where('userId', '==', currentUser.uid).get()
+                .then((querySnapshot) => {
+                    let present = 0;
+                    let absent = 0;
+                    
+                    individualAttendanceRecords.innerHTML = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const record = doc.data();
+                        
+                        if (record.status === 'present') {
+                            present++;
+                        } else if (record.status === 'absent') {
+                            absent++;
+                        }
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${record.date ? record.date.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>${record.checkIn || 'N/A'}</td>
+                            <td>${record.checkOut || 'N/A'}</td>
+                            <td>${record.hoursWorked || '0'}</td>
+                            <td><span class="status-badge status-${record.status || 'absent'}">${record.status || 'Absent'}</span></td>
+                        `;
+                        individualAttendanceRecords.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    individualPresentDays.textContent = present;
+                    individualAbsentDays.textContent = absent;
+                    const totalDays = present + absent;
+                    individualAttendancePercent.textContent = totalDays > 0 ? Math.round((present / totalDays) * 100) + '%' : '0%';
+                })
+                .catch((error) => {
+                    console.error("Error loading attendance:", error);
+                });
+            
+            // Load profile data
+            individualProfileName.value = currentUserData.name || '';
+            individualProfileEmail.value = currentUserData.email || '';
+            individualProfileAddress.value = currentUserData.address || '';
+            individualProfilePhone.value = currentUserData.phone || '';
+            individualProfilePurpose.value = currentUserData.purpose || '';
+        }
+
+        function loadCompanyData() {
+            // Load employees
+            db.collection('users').where('companyId', '==', currentUser.uid).get()
+                .then((querySnapshot) => {
+                    const employees = [];
+                    querySnapshot.forEach((doc) => {
+                        employees.push(doc.data());
+                    });
+                    
+                    companyTotalEmployees.textContent = employees.length;
+                    
+                    // Update team performance table
+                    companyTeamPerformance.innerHTML = '';
+                    employees.forEach(employee => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${employee.name}</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                            <td>0%</td>
+                        `;
+                        companyTeamPerformance.appendChild(row);
+                    });
+                    
+                    // Update employees table
+                    companyAllEmployees.innerHTML = '';
+                    employees.forEach(employee => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${employee.name}</td>
+                            <td>${employee.email}</td>
+                            <td>${employee.position || 'Employee'}</td>
+                            <td>0</td>
+                            <td><span class="status-badge status-${employee.status || 'active'}">${employee.status || 'Active'}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm">Edit</button>
+                                    <button class="btn btn-danger btn-sm">Remove</button>
+                                </div>
+                            </td>
+                        `;
+                        companyAllEmployees.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading employees:", error);
+                });
+            
+            // Load company tasks
+            db.collection('tasks').where('companyId', '==', currentUser.uid).get()
+                .then((querySnapshot) => {
+                    let total = 0;
+                    let pending = 0;
+                    let overdue = 0;
+                    
+                    companyAllTasks.innerHTML = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const task = doc.data();
+                        total++;
+                        
+                        if (task.status === 'pending') {
+                            pending++;
+                        }
+                        
+                        // Check if task is overdue
+                        if (task.dueDate && new Date(task.dueDate.toDate()) < new Date() && task.status !== 'completed') {
+                            overdue++;
+                        }
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${task.name}</td>
+                            <td>${task.assignedTo || 'Unassigned'}</td>
+                            <td>${task.dueDate ? task.dueDate.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>${task.priority || 'Medium'}</td>
+                            <td><span class="status-badge status-${task.status || 'pending'}">${task.status || 'Pending'}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm">Edit</button>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </div>
+                            </td>
+                        `;
+                        companyAllTasks.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    companyTotalTasks.textContent = total;
+                    companyPendingTasks.textContent = pending;
+                    companyOverdueTasks.textContent = overdue;
+                })
+                .catch((error) => {
+                    console.error("Error loading company tasks:", error);
+                });
+            
+            // Load company attendance
+            db.collection('attendance').where('companyId', '==', currentUser.uid).get()
+                .then((querySnapshot) => {
+                    companyAllAttendance.innerHTML = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const record = doc.data();
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${record.userName || 'Unknown'}</td>
+                            <td>${record.date ? record.date.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>${record.checkIn || 'N/A'}</td>
+                            <td>${record.checkOut || 'N/A'}</td>
+                            <td>${record.hoursWorked || '0'}</td>
+                            <td><span class="status-badge status-${record.status || 'absent'}">${record.status || 'Absent'}</span></td>
+                        `;
+                        companyAllAttendance.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading company attendance:", error);
+                });
+            
+            // Load profile data
+            companyProfileName.value = currentUserData.companyName || '';
+            companyProfileEmail.value = currentUserData.email || '';
+            companyProfileAddress.value = currentUserData.companyAddress || '';
+            companyProfileAdmin.value = currentUserData.adminName || '';
+            companyProfilePhone.value = currentUserData.adminPhone || '';
+        }
+
+        function loadAdminData() {
+            // Load users
+            db.collection('users').where('userType', '==', 'individual').get()
+                .then((querySnapshot) => {
+                    const users = [];
+                    querySnapshot.forEach((doc) => {
+                        const user = doc.data();
+                        user.id = doc.id;
+                        users.push(user);
+                    });
+                    
+                    adminTotalUsers.textContent = users.length;
+                    
+                    // Update users table
+                    adminAllUsers.innerHTML = '';
+                    users.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.phone}</td>
+                            <td>${user.purpose}</td>
+                            <td>${user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status-badge status-${user.status || 'pending'}">${user.status || 'Pending'}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm">Approve</button>
+                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                </div>
+                            </td>
+                        `;
+                        adminAllUsers.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading users:", error);
+                });
+            
+            // Load companies
+            db.collection('users').where('userType', '==', 'company').get()
+                .then((querySnapshot) => {
+                    const companies = [];
+                    querySnapshot.forEach((doc) => {
+                        const company = doc.data();
+                        company.id = doc.id;
+                        companies.push(company);
+                    });
+                    
+                    adminTotalCompanies.textContent = companies.length;
+                    
+                    // Update companies table
+                    adminAllCompanies.innerHTML = '';
+                    companies.forEach(company => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${company.companyName}</td>
+                            <td>${company.adminName}</td>
+                            <td>${company.email}</td>
+                            <td>${company.adminPhone}</td>
+                            <td>0</td>
+                            <td>${company.createdAt ? company.createdAt.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status-badge status-${company.status || 'pending'}">${company.status || 'Pending'}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm">Approve</button>
+                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                </div>
+                            </td>
+                        `;
+                        adminAllCompanies.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading companies:", error);
+                });
+            
+            // Load pending approvals
+            db.collection('users').where('status', '==', 'pending').get()
+                .then((querySnapshot) => {
+                    adminPendingApprovals.textContent = querySnapshot.size;
+                    
+                    // Update recent registrations
+                    adminRecentRegistrations.innerHTML = '';
+                    querySnapshot.forEach((doc) => {
+                        const user = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.name || user.adminName}</td>
+                            <td>${user.email}</td>
+                            <td>${user.userType === 'company' ? 'Company' : 'Individual'}</td>
+                            <td>${user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status-badge status-${user.status || 'pending'}">${user.status || 'Pending'}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm">Approve</button>
+                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                </div>
+                            </td>
+                        `;
+                        adminRecentRegistrations.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading pending approvals:", error);
+                });
+            
+            // Load all tasks
+            db.collection('tasks').get()
+                .then((querySnapshot) => {
+                    adminTotalTasks.textContent = querySnapshot.size;
+                    
+                    adminAllTasks.innerHTML = '';
+                    querySnapshot.forEach((doc) => {
+                        const task = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${task.name}</td>
+                            <td>${task.assignedTo || 'Unassigned'}</td>
+                            <td>${task.userType || 'Individual'}</td>
+                            <td>${task.dueDate ? task.dueDate.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>${task.priority || 'Medium'}</td>
+                            <td><span class="status-badge status-${task.status || 'pending'}">${task.status || 'Pending'}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </div>
+                            </td>
+                        `;
+                        adminAllTasks.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading all tasks:", error);
+                });
+            
+            // Load all attendance
+            db.collection('attendance').get()
+                .then((querySnapshot) => {
+                    adminAllAttendance.innerHTML = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const record = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${record.userName || 'Unknown'}</td>
+                            <td>${record.userType || 'Individual'}</td>
+                            <td>${record.date ? record.date.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>${record.checkIn || 'N/A'}</td>
+                            <td>${record.checkOut || 'N/A'}</td>
+                            <td>${record.hoursWorked || '0'}</td>
+                            <td><span class="status-badge status-${record.status || 'absent'}">${record.status || 'Absent'}</span></td>
+                        `;
+                        adminAllAttendance.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading all attendance:", error);
+                });
         }
 
         function showAlert(message, type) {
@@ -1197,15 +3001,65 @@
             setTimeout(hideAlerts, 5000);
         }
 
+        function showConfigAlert(message) {
+            configMessage.textContent = message;
+            configAlert.style.display = 'block';
+        }
+
         function hideAlerts() {
             successAlert.style.display = 'none';
             errorAlert.style.display = 'none';
+            configAlert.style.display = 'none';
         }
 
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === userModal) {
-                userModal.style.display = 'none';
+        // Initialize the UI
+        updateUI();
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User is logged in:', user.email);
+                
+                // Get user data from Firestore
+                db.collection('users').doc(user.uid).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            currentUser = user;
+                            currentUserData = userData;
+                            
+                            if (userData.status === 'approved') {
+                                if (userData.userType === 'individual') {
+                                    showIndividualDashboard();
+                                } else if (userData.userType === 'company') {
+                                    showCompanyDashboard();
+                                } else if (userData.userType === 'admin') {
+                                    showAdminPanel();
+                                }
+                            } else {
+                                showAlert('Your account is pending approval. We will notify you once approved.', 'error');
+                                auth.signOut();
+                            }
+                        } else {
+                            console.log('No user data found');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error getting user data:", error);
+                    });
+            } else {
+                console.log('User is logged out');
+            }
+        });
+
+        // Test Firebase connection on load
+        window.addEventListener('load', () => {
+            console.log("Testing Firebase connection...");
+            
+            if (auth && db) {
+                console.log("Firebase services loaded successfully");
+            } else {
+                showConfigAlert("Firebase services failed to load. Please check your configuration.");
             }
         });
     </script>
