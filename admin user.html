@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
@@ -343,11 +342,6 @@
             color: var(--danger);
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
         .btn {
             padding: 8px 16px;
             border: none;
@@ -356,26 +350,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-        }
-
-        .btn-approve {
-            background: #e6f7e6;
-            color: #52c41a;
-        }
-
-        .btn-approve:hover {
-            background: #d4f5d4;
-            transform: translateY(-2px);
-        }
-
-        .btn-reject {
-            background: #ffe6e6;
-            color: var(--danger);
-        }
-
-        .btn-reject:hover {
-            background: #ffd4d4;
-            transform: translateY(-2px);
         }
 
         .btn-view {
@@ -469,10 +443,10 @@
             display: none;
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
 
         .alert-error {
@@ -487,10 +461,26 @@
             border: 1px solid #ffeaa7;
         }
 
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        /* Read-only Notice */
+        .read-only-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .read-only-notice i {
+            color: #856404;
+            font-size: 1.2rem;
+        }
+
+        .read-only-notice p {
+            color: #856404;
+            margin: 0;
         }
 
         /* Empty State */
@@ -532,28 +522,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Read-only Notice */
-        .read-only-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: var(--radius);
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .read-only-notice i {
-            color: #856404;
-            font-size: 1.2rem;
-        }
-
-        .read-only-notice p {
-            color: #856404;
-            margin: 0;
-        }
-
         /* Responsive Styles */
         @media (max-width: 992px) {
             .users-table {
@@ -583,10 +551,6 @@
             
             .filter-tabs {
                 justify-content: center;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
             }
         }
     </style>
@@ -677,6 +641,9 @@
             <div class="alert alert-error" id="errorAlert">
                 <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
             </div>
+            <div class="alert alert-warning" id="warningAlert">
+                <i class="fas fa-exclamation-triangle"></i> <span id="warningMessage"></span>
+            </div>
 
             <!-- Filter Tabs -->
             <div class="filter-tabs">
@@ -762,7 +729,14 @@
         };
 
         // Initialize Firebase (without auth)
-        firebase.initializeApp(firebaseConfig);
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialized successfully");
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            showAlert("Firebase initialization failed. Please check your configuration.", 'error');
+        }
+
         const db = firebase.firestore();
 
         // DOM Elements
@@ -778,8 +752,10 @@
         const modalFooter = document.getElementById('modalFooter');
         const infoAlert = document.getElementById('infoAlert');
         const errorAlert = document.getElementById('errorAlert');
+        const warningAlert = document.getElementById('warningAlert');
         const infoMessage = document.getElementById('infoMessage');
         const errorMessage = document.getElementById('errorMessage');
+        const warningMessage = document.getElementById('warningMessage');
         const tableTitle = document.getElementById('tableTitle');
         const filterTabs = document.querySelectorAll('.filter-tab');
         
@@ -858,16 +834,20 @@
                     let pendingCount = 0;
                     
                     querySnapshot.forEach((doc) => {
-                        const user = {
-                            id: doc.id,
-                            ...doc.data()
-                        };
-                        users.push(user);
-                        
-                        // Count by type
-                        if (user.userType === 'individual') individualCount++;
-                        if (user.userType === 'company') companyCount++;
-                        if (user.status === 'pending') pendingCount++;
+                        try {
+                            const user = {
+                                id: doc.id,
+                                ...doc.data()
+                            };
+                            users.push(user);
+                            
+                            // Count by type
+                            if (user.userType === 'individual') individualCount++;
+                            if (user.userType === 'company') companyCount++;
+                            if (user.status === 'pending') pendingCount++;
+                        } catch (error) {
+                            console.error('Error processing user data:', error);
+                        }
                     });
                     
                     // Update stats
@@ -879,10 +859,22 @@
                     // Render users
                     filterUsers();
                     hideLoading();
+                    
+                    if (users.length === 0) {
+                        showWarning('No users found in the database. The system might be empty or there might be a permissions issue.');
+                    }
                 })
                 .catch((error) => {
                     console.error("Error loading users: ", error);
-                    showAlert("Error loading users: " + error.message, 'error');
+                    let errorMsg = "Error loading users: " + error.message;
+                    
+                    if (error.code === 'permission-denied') {
+                        errorMsg = "Permission denied. Please check Firestore security rules to allow public read access.";
+                    } else if (error.code === 'unavailable') {
+                        errorMsg = "Network error. Please check your internet connection.";
+                    }
+                    
+                    showAlert(errorMsg, 'error');
                     hideLoading();
                 });
         }
@@ -945,57 +937,69 @@
         function renderUsers(usersToRender) {
             usersTableBody.innerHTML = '';
             
+            if (usersToRender.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
             usersToRender.forEach(user => {
-                const row = document.createElement('tr');
-                
-                // Format registration date
-                const regDate = user.createdAt ? 
-                    user.createdAt.toDate().toLocaleDateString() : 
-                    'N/A';
-                
-                // Get user initials for avatar
-                const initials = getUserInitials(user);
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="user-info">
-                            <div class="user-avatar">${initials}</div>
-                            <div class="user-details">
-                                <h4>${getUserName(user)}</h4>
-                                <p>${user.userType === 'company' ? user.companyName : ''}</p>
+                try {
+                    const row = document.createElement('tr');
+                    
+                    // Format registration date
+                    const regDate = user.createdAt ? 
+                        user.createdAt.toDate().toLocaleDateString() : 
+                        'N/A';
+                    
+                    // Get user initials for avatar
+                    const initials = getUserInitials(user);
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">${initials}</div>
+                                <div class="user-details">
+                                    <h4>${getUserName(user)}</h4>
+                                    <p>${user.userType === 'company' ? (user.companyName || 'Company') : 'Individual User'}</p>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="user-type ${user.userType}">
-                            ${user.userType === 'individual' ? 'Individual' : 'Company'}
-                        </span>
-                    </td>
-                    <td>${user.email}</td>
-                    <td>${user.phone || user.adminPhone || 'N/A'}</td>
-                    <td>
-                        <span class="status-badge status-${user.status}">
-                            ${user.status === 'pending' ? 'Pending' : 
-                              user.status === 'approved' ? 'Active' : 'Deactivated'}
-                        </span>
-                    </td>
-                    <td>${regDate}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-view" onclick="viewUser('${user.id}')">
-                                <i class="fas fa-eye"></i> View Details
-                            </button>
-                        </div>
-                    </td>
-                `;
-                
-                usersTableBody.appendChild(row);
+                        </td>
+                        <td>
+                            <span class="user-type ${user.userType}">
+                                ${user.userType === 'individual' ? 'Individual' : 'Company'}
+                            </span>
+                        </td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>${user.phone || user.adminPhone || 'N/A'}</td>
+                        <td>
+                            <span class="status-badge status-${user.status || 'pending'}">
+                                ${(user.status === 'pending' ? 'Pending' : 
+                                  user.status === 'approved' ? 'Active' : 'Deactivated') || 'Pending'}
+                            </span>
+                        </td>
+                        <td>${regDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-view" onclick="viewUser('${user.id}')">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    usersTableBody.appendChild(row);
+                } catch (error) {
+                    console.error('Error rendering user row:', error);
+                }
             });
         }
 
         function viewUser(userId) {
             const user = users.find(u => u.id === userId);
-            if (!user) return;
+            if (!user) {
+                showAlert('User not found', 'error');
+                return;
+            }
             
             currentUser = user;
             
@@ -1006,11 +1010,11 @@
                 userDetails = `
                     <div class="user-detail-row">
                         <div class="user-detail-label">Full Name:</div>
-                        <div class="user-detail-value">${user.name}</div>
+                        <div class="user-detail-value">${user.name || 'N/A'}</div>
                     </div>
                     <div class="user-detail-row">
                         <div class="user-detail-label">Email:</div>
-                        <div class="user-detail-value">${user.email}</div>
+                        <div class="user-detail-value">${user.email || 'N/A'}</div>
                     </div>
                     <div class="user-detail-row">
                         <div class="user-detail-label">Phone:</div>
@@ -1029,15 +1033,15 @@
                 userDetails = `
                     <div class="user-detail-row">
                         <div class="user-detail-label">Company Name:</div>
-                        <div class="user-detail-value">${user.companyName}</div>
+                        <div class="user-detail-value">${user.companyName || 'N/A'}</div>
                     </div>
                     <div class="user-detail-row">
                         <div class="user-detail-label">Admin Name:</div>
-                        <div class="user-detail-value">${user.adminName}</div>
+                        <div class="user-detail-value">${user.adminName || 'N/A'}</div>
                     </div>
                     <div class="user-detail-row">
                         <div class="user-detail-label">Company Email:</div>
-                        <div class="user-detail-value">${user.email}</div>
+                        <div class="user-detail-value">${user.email || 'N/A'}</div>
                     </div>
                     <div class="user-detail-row">
                         <div class="user-detail-label">Admin Phone:</div>
@@ -1058,7 +1062,7 @@
                 <div class="user-detail-row">
                     <div class="user-detail-label">Status:</div>
                     <div class="user-detail-value">
-                        <span class="status-badge status-${user.status}">
+                        <span class="status-badge status-${user.status || 'pending'}">
                             ${user.status === 'pending' ? 'Pending Approval' : 
                               user.status === 'approved' ? 'Active' : 'Deactivated'}
                         </span>
@@ -1111,7 +1115,7 @@
 
         function getUserInitials(user) {
             const name = getUserName(user);
-            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || 'UU';
         }
 
         function showLoading() {
@@ -1132,13 +1136,22 @@
         }
 
         function showAlert(message, type) {
+            // Hide all alerts first
+            infoAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+            warningAlert.style.display = 'none';
+            
             if (type === 'error') {
                 errorMessage.textContent = message;
                 errorAlert.style.display = 'block';
-                setTimeout(() => {
-                    errorAlert.style.display = 'none';
-                }, 5000);
+            } else if (type === 'warning') {
+                warningMessage.textContent = message;
+                warningAlert.style.display = 'block';
             }
+        }
+
+        function showWarning(message) {
+            showAlert(message, 'warning');
         }
 
         // Initialize the admin panel
