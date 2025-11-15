@@ -8,550 +8,100 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
-        :root {
-            --primary: #4361ee;
-            --primary-light: #4895ef;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --danger: #e63946;
-            --warning: #f4a261;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --light-gray: #e9ecef;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --radius: 12px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background-color: #f5f7fb;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header Styles */
-        header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .logo i {
-            font-size: 2rem;
-        }
-
-        .admin-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .admin-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--success);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        .home-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .home-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Admin Dashboard */
-        .admin-dashboard {
-            padding: 40px 0;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .dashboard-title {
-            font-size: 2rem;
-            color: var(--dark);
-        }
-
-        .stats-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: var(--transition);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
+        /* Previous CSS styles remain the same, adding new styles for action buttons */
+        
+        .btn-approve {
+            background: #28a745;
             color: white;
         }
 
-        .stat-icon.individual {
-            background: var(--primary);
-        }
-
-        .stat-icon.company {
-            background: var(--secondary);
-        }
-
-        .stat-icon.pending {
-            background: var(--warning);
-        }
-
-        .stat-icon.total {
-            background: var(--success);
-        }
-
-        .stat-info h3 {
-            font-size: 2rem;
-            margin-bottom: 5px;
-        }
-
-        .stat-info p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        /* Filter Tabs */
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .filter-tab {
-            padding: 10px 20px;
-            background: white;
-            border: 2px solid var(--light-gray);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-        }
-
-        .filter-tab.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .filter-tab:hover {
-            border-color: var(--primary);
-        }
-
-        /* Users Table */
-        .users-section {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .section-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            color: var(--dark);
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: var(--light);
-            border-radius: 50px;
-            padding: 8px 15px;
-            width: 300px;
-        }
-
-        .search-box input {
-            background: transparent;
-            border: none;
-            outline: none;
-            width: 100%;
-            padding: 5px;
-        }
-
-        .search-box i {
-            color: var(--gray);
-            margin-right: 8px;
-        }
-
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .users-table th {
-            background: var(--light);
-            padding: 15px 20px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .users-table td {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        .user-details h4 {
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
-
-        .user-details p {
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
-
-        .user-type {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .user-type.individual {
-            background: #e6f7ff;
-            color: var(--primary);
-        }
-
-        .user-type.company {
-            background: #f0f8ff;
-            color: var(--secondary);
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: #fff7e6;
-            color: var(--warning);
-        }
-
-        .status-approved {
-            background: #e6f7e6;
-            color: #52c41a;
-        }
-
-        .status-rejected {
-            background: #ffe6e6;
-            color: var(--danger);
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-view {
-            background: var(--light);
-            color: var(--dark);
-        }
-
-        .btn-view:hover {
-            background: var(--light-gray);
+        .btn-approve:hover {
+            background: #218838;
             transform: translateY(-2px);
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+        .btn-reject {
+            background: #dc3545;
+            color: white;
         }
 
-        .modal-content {
-            background: white;
-            border-radius: var(--radius);
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow);
+        .btn-reject:hover {
+            background: #c82333;
+            transform: translateY(-2px);
         }
 
-        .modal-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--light-gray);
+        .btn-reactivate {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-reactivate:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .modal-title {
-            font-size: 1.3rem;
-            color: var(--dark);
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
         }
 
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
-        }
-
-        .modal-body {
-            padding: 25px;
-        }
-
-        .user-detail-row {
-            display: flex;
-            margin-bottom: 20px;
-        }
-
-        .user-detail-label {
-            flex: 1;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .user-detail-value {
-            flex: 2;
-            color: var(--gray);
-        }
-
-        .modal-footer {
-            padding: 20px 25px;
-            border-top: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        /* Alert Styles */
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        .alert-success {
+        /* Status badges */
+        .status-active {
             background: #d4edda;
             color: #155724;
-            border: 1px solid #c3e6cb;
         }
 
-        .alert-error {
+        .status-inactive {
             background: #f8d7da;
             color: #721c24;
-            border: 1px solid #f5c6cb;
         }
 
-        /* Read-only Notice */
-        .read-only-notice {
+        .status-pending {
             background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: var(--radius);
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .read-only-notice i {
             color: #856404;
-            font-size: 1.2rem;
         }
 
-        .read-only-notice p {
-            color: #856404;
-            margin: 0;
+        /* Confirmation modal */
+        .confirmation-modal .modal-content {
+            max-width: 400px;
         }
 
-        /* Empty State */
-        .empty-state {
+        .confirmation-text {
             text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
             margin-bottom: 20px;
-            color: var(--light-gray);
+            font-size: 1.1rem;
         }
 
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-
-        /* Loading State */
-        .loading {
+        .confirmation-buttons {
             display: flex;
+            gap: 10px;
             justify-content: center;
-            padding: 40px;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--light-gray);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .btn-confirm {
+            background: #dc3545;
+            color: white;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .btn-confirm:hover {
+            background: #c82333;
         }
 
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            .users-table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .search-box {
-                width: 200px;
-            }
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
         }
 
-        @media (max-width: 768px) {
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .search-box {
-                width: 100%;
-            }
-            
-            .stats-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-tabs {
-                justify-content: center;
-            }
+        .btn-cancel:hover {
+            background: #5a6268;
         }
     </style>
 </head>
@@ -566,9 +116,9 @@
                 </div>
                 <div class="admin-info">
                     <div class="admin-avatar">
-                        <i class="fas fa-eye"></i>
+                        <i class="fas fa-user-shield"></i>
                     </div>
-                    <span>Open Access Mode</span>
+                    <span>Admin Panel</span>
                     <a href="index.html" class="home-btn">
                         <i class="fas fa-home"></i> Main Site
                     </a>
@@ -580,12 +130,6 @@
     <!-- Admin Dashboard -->
     <section class="admin-dashboard">
         <div class="container">
-            <!-- Open Access Notice -->
-            <div class="read-only-notice">
-                <i class="fas fa-unlock"></i>
-                <p><strong>Open Access Mode:</strong> This admin panel has full public read access to all data. No authentication required.</p>
-            </div>
-
             <div class="dashboard-header">
                 <h1 class="dashboard-title">User Management Dashboard</h1>
                 <div class="search-box">
@@ -636,7 +180,7 @@
 
             <!-- Alert Messages -->
             <div class="alert alert-info" id="infoAlert">
-                <i class="fas fa-info-circle"></i> <span id="infoMessage">Open Access: All data is publicly accessible</span>
+                <i class="fas fa-info-circle"></i> <span id="infoMessage">Admin Panel: Manage user accounts and approvals</span>
             </div>
             <div class="alert alert-success" id="successAlert" style="display: none;">
                 <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
@@ -716,6 +260,25 @@
         </div>
     </div>
 
+    <!-- Confirmation Modal -->
+    <div class="modal confirmation-modal" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirmationTitle">Confirm Action</h3>
+                <button class="close-modal" id="closeConfirmationModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="confirmation-text" id="confirmationText">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <div class="confirmation-buttons">
+                    <button class="btn btn-confirm" id="confirmAction">Confirm</button>
+                    <button class="btn btn-cancel" id="cancelAction">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -728,11 +291,12 @@
             measurementId: "G-MHVLPKVWRQ"
         };
 
-        // Initialize Firebase with error handling
-        let db;
+        // Initialize Firebase
+        let db, auth;
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
+            auth = firebase.auth();
             console.log("Firebase initialized successfully");
             showAlert("Connected to database successfully!", "success");
         } catch (error) {
@@ -751,6 +315,14 @@
         const closeModal = document.getElementById('closeModal');
         const modalBody = document.getElementById('modalBody');
         const modalFooter = document.getElementById('modalFooter');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const closeConfirmationModal = document.getElementById('closeConfirmationModal');
+        const confirmAction = document.getElementById('confirmAction');
+        const cancelAction = document.getElementById('cancelAction');
+        const confirmationTitle = document.getElementById('confirmationTitle');
+        const confirmationText = document.getElementById('confirmationText');
+        
+        // Alert elements
         const infoAlert = document.getElementById('infoAlert');
         const successAlert = document.getElementById('successAlert');
         const errorAlert = document.getElementById('errorAlert');
@@ -766,10 +338,12 @@
         const companyUsers = document.getElementById('companyUsers');
         const pendingUsers = document.getElementById('pendingUsers');
 
-        // Current user data
+        // Current user data and state
         let users = [];
         let currentFilter = 'all';
         let currentSearchTerm = '';
+        let pendingAction = null;
+        let selectedUserId = null;
 
         // Event Listeners
         searchInput.addEventListener('input', (e) => {
@@ -778,8 +352,30 @@
         });
 
         refreshBtn.addEventListener('click', loadUsers);
+        
+        // Modal close events
         closeModal.addEventListener('click', () => {
             userModal.style.display = 'none';
+        });
+
+        closeConfirmationModal.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+
+        cancelAction.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+
+        confirmAction.addEventListener('click', executePendingAction);
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === userModal) {
+                userModal.style.display = 'none';
+            }
+            if (e.target === confirmationModal) {
+                confirmationModal.style.display = 'none';
+            }
         });
 
         // Filter tab event listeners
@@ -791,13 +387,6 @@
                 updateTableTitle();
                 filterUsers();
             });
-        });
-
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === userModal) {
-                userModal.style.display = 'none';
-            }
         });
 
         // Functions
@@ -840,7 +429,7 @@
                             };
                             users.push(user);
                             
-                            // Count by type
+                            // Count by type and status
                             if (user.userType === 'individual') individualCount++;
                             if (user.userType === 'company') companyCount++;
                             if (user.status === 'pending') pendingCount++;
@@ -870,7 +459,7 @@
                     let errorMsg = "Error loading users: " + error.message;
                     
                     if (error.code === 'permission-denied') {
-                        errorMsg = "Permission denied. Please update Firestore rules to allow public read access.";
+                        errorMsg = "Permission denied. Please update Firestore rules to allow read access.";
                     } else if (error.code === 'unavailable') {
                         errorMsg = "Network error. Please check your internet connection.";
                     } else if (error.code === 'not-found') {
@@ -976,15 +565,34 @@
                         <td>${user.phone || user.adminPhone || 'N/A'}</td>
                         <td>
                             <span class="status-badge status-${user.status || 'pending'}">
-                                ${(user.status === 'pending' ? 'Pending' : 
-                                  user.status === 'approved' ? 'Active' : 'Deactivated') || 'Pending'}
+                                ${getStatusText(user.status)}
                             </span>
                         </td>
                         <td>${regDate}</td>
                         <td>
-                            <button class="btn btn-view" onclick="viewUser('${user.id}')">
-                                <i class="fas fa-eye"></i> View Details
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-view btn-small" onclick="viewUser('${user.id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                ${user.status === 'pending' ? `
+                                    <button class="btn btn-approve btn-small" onclick="approveUser('${user.id}')">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-reject btn-small" onclick="rejectUser('${user.id}')">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                ` : ''}
+                                ${user.status === 'approved' ? `
+                                    <button class="btn btn-reject btn-small" onclick="deactivateUser('${user.id}')">
+                                        <i class="fas fa-ban"></i> Deactivate
+                                    </button>
+                                ` : ''}
+                                ${user.status === 'rejected' ? `
+                                    <button class="btn btn-reactivate btn-small" onclick="reactivateUser('${user.id}')">
+                                        <i class="fas fa-redo"></i> Reactivate
+                                    </button>
+                                ` : ''}
+                            </div>
                         </td>
                     `;
                     
@@ -993,6 +601,149 @@
                     console.error('Error rendering user row:', error);
                 }
             });
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'pending': return 'Pending';
+                case 'approved': return 'Active';
+                case 'rejected': return 'Deactivated';
+                default: return 'Pending';
+            }
+        }
+
+        // User Management Functions
+        function approveUser(userId) {
+            selectedUserId = userId;
+            const user = users.find(u => u.id === userId);
+            const userName = getUserName(user);
+            
+            confirmationTitle.textContent = 'Approve User';
+            confirmationText.textContent = `Are you sure you want to approve ${userName}? This will activate their account.`;
+            pendingAction = 'approve';
+            confirmationModal.style.display = 'flex';
+        }
+
+        function rejectUser(userId) {
+            selectedUserId = userId;
+            const user = users.find(u => u.id === userId);
+            const userName = getUserName(user);
+            
+            confirmationTitle.textContent = 'Reject User';
+            confirmationText.textContent = `Are you sure you want to reject ${userName}? This will deactivate their account.`;
+            pendingAction = 'reject';
+            confirmationModal.style.display = 'flex';
+        }
+
+        function deactivateUser(userId) {
+            selectedUserId = userId;
+            const user = users.find(u => u.id === userId);
+            const userName = getUserName(user);
+            
+            confirmationTitle.textContent = 'Deactivate User';
+            confirmationText.textContent = `Are you sure you want to deactivate ${userName}? They will no longer be able to access the system.`;
+            pendingAction = 'deactivate';
+            confirmationModal.style.display = 'flex';
+        }
+
+        function reactivateUser(userId) {
+            selectedUserId = userId;
+            const user = users.find(u => u.id === userId);
+            const userName = getUserName(user);
+            
+            confirmationTitle.textContent = 'Reactivate User';
+            confirmationText.textContent = `Are you sure you want to reactivate ${userName}? This will change their status to pending approval.`;
+            pendingAction = 'reactivate';
+            confirmationModal.style.display = 'flex';
+        }
+
+        function executePendingAction() {
+            if (!selectedUserId || !pendingAction) return;
+
+            const user = users.find(u => u.id === selectedUserId);
+            const userName = getUserName(user);
+            let newStatus, actionText;
+
+            switch(pendingAction) {
+                case 'approve':
+                    newStatus = 'approved';
+                    actionText = 'approved';
+                    break;
+                case 'reject':
+                case 'deactivate':
+                    newStatus = 'rejected';
+                    actionText = 'deactivated';
+                    break;
+                case 'reactivate':
+                    newStatus = 'pending';
+                    actionText = 'reactivated';
+                    break;
+                default:
+                    return;
+            }
+
+            // Update user status in Firestore
+            const updateData = {
+                status: newStatus,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Add timestamp for approval/rejection
+            if (pendingAction === 'approve') {
+                updateData.approvedAt = firebase.firestore.FieldValue.serverTimestamp();
+            } else if (pendingAction === 'reject' || pendingAction === 'deactivate') {
+                updateData.rejectedAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
+
+            db.collection('users').doc(selectedUserId).update(updateData)
+                .then(() => {
+                    showAlert(`Successfully ${actionText} ${userName}`, "success");
+                    
+                    // Update local data
+                    const userIndex = users.findIndex(u => u.id === selectedUserId);
+                    if (userIndex !== -1) {
+                        users[userIndex].status = newStatus;
+                        if (pendingAction === 'approve') {
+                            users[userIndex].approvedAt = firebase.firestore.Timestamp.now();
+                        } else if (pendingAction === 'reject' || pendingAction === 'deactivate') {
+                            users[userIndex].rejectedAt = firebase.firestore.Timestamp.now();
+                        }
+                    }
+                    
+                    // Refresh the view
+                    filterUsers();
+                    updateStats();
+                    
+                    // Close modals
+                    confirmationModal.style.display = 'none';
+                    userModal.style.display = 'none';
+                })
+                .catch((error) => {
+                    console.error(`Error ${pendingAction} user:`, error);
+                    showAlert(`Failed to ${pendingAction} user: ${error.message}`, "error");
+                    confirmationModal.style.display = 'none';
+                });
+
+            // Reset pending action
+            pendingAction = null;
+            selectedUserId = null;
+        }
+
+        function updateStats() {
+            let individualCount = 0;
+            let companyCount = 0;
+            let pendingCount = 0;
+            
+            users.forEach(user => {
+                if (user.userType === 'individual') individualCount++;
+                if (user.userType === 'company') companyCount++;
+                if (user.status === 'pending') pendingCount++;
+            });
+            
+            totalUsers.textContent = users.length;
+            individualUsers.textContent = individualCount;
+            companyUsers.textContent = companyCount;
+            pendingUsers.textContent = pendingCount;
         }
 
         function viewUser(userId) {
@@ -1062,8 +813,7 @@
                     <div class="user-detail-label">Status:</div>
                     <div class="user-detail-value">
                         <span class="status-badge status-${user.status || 'pending'}">
-                            ${user.status === 'pending' ? 'Pending Approval' : 
-                              user.status === 'approved' ? 'Active' : 'Deactivated'}
+                            ${getStatusText(user.status)}
                         </span>
                     </div>
                 </div>
@@ -1093,8 +843,32 @@
             
             modalBody.innerHTML = userDetails;
             
-            // Build modal footer with only close button
-            modalFooter.innerHTML = `
+            // Build modal footer with action buttons
+            let actionButtons = '';
+            if (user.status === 'pending') {
+                actionButtons = `
+                    <button class="btn btn-approve" onclick="approveUser('${user.id}')">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn btn-reject" onclick="rejectUser('${user.id}')">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                `;
+            } else if (user.status === 'approved') {
+                actionButtons = `
+                    <button class="btn btn-reject" onclick="deactivateUser('${user.id}')">
+                        <i class="fas fa-ban"></i> Deactivate
+                    </button>
+                `;
+            } else if (user.status === 'rejected') {
+                actionButtons = `
+                    <button class="btn btn-reactivate" onclick="reactivateUser('${user.id}')">
+                        <i class="fas fa-redo"></i> Reactivate
+                    </button>
+                `;
+            }
+            
+            modalFooter.innerHTML = actionButtons + `
                 <button class="btn btn-view" onclick="userModal.style.display='none'">
                     <i class="fas fa-times"></i> Close
                 </button>
@@ -1151,11 +925,10 @@
                 infoAlert.style.display = 'block';
             }
             
-            // Auto hide success/info alerts after 5 seconds
-            if (type !== 'error') {
+            // Auto hide success alerts after 5 seconds
+            if (type === 'success') {
                 setTimeout(() => {
-                    if (type === 'success') successAlert.style.display = 'none';
-                    if (type === 'info') infoAlert.style.display = 'block'; // Keep info visible
+                    successAlert.style.display = 'none';
                 }, 5000);
             }
         }
