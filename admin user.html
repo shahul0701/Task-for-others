@@ -10,7 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* Your existing CSS styles */
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
@@ -136,6 +135,12 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .stat-icon {
@@ -173,6 +178,34 @@
         .stat-info p {
             color: var(--gray);
             font-size: 0.9rem;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid var(--light-gray);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .filter-tab:hover {
+            border-color: var(--primary);
         }
 
         /* Users Table */
@@ -328,6 +361,7 @@
 
         .btn-approve:hover {
             background: #d4f5d4;
+            transform: translateY(-2px);
         }
 
         .btn-reject {
@@ -337,6 +371,7 @@
 
         .btn-reject:hover {
             background: #ffd4d4;
+            transform: translateY(-2px);
         }
 
         .btn-view {
@@ -346,6 +381,7 @@
 
         .btn-view:hover {
             background: var(--light-gray);
+            transform: translateY(-2px);
         }
 
         /* Modal */
@@ -539,6 +575,14 @@
             .stats-cards {
                 grid-template-columns: 1fr;
             }
+            
+            .filter-tabs {
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -578,10 +622,10 @@
             <!-- Admin Content (hidden by default) -->
             <div id="adminContent" style="display: none;">
                 <div class="dashboard-header">
-                    <h1 class="dashboard-title">User Management</h1>
+                    <h1 class="dashboard-title">User Management Dashboard</h1>
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search users...">
+                        <input type="text" id="searchInput" placeholder="Search users by name, email, or company...">
                     </div>
                 </div>
 
@@ -636,10 +680,20 @@
                     <i class="fas fa-exclamation-triangle"></i> <span id="warningMessage"></span>
                 </div>
 
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <div class="filter-tab active" data-filter="all">All Users</div>
+                    <div class="filter-tab" data-filter="pending">Pending Approval</div>
+                    <div class="filter-tab" data-filter="approved">Active Users</div>
+                    <div class="filter-tab" data-filter="rejected">Deactivated</div>
+                    <div class="filter-tab" data-filter="individual">Individual</div>
+                    <div class="filter-tab" data-filter="company">Company</div>
+                </div>
+
                 <!-- Users Table -->
                 <div class="users-section">
                     <div class="section-header">
-                        <h2 class="section-title">All Users</h2>
+                        <h2 class="section-title" id="tableTitle">All Users</h2>
                         <div class="table-actions">
                             <button class="btn btn-view" id="refreshBtn">
                                 <i class="fas fa-sync-alt"></i> Refresh
@@ -674,7 +728,7 @@
                         <div class="empty-state" id="emptyState" style="display: none;">
                             <i class="fas fa-users"></i>
                             <h3>No Users Found</h3>
-                            <p>There are no users registered in the system yet.</p>
+                            <p id="emptyStateMessage">There are no users registered in the system yet.</p>
                         </div>
                     </div>
                 </div>
@@ -719,6 +773,7 @@
         const usersTableBody = document.getElementById('usersTableBody');
         const loadingState = document.getElementById('loadingState');
         const emptyState = document.getElementById('emptyState');
+        const emptyStateMessage = document.getElementById('emptyStateMessage');
         const searchInput = document.getElementById('searchInput');
         const refreshBtn = document.getElementById('refreshBtn');
         const logoutBtn = document.getElementById('logoutBtn');
@@ -735,6 +790,8 @@
         const adminEmail = document.getElementById('adminEmail');
         const adminContent = document.getElementById('adminContent');
         const accessDenied = document.getElementById('accessDenied');
+        const tableTitle = document.getElementById('tableTitle');
+        const filterTabs = document.querySelectorAll('.filter-tab');
         
         // Stats elements
         const totalUsers = document.getElementById('totalUsers');
@@ -746,13 +803,35 @@
         let users = [];
         let currentUser = null;
         let isUserAdmin = false;
+        let currentFilter = 'all';
+        let currentSearchTerm = '';
 
         // Event Listeners
-        searchInput.addEventListener('input', filterUsers);
+        searchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value.toLowerCase();
+            filterUsers();
+        });
+
         refreshBtn.addEventListener('click', loadUsers);
         logoutBtn.addEventListener('click', logout);
         closeModal.addEventListener('click', () => {
             userModal.style.display = 'none';
+        });
+
+        // Filter tab event listeners
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                filterTabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                // Update current filter
+                currentFilter = tab.dataset.filter;
+                // Update table title
+                updateTableTitle();
+                // Filter users
+                filterUsers();
+            });
         });
 
         // Close modal when clicking outside
@@ -763,6 +842,18 @@
         });
 
         // Functions
+        function updateTableTitle() {
+            const titles = {
+                'all': 'All Users',
+                'pending': 'Pending Approval',
+                'approved': 'Active Users',
+                'rejected': 'Deactivated Users',
+                'individual': 'Individual Users',
+                'company': 'Company Users'
+            };
+            tableTitle.textContent = titles[currentFilter] || 'All Users';
+        }
+
         async function checkAdminAccess(userId) {
             try {
                 const adminDoc = await db.collection('admins').doc(userId).get();
@@ -835,20 +926,69 @@
                     pendingUsers.textContent = pendingCount;
                     
                     // Render users
-                    renderUsers(users);
+                    filterUsers();
                     hideLoading();
-                    
-                    if (users.length === 0) {
-                        showEmptyState();
-                    } else {
-                        hideEmptyState();
-                    }
                 })
                 .catch((error) => {
                     console.error("Error loading users: ", error);
                     showAlert("Error loading users: " + error.message, 'error');
                     hideLoading();
                 });
+        }
+
+        function filterUsers() {
+            let filteredUsers = users;
+
+            // Apply status filter
+            if (currentFilter !== 'all') {
+                if (['pending', 'approved', 'rejected'].includes(currentFilter)) {
+                    filteredUsers = filteredUsers.filter(user => user.status === currentFilter);
+                } else if (currentFilter === 'individual') {
+                    filteredUsers = filteredUsers.filter(user => user.userType === 'individual');
+                } else if (currentFilter === 'company') {
+                    filteredUsers = filteredUsers.filter(user => user.userType === 'company');
+                }
+            }
+
+            // Apply search filter
+            if (currentSearchTerm) {
+                filteredUsers = filteredUsers.filter(user => {
+                    const userName = getUserName(user).toLowerCase();
+                    const userEmail = user.email.toLowerCase();
+                    const companyName = (user.companyName || '').toLowerCase();
+                    const userType = user.userType;
+                    
+                    return userName.includes(currentSearchTerm) || 
+                           userEmail.includes(currentSearchTerm) ||
+                           companyName.includes(currentSearchTerm) ||
+                           userType.includes(currentSearchTerm);
+                });
+            }
+
+            renderUsers(filteredUsers);
+            
+            if (filteredUsers.length === 0) {
+                showEmptyState();
+                emptyStateMessage.textContent = getEmptyStateMessage();
+            } else {
+                hideEmptyState();
+            }
+        }
+
+        function getEmptyStateMessage() {
+            if (currentSearchTerm) {
+                return `No users found matching "${currentSearchTerm}". Try a different search term.`;
+            }
+            
+            const messages = {
+                'all': 'There are no users registered in the system yet.',
+                'pending': 'There are no users pending approval.',
+                'approved': 'There are no active users.',
+                'rejected': 'There are no deactivated users.',
+                'individual': 'There are no individual users.',
+                'company': 'There are no company users.'
+            };
+            return messages[currentFilter] || 'No users found.';
         }
 
         function renderUsers(usersToRender) {
@@ -885,14 +1025,14 @@
                     <td>
                         <span class="status-badge status-${user.status}">
                             ${user.status === 'pending' ? 'Pending' : 
-                              user.status === 'approved' ? 'Approved' : 'Rejected'}
+                              user.status === 'approved' ? 'Active' : 'Deactivated'}
                         </span>
                     </td>
                     <td>${regDate}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-view" onclick="viewUser('${user.id}')">
-                                <i class="fas fa-eye"></i>
+                                <i class="fas fa-eye"></i> View
                             </button>
                             ${user.status === 'pending' ? `
                                 <button class="btn btn-approve" onclick="approveUser('${user.id}')">
@@ -986,8 +1126,8 @@
                     <div class="user-detail-label">Status:</div>
                     <div class="user-detail-value">
                         <span class="status-badge status-${user.status}">
-                            ${user.status === 'pending' ? 'Pending' : 
-                              user.status === 'approved' ? 'Approved' : 'Rejected'}
+                            ${user.status === 'pending' ? 'Pending Approval' : 
+                              user.status === 'approved' ? 'Active' : 'Deactivated'}
                         </span>
                     </div>
                 </div>
@@ -1007,7 +1147,7 @@
                 ` : ''}
                 ${user.rejectedAt ? `
                 <div class="user-detail-row">
-                    <div class="user-detail-label">Rejected Date:</div>
+                    <div class="user-detail-label">Deactivated Date:</div>
                     <div class="user-detail-value">
                         ${user.rejectedAt.toDate().toLocaleString()}
                     </div>
@@ -1043,6 +1183,13 @@
                 `;
             }
             
+            // Add close button
+            footerActions += `
+                <button class="btn btn-view" onclick="userModal.style.display='none'">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            `;
+            
             modalFooter.innerHTML = footerActions;
             
             // Show modal
@@ -1053,7 +1200,7 @@
             const user = users.find(u => u.id === userId);
             const action = user.status === 'rejected' ? 'activate' : 'approve';
             
-            if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+            if (!confirm(`Are you sure you want to ${action} this user? This will allow them to access the system.`)) return;
             
             db.collection('users').doc(userId).update({
                 status: 'approved',
@@ -1061,7 +1208,7 @@
                 rejectedAt: null // Clear rejected date if exists
             })
             .then(() => {
-                showAlert(`User ${action}d successfully!`, 'success');
+                showAlert(`User ${action === 'activate' ? 'activated' : 'approved'} successfully! The user can now access the system.`, 'success');
                 loadUsers();
                 userModal.style.display = 'none';
             })
@@ -1075,7 +1222,7 @@
             const user = users.find(u => u.id === userId);
             const action = user.status === 'approved' ? 'deactivate' : 'reject';
             
-            if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+            if (!confirm(`Are you sure you want to ${action} this user? ${action === 'deactivate' ? 'They will lose access to the system.' : 'This will prevent them from accessing the system.'}`)) return;
             
             db.collection('users').doc(userId).update({
                 status: 'rejected',
@@ -1083,7 +1230,7 @@
                 approvedAt: null // Clear approved date if exists
             })
             .then(() => {
-                showAlert(`User ${action}ed successfully!`, 'success');
+                showAlert(`User ${action === 'deactivate' ? 'deactivated' : 'rejected'} successfully! ${action === 'deactivate' ? 'The user can no longer access the system.' : 'The user will not be able to access the system.'}`, 'success');
                 loadUsers();
                 userModal.style.display = 'none';
             })
@@ -1091,35 +1238,6 @@
                 console.error(`Error ${action}ing user: `, error);
                 showAlert(`Error ${action}ing user: ` + error.message, 'error');
             });
-        }
-
-        function filterUsers() {
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            if (!searchTerm) {
-                renderUsers(users);
-                return;
-            }
-            
-            const filteredUsers = users.filter(user => {
-                const userName = getUserName(user).toLowerCase();
-                const userEmail = user.email.toLowerCase();
-                const userType = user.userType;
-                const companyName = (user.companyName || '').toLowerCase();
-                
-                return userName.includes(searchTerm) || 
-                       userEmail.includes(searchTerm) ||
-                       userType.includes(searchTerm) ||
-                       companyName.includes(searchTerm);
-            });
-            
-            renderUsers(filteredUsers);
-            
-            if (filteredUsers.length === 0) {
-                showEmptyState();
-            } else {
-                hideEmptyState();
-            }
         }
 
         function getUserName(user) {
@@ -1148,6 +1266,7 @@
 
         function showLoading() {
             loadingState.style.display = 'flex';
+            hideEmptyState();
         }
 
         function hideLoading() {
@@ -1204,6 +1323,7 @@
                         console.log('User is admin, loading admin panel...');
                         adminContent.style.display = 'block';
                         accessDenied.style.display = 'none';
+                        updateTableTitle();
                         loadUsers();
                     } else {
                         console.log('User is not admin, showing access denied');
