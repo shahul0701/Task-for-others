@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | TaskFlow Pro</title>
+    <title>TaskFlow Pro | Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -17,7 +17,6 @@
             --success: #4cc9f0;
             --danger: #e63946;
             --warning: #f4a261;
-            --info: #4cc9f0;
             --light: #f8f9fa;
             --dark: #212529;
             --gray: #6c757d;
@@ -53,6 +52,9 @@
             color: white;
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .header-content {
@@ -73,13 +75,31 @@
             font-size: 2rem;
         }
 
-        .admin-info {
+        .admin-nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 16px;
+            border-radius: 50px;
+        }
+
+        .admin-nav a:hover, .admin-nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .admin-avatar {
+        .user-avatar {
             width: 40px;
             height: 40px;
             background: var(--success);
@@ -87,10 +107,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
             font-weight: 600;
         }
 
-        .home-btn {
+        .logout-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -98,29 +119,69 @@
             border-radius: 50px;
             cursor: pointer;
             transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .home-btn:hover {
+        .logout-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Admin Dashboard */
-        .admin-dashboard {
-            padding: 40px 0;
+        /* Main Content */
+        .main-content {
+            display: flex;
+            min-height: calc(100vh - 80px);
         }
 
-        .dashboard-header {
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 30px 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .content-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
         }
 
-        .dashboard-title {
+        .content-header h1 {
             font-size: 2rem;
             color: var(--dark);
         }
@@ -129,7 +190,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
@@ -140,12 +201,6 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            transition: var(--transition);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .stat-icon {
@@ -159,24 +214,24 @@
             color: white;
         }
 
-        .stat-icon.individual {
+        .stat-icon.primary {
             background: var(--primary);
         }
 
-        .stat-icon.company {
-            background: var(--secondary);
-        }
-
-        .stat-icon.pending {
-            background: var(--warning);
-        }
-
-        .stat-icon.total {
+        .stat-icon.success {
             background: var(--success);
         }
 
+        .stat-icon.warning {
+            background: var(--warning);
+        }
+
+        .stat-icon.danger {
+            background: var(--danger);
+        }
+
         .stat-info h3 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 5px;
         }
 
@@ -185,51 +240,23 @@
             font-size: 0.9rem;
         }
 
-        /* Filter Tabs */
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .filter-tab {
-            padding: 10px 20px;
-            background: white;
-            border: 2px solid var(--light-gray);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-        }
-
-        .filter-tab.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .filter-tab:hover {
-            border-color: var(--primary);
-        }
-
-        /* Users Table */
-        .users-section {
+        /* Table Styles */
+        .table-container {
             background: white;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             overflow: hidden;
         }
 
-        .section-header {
-            padding: 20px 25px;
+        .table-header {
+            padding: 20px;
             border-bottom: 1px solid var(--light-gray);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .section-title {
+        .table-header h2 {
             font-size: 1.5rem;
             color: var(--dark);
         }
@@ -239,51 +266,53 @@
             align-items: center;
             background: var(--light);
             border-radius: 50px;
-            padding: 8px 15px;
+            padding: 10px 15px;
             width: 300px;
         }
 
         .search-box input {
-            background: transparent;
             border: none;
+            background: transparent;
             outline: none;
             width: 100%;
-            padding: 5px;
+            margin-left: 10px;
         }
 
-        .search-box i {
-            color: var(--gray);
-            margin-right: 8px;
-        }
-
-        .users-table {
+        table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .users-table th {
+        thead {
             background: var(--light);
-            padding: 15px 20px;
+        }
+
+        th {
+            padding: 15px;
             text-align: left;
             font-weight: 600;
             color: var(--dark);
             border-bottom: 1px solid var(--light-gray);
         }
 
-        .users-table td {
-            padding: 15px 20px;
+        td {
+            padding: 15px;
             border-bottom: 1px solid var(--light-gray);
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        tr:last-child td {
+            border-bottom: none;
         }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar-small {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background: var(--primary-light);
             display: flex;
@@ -291,121 +320,88 @@
             justify-content: center;
             color: white;
             font-weight: 600;
-        }
-
-        .user-details h4 {
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
-
-        .user-details p {
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
-
-        .user-type {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .user-type.individual {
-            background: #e6f7ff;
-            color: var(--primary);
-        }
-
-        .user-type.company {
-            background: #f0f8ff;
-            color: var(--secondary);
+            font-size: 0.9rem;
         }
 
         .status-badge {
-            display: inline-block;
             padding: 5px 12px;
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 600;
         }
 
+        .status-active {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
         .status-pending {
-            background: #fff7e6;
+            background: rgba(244, 162, 97, 0.2);
             color: var(--warning);
         }
 
-        .status-approved {
-            background: #e6f7e6;
-            color: #52c41a;
-        }
-
-        .status-rejected {
-            background: #ffe6e6;
+        .status-inactive {
+            background: rgba(230, 57, 70, 0.2);
             color: var(--danger);
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-view {
-            background: var(--light);
-            color: var(--dark);
-        }
-
-        .btn-view:hover {
-            background: var(--light-gray);
-            transform: translateY(-2px);
-        }
-
-        .btn-approve {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-approve:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .btn-reject {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-reject:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-
-        .btn-reactivate {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .btn-reactivate:hover {
-            background: #138496;
-            transform: translateY(-2px);
         }
 
         .action-buttons {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .btn-small {
-            padding: 6px 12px;
+        .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.85rem;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
             font-size: 0.8rem;
         }
 
-        /* Modal */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #3aa8d0;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c1121f;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e76f51;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -414,7 +410,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            z-index: 2000;
             align-items: center;
             justify-content: center;
         }
@@ -422,22 +418,21 @@
         .modal-content {
             background: white;
             border-radius: var(--radius);
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow);
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
         }
 
         .modal-header {
-            padding: 20px 25px;
+            padding: 20px;
             border-bottom: 1px solid var(--light-gray);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .modal-title {
+        .modal-header h3 {
             font-size: 1.3rem;
             color: var(--dark);
         }
@@ -451,66 +446,41 @@
         }
 
         .modal-body {
-            padding: 25px;
-        }
-
-        .user-detail-row {
-            display: flex;
-            margin-bottom: 20px;
-        }
-
-        .user-detail-label {
-            flex: 1;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .user-detail-value {
-            flex: 2;
-            color: var(--gray);
+            padding: 20px;
         }
 
         .modal-footer {
-            padding: 20px 25px;
+            padding: 20px;
             border-top: 1px solid var(--light-gray);
             display: flex;
             justify-content: flex-end;
             gap: 10px;
         }
 
-        /* Confirmation Modal */
-        .confirmation-modal .modal-content {
-            max-width: 400px;
-        }
-
-        .confirmation-text {
-            text-align: center;
+        .form-group {
             margin-bottom: 20px;
-            font-size: 1.1rem;
         }
 
-        .confirmation-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
         }
 
-        .btn-confirm {
-            background: #dc3545;
-            color: white;
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
         }
 
-        .btn-confirm:hover {
-            background: #c82333;
-        }
-
-        .btn-cancel {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-cancel:hover {
-            background: #5a6268;
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
 
         /* Alert Styles */
@@ -519,12 +489,6 @@
             border-radius: 8px;
             margin-bottom: 20px;
             display: none;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
         }
 
         .alert-success {
@@ -539,157 +503,97 @@
             border: 1px solid #f5c6cb;
         }
 
-        /* Read-only Notice */
-        .read-only-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: var(--radius);
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .read-only-notice i {
-            color: #856404;
-            font-size: 1.2rem;
-        }
-
-        .read-only-notice p {
-            color: #856404;
-            margin: 0;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: var(--light-gray);
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-
-        /* Loading State */
-        .loading {
+        /* Pagination */
+        .pagination {
             display: flex;
             justify-content: center;
-            padding: 40px;
+            padding: 20px;
+            gap: 10px;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--light-gray);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Export Section */
-        .export-section {
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid var(--light-gray);
             background: white;
-            border-radius: var(--radius);
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
-
-        .export-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .export-title {
-            font-size: 1.3rem;
-            color: var(--dark);
-        }
-
-        .export-options {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn-export {
-            background: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .btn-export:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
+        .pagination button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination button:hover:not(.active) {
+            background: var(--light);
         }
 
         /* Responsive Styles */
         @media (max-width: 992px) {
-            .users-table {
-                display: block;
-                overflow-x: auto;
+            .main-content {
+                flex-direction: column;
             }
             
-            .search-box {
-                width: 200px;
+            .sidebar {
+                width: 100%;
+                padding: 20px 0;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 0 20px;
+            }
+            
+            .sidebar-menu li {
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+            
+            .sidebar-menu a {
+                white-space: nowrap;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+            }
+            
+            .sidebar-menu a:hover, .sidebar-menu a.active {
+                border-left: none;
+                border-bottom: 4px solid var(--primary);
             }
         }
 
         @media (max-width: 768px) {
-            .dashboard-header {
+            .header-content {
                 flex-direction: column;
-                align-items: flex-start;
                 gap: 15px;
             }
             
-            .search-box {
+            .admin-nav {
+                order: 3;
                 width: 100%;
+                justify-content: center;
+                margin-top: 10px;
             }
             
             .stats-cards {
                 grid-template-columns: 1fr;
             }
             
-            .filter-tabs {
-                justify-content: center;
-            }
-            
-            .export-header {
+            .table-header {
                 flex-direction: column;
-                align-items: flex-start;
                 gap: 15px;
+                align-items: flex-start;
             }
             
-            .export-options {
+            .search-box {
                 width: 100%;
-                justify-content: space-between;
             }
             
-            .btn-export {
-                flex: 1;
-                justify-content: center;
+            table {
+                display: block;
+                overflow-x: auto;
             }
         }
     </style>
@@ -701,36 +605,48 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-tasks"></i>
-                    <span>TaskFlow Pro Admin</span>
+                    <span>TaskFlow Pro</span>
                 </div>
-                <div class="admin-info">
-                    <div class="admin-avatar">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <span>Admin Panel</span>
-                    <a href="index.html" class="home-btn">
-                        <i class="fas fa-home"></i> Main Site
-                    </a>
+                <div class="admin-nav">
+                    <a href="#" class="active">Dashboard</a>
+                    <a href="#">Users</a>
+                    <a href="#">Reports</a>
+                    <a href="#">Settings</a>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <div>Admin User</div>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Admin Dashboard -->
-    <section class="admin-dashboard">
-        <div class="container">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">User Management Dashboard</h1>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search users by name, email, or company...">
-                </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> User Management</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> System Settings</a></li>
+                <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+            </ul>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <div class="content-header">
+                <h1>User Management</h1>
+                <button class="btn btn-primary" id="addUserBtn">Add New User</button>
             </div>
 
             <!-- Stats Cards -->
             <div class="stats-cards">
                 <div class="stat-card">
-                    <div class="stat-icon total">
+                    <div class="stat-icon primary">
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="stat-info">
@@ -739,149 +655,117 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon individual">
-                        <i class="fas fa-user"></i>
+                    <div class="stat-icon success">
+                        <i class="fas fa-user-check"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 id="individualUsers">0</h3>
-                        <p>Individual Users</p>
+                        <h3 id="activeUsers">0</h3>
+                        <p>Active Users</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon company">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="companyUsers">0</h3>
-                        <p>Company Users</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon pending">
-                        <i class="fas fa-clock"></i>
+                    <div class="stat-icon warning">
+                        <i class="fas fa-user-clock"></i>
                     </div>
                     <div class="stat-info">
                         <h3 id="pendingUsers">0</h3>
-                        <p>Pending Approval</p>
+                        <p>Pending Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon danger">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inactiveUsers">0</h3>
+                        <p>Inactive Users</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Export Section -->
-            <div class="export-section">
-                <div class="export-header">
-                    <h2 class="export-title">Export Data</h2>
-                    <div class="export-options">
-                        <button class="btn-export" id="exportCSV">
-                            <i class="fas fa-file-csv"></i> Export as CSV
-                        </button>
-                        <button class="btn-export" id="exportPDF">
-                            <i class="fas fa-file-pdf"></i> Export as PDF
-                        </button>
-                        <button class="btn-export" id="exportJSON">
-                            <i class="fas fa-file-code"></i> Export as JSON
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alert Messages -->
-            <div class="alert alert-info" id="infoAlert">
-                <i class="fas fa-info-circle"></i> <span id="infoMessage">Admin Panel: Manage user accounts and approvals</span>
-            </div>
-            <div class="alert alert-success" id="successAlert" style="display: none;">
+            <!-- Alerts -->
+            <div class="alert alert-success" id="successAlert">
                 <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
             </div>
-            <div class="alert alert-error" id="errorAlert" style="display: none;">
+            <div class="alert alert-error" id="errorAlert">
                 <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
             </div>
 
-            <!-- Filter Tabs -->
-            <div class="filter-tabs">
-                <div class="filter-tab active" data-filter="all">All Users</div>
-                <div class="filter-tab" data-filter="pending">Pending Approval</div>
-                <div class="filter-tab" data-filter="approved">Active Users</div>
-                <div class="filter-tab" data-filter="rejected">Deactivated</div>
-                <div class="filter-tab" data-filter="individual">Individual</div>
-                <div class="filter-tab" data-filter="company">Company</div>
-            </div>
-
             <!-- Users Table -->
-            <div class="users-section">
-                <div class="section-header">
-                    <h2 class="section-title" id="tableTitle">All Users</h2>
-                    <div class="table-actions">
-                        <button class="btn btn-view" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>All Users</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search users...">
                     </div>
                 </div>
-                
-                <div class="table-container">
-                    <table class="users-table">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Type</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-                                <th>Registration Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <!-- Users will be loaded here -->
-                        </tbody>
-                    </table>
-                    
-                    <!-- Loading State -->
-                    <div class="loading" id="loadingState">
-                        <div class="spinner"></div>
-                    </div>
-                    
-                    <!-- Empty State -->
-                    <div class="empty-state" id="emptyState" style="display: none;">
-                        <i class="fas fa-users"></i>
-                        <h3>No Users Found</h3>
-                        <p id="emptyStateMessage">There are no users registered in the system yet.</p>
-                    </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Registration Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be populated here -->
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be generated here -->
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- User Details Modal -->
     <div class="modal" id="userModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">User Details</h3>
+                <h3 id="modalTitle">User Details</h3>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- User details will be loaded here -->
-            </div>
-            <div class="modal-footer" id="modalFooter">
-                <!-- Action buttons will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div class="modal confirmation-modal" id="confirmationModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="confirmationTitle">Confirm Action</h3>
-                <button class="close-modal" id="closeConfirmationModal">&times;</button>
-            </div>
             <div class="modal-body">
-                <p class="confirmation-text" id="confirmationText">Are you sure you want to perform this action?</p>
+                <div class="form-group">
+                    <label for="modalUserName">Name</label>
+                    <input type="text" id="modalUserName" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="modalUserEmail">Email</label>
+                    <input type="email" id="modalUserEmail" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="modalUserType">User Type</label>
+                    <input type="text" id="modalUserType" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="modalUserStatus">Status</label>
+                    <select id="modalUserStatus" class="form-control">
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modalUserAddress">Address</label>
+                    <textarea id="modalUserAddress" class="form-control" rows="3" readonly></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="modalUserPhone">Phone</label>
+                    <input type="text" id="modalUserPhone" class="form-control" readonly>
+                </div>
+                <div class="form-group" id="companyInfoGroup" style="display: none;">
+                    <label for="modalCompanyName">Company Name</label>
+                    <input type="text" id="modalCompanyName" class="form-control" readonly>
+                </div>
             </div>
             <div class="modal-footer">
-                <div class="confirmation-buttons">
-                    <button class="btn btn-confirm" id="confirmAction">Confirm</button>
-                    <button class="btn btn-cancel" id="cancelAction">Cancel</button>
-                </div>
+                <button class="btn btn-primary" id="saveUserBtn">Save Changes</button>
+                <button class="btn" id="cancelModalBtn">Cancel</button>
             </div>
         </div>
     </div>
@@ -899,733 +783,430 @@
         };
 
         // Initialize Firebase
-        let db, auth;
+        let auth, db;
         try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
             auth = firebase.auth();
+            db = firebase.firestore();
             console.log("Firebase initialized successfully");
-            showAlert("Connected to database successfully!", "success");
         } catch (error) {
             console.error("Firebase initialization error:", error);
-            showAlert("Firebase initialization failed: " + error.message, "error");
+            showAlert("Firebase failed to initialize. Please check your configuration.", "error");
         }
 
         // DOM Elements
+        const logoutBtn = document.getElementById('logoutBtn');
+        const addUserBtn = document.getElementById('addUserBtn');
         const usersTableBody = document.getElementById('usersTableBody');
-        const loadingState = document.getElementById('loadingState');
-        const emptyState = document.getElementById('emptyState');
-        const emptyStateMessage = document.getElementById('emptyStateMessage');
         const searchInput = document.getElementById('searchInput');
-        const refreshBtn = document.getElementById('refreshBtn');
         const userModal = document.getElementById('userModal');
         const closeModal = document.getElementById('closeModal');
-        const modalBody = document.getElementById('modalBody');
-        const modalFooter = document.getElementById('modalFooter');
-        const confirmationModal = document.getElementById('confirmationModal');
-        const closeConfirmationModal = document.getElementById('closeConfirmationModal');
-        const confirmAction = document.getElementById('confirmAction');
-        const cancelAction = document.getElementById('cancelAction');
-        const confirmationTitle = document.getElementById('confirmationTitle');
-        const confirmationText = document.getElementById('confirmationText');
-        const exportCSV = document.getElementById('exportCSV');
-        const exportPDF = document.getElementById('exportPDF');
-        const exportJSON = document.getElementById('exportJSON');
-        
-        // Alert elements
-        const infoAlert = document.getElementById('infoAlert');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const saveUserBtn = document.getElementById('saveUserBtn');
         const successAlert = document.getElementById('successAlert');
         const errorAlert = document.getElementById('errorAlert');
-        const infoMessage = document.getElementById('infoMessage');
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
-        const tableTitle = document.getElementById('tableTitle');
-        const filterTabs = document.querySelectorAll('.filter-tab');
-        
-        // Stats elements
         const totalUsers = document.getElementById('totalUsers');
-        const individualUsers = document.getElementById('individualUsers');
-        const companyUsers = document.getElementById('companyUsers');
+        const activeUsers = document.getElementById('activeUsers');
         const pendingUsers = document.getElementById('pendingUsers');
+        const inactiveUsers = document.getElementById('inactiveUsers');
+        const pagination = document.getElementById('pagination');
 
-        // Current user data and state
+        // Modal form fields
+        const modalTitle = document.getElementById('modalTitle');
+        const modalUserName = document.getElementById('modalUserName');
+        const modalUserEmail = document.getElementById('modalUserEmail');
+        const modalUserType = document.getElementById('modalUserType');
+        const modalUserStatus = document.getElementById('modalUserStatus');
+        const modalUserAddress = document.getElementById('modalUserAddress');
+        const modalUserPhone = document.getElementById('modalUserPhone');
+        const modalCompanyName = document.getElementById('modalCompanyName');
+        const companyInfoGroup = document.getElementById('companyInfoGroup');
+
+        // Global variables
         let users = [];
-        let currentFilter = 'all';
-        let currentSearchTerm = '';
-        let pendingAction = null;
-        let selectedUserId = null;
+        let filteredUsers = [];
+        let currentPage = 1;
+        const usersPerPage = 10;
+        let currentEditingUserId = null;
 
         // Event Listeners
-        searchInput.addEventListener('input', (e) => {
-            currentSearchTerm = e.target.value.toLowerCase();
-            filterUsers();
-        });
+        logoutBtn.addEventListener('click', handleLogout);
+        addUserBtn.addEventListener('click', showAddUserModal);
+        closeModal.addEventListener('click', () => userModal.style.display = 'none');
+        cancelModalBtn.addEventListener('click', () => userModal.style.display = 'none');
+        saveUserBtn.addEventListener('click', saveUserChanges);
+        searchInput.addEventListener('input', filterUsers);
 
-        refreshBtn.addEventListener('click', loadUsers);
-        
-        // Modal close events
-        closeModal.addEventListener('click', () => {
-            userModal.style.display = 'none';
-        });
-
-        closeConfirmationModal.addEventListener('click', () => {
-            confirmationModal.style.display = 'none';
-        });
-
-        cancelAction.addEventListener('click', () => {
-            confirmationModal.style.display = 'none';
-        });
-
-        confirmAction.addEventListener('click', executePendingAction);
-
-        // Export buttons
-        exportCSV.addEventListener('click', exportToCSV);
-        exportPDF.addEventListener('click', exportToPDF);
-        exportJSON.addEventListener('click', exportToJSON);
-
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === userModal) {
-                userModal.style.display = 'none';
-            }
-            if (e.target === confirmationModal) {
-                confirmationModal.style.display = 'none';
-            }
-        });
-
-        // Filter tab event listeners
-        filterTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                filterTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                currentFilter = tab.dataset.filter;
-                updateTableTitle();
-                filterUsers();
-            });
+        // Initialize the admin panel
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
         });
 
         // Functions
-        function updateTableTitle() {
-            const titles = {
-                'all': 'All Users',
-                'pending': 'Pending Approval',
-                'approved': 'Active Users',
-                'rejected': 'Deactivated Users',
-                'individual': 'Individual Users',
-                'company': 'Company Users'
-            };
-            tableTitle.textContent = titles[currentFilter] || 'All Users';
-        }
-
         function loadUsers() {
             if (!db) {
-                showAlert("Database not initialized. Please check Firebase configuration.", "error");
+                showAlert("Database not available. Please check Firebase configuration.", "error");
                 return;
             }
 
-            showLoading();
-            showAlert("Loading user data...", "info");
-            
-            db.collection('users')
-                .orderBy('createdAt', 'desc')
-                .get()
+            db.collection('users').orderBy('createdAt', 'desc').get()
                 .then((querySnapshot) => {
                     users = [];
-                    let individualCount = 0;
-                    let companyCount = 0;
-                    let pendingCount = 0;
-                    
                     querySnapshot.forEach((doc) => {
-                        try {
-                            const userData = doc.data();
-                            const user = {
-                                id: doc.id,
-                                ...userData
-                            };
-                            users.push(user);
-                            
-                            // Count by type and status
-                            if (user.userType === 'individual') individualCount++;
-                            if (user.userType === 'company') companyCount++;
-                            if (user.status === 'pending') pendingCount++;
-                        } catch (error) {
-                            console.error('Error processing user data:', error);
-                        }
+                        const user = doc.data();
+                        user.id = doc.id;
+                        users.push(user);
                     });
                     
-                    // Update stats
-                    totalUsers.textContent = users.length;
-                    individualUsers.textContent = individualCount;
-                    companyUsers.textContent = companyCount;
-                    pendingUsers.textContent = pendingCount;
-                    
-                    // Render users
+                    updateUserStats();
                     filterUsers();
-                    hideLoading();
-                    
-                    if (users.length > 0) {
-                        showAlert(`Successfully loaded ${users.length} users`, "success");
-                    } else {
-                        showAlert("No users found in the database", "info");
-                    }
                 })
                 .catch((error) => {
-                    console.error("Error loading users: ", error);
-                    let errorMsg = "Error loading users: " + error.message;
-                    
-                    if (error.code === 'permission-denied') {
-                        errorMsg = "Permission denied. Please update Firestore rules to allow read access.";
-                    } else if (error.code === 'unavailable') {
-                        errorMsg = "Network error. Please check your internet connection.";
-                    } else if (error.code === 'not-found') {
-                        errorMsg = "Database not found. Please check your Firebase configuration.";
-                    }
-                    
-                    showAlert(errorMsg, "error");
-                    hideLoading();
+                    console.error("Error loading users:", error);
+                    showAlert("Failed to load users. Please try again.", "error");
                 });
+        }
+
+        function updateUserStats() {
+            const total = users.length;
+            const active = users.filter(user => user.status === 'active').length;
+            const pending = users.filter(user => user.status === 'pending').length;
+            const inactive = users.filter(user => user.status === 'inactive').length;
+            
+            totalUsers.textContent = total;
+            activeUsers.textContent = active;
+            pendingUsers.textContent = pending;
+            inactiveUsers.textContent = inactive;
         }
 
         function filterUsers() {
-            let filteredUsers = users;
-
-            // Apply status filter
-            if (currentFilter !== 'all') {
-                if (['pending', 'approved', 'rejected'].includes(currentFilter)) {
-                    filteredUsers = filteredUsers.filter(user => user.status === currentFilter);
-                } else if (currentFilter === 'individual') {
-                    filteredUsers = filteredUsers.filter(user => user.userType === 'individual');
-                } else if (currentFilter === 'company') {
-                    filteredUsers = filteredUsers.filter(user => user.userType === 'company');
-                }
-            }
-
-            // Apply search filter
-            if (currentSearchTerm) {
-                filteredUsers = filteredUsers.filter(user => {
-                    const userName = getUserName(user).toLowerCase();
-                    const userEmail = (user.email || '').toLowerCase();
-                    const companyName = (user.companyName || '').toLowerCase();
-                    const userType = user.userType || '';
-                    
-                    return userName.includes(currentSearchTerm) || 
-                           userEmail.includes(currentSearchTerm) ||
-                           companyName.includes(currentSearchTerm) ||
-                           userType.includes(currentSearchTerm);
-                });
-            }
-
-            renderUsers(filteredUsers);
+            const searchTerm = searchInput.value.toLowerCase();
             
-            if (filteredUsers.length === 0) {
-                showEmptyState();
-                emptyStateMessage.textContent = getEmptyStateMessage();
+            if (searchTerm) {
+                filteredUsers = users.filter(user => 
+                    user.name?.toLowerCase().includes(searchTerm) || 
+                    user.email?.toLowerCase().includes(searchTerm) ||
+                    user.companyName?.toLowerCase().includes(searchTerm)
+                );
             } else {
-                hideEmptyState();
-            }
-        }
-
-        function getEmptyStateMessage() {
-            if (currentSearchTerm) {
-                return `No users found matching "${currentSearchTerm}". Try a different search term.`;
+                filteredUsers = [...users];
             }
             
-            const messages = {
-                'all': 'There are no users registered in the system yet.',
-                'pending': 'There are no users pending approval.',
-                'approved': 'There are no active users.',
-                'rejected': 'There are no deactivated users.',
-                'individual': 'There are no individual users.',
-                'company': 'There are no company users.'
-            };
-            return messages[currentFilter] || 'No users found.';
+            renderUsersTable();
+            renderPagination();
         }
 
-        function renderUsers(usersToRender) {
+        function renderUsersTable() {
             usersTableBody.innerHTML = '';
             
-            if (usersToRender.length === 0) {
-                showEmptyState();
+            const startIndex = (currentPage - 1) * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            const usersToShow = filteredUsers.slice(startIndex, endIndex);
+            
+            if (usersToShow.length === 0) {
+                usersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 30px;">
+                            No users found
+                        </td>
+                    </tr>
+                `;
                 return;
             }
             
-            usersToRender.forEach(user => {
-                try {
-                    const row = document.createElement('tr');
-                    
-                    // Format registration date
-                    const regDate = user.createdAt ? 
-                        user.createdAt.toDate().toLocaleDateString() : 
-                        'N/A';
-                    
-                    // Get user initials for avatar
-                    const initials = getUserInitials(user);
-                    
-                    row.innerHTML = `
-                        <td>
-                            <div class="user-info">
-                                <div class="user-avatar">${initials}</div>
-                                <div class="user-details">
-                                    <h4>${getUserName(user)}</h4>
-                                    <p>${user.userType === 'company' ? (user.companyName || 'Company') : 'Individual User'}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="user-type ${user.userType}">
-                                ${user.userType === 'individual' ? 'Individual' : 'Company'}
-                            </span>
-                        </td>
-                        <td>${user.email || 'N/A'}</td>
-                        <td>${user.phone || user.adminPhone || 'N/A'}</td>
-                        <td>
-                            <span class="status-badge status-${user.status || 'pending'}">
-                                ${getStatusText(user.status)}
-                            </span>
-                        </td>
-                        <td>${regDate}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-view btn-small" onclick="viewUser('${user.id}')">
-                                    <i class="fas fa-eye"></i> View
-                                </button>
-                                ${user.status === 'pending' ? `
-                                    <button class="btn btn-approve btn-small" onclick="approveUser('${user.id}')">
-                                        <i class="fas fa-check"></i> Approve
-                                    </button>
-                                    <button class="btn btn-reject btn-small" onclick="rejectUser('${user.id}')">
-                                        <i class="fas fa-times"></i> Reject
-                                    </button>
-                                ` : ''}
-                                ${user.status === 'approved' ? `
-                                    <button class="btn btn-reject btn-small" onclick="deactivateUser('${user.id}')">
-                                        <i class="fas fa-ban"></i> Deactivate
-                                    </button>
-                                ` : ''}
-                                ${user.status === 'rejected' ? `
-                                    <button class="btn btn-reactivate btn-small" onclick="reactivateUser('${user.id}')">
-                                        <i class="fas fa-redo"></i> Reactivate
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </td>
-                    `;
-                    
-                    usersTableBody.appendChild(row);
-                } catch (error) {
-                    console.error('Error rendering user row:', error);
+            usersToShow.forEach(user => {
+                const row = document.createElement('tr');
+                
+                // Get initials for avatar
+                const initials = user.name ? 
+                    user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 
+                    'U';
+                
+                // Format date
+                const regDate = user.createdAt ? 
+                    new Date(user.createdAt.toDate()).toLocaleDateString() : 
+                    'N/A';
+                
+                // Status badge
+                let statusClass = '';
+                let statusText = '';
+                
+                switch(user.status) {
+                    case 'active':
+                        statusClass = 'status-active';
+                        statusText = 'Active';
+                        break;
+                    case 'pending':
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                        break;
+                    case 'inactive':
+                        statusClass = 'status-inactive';
+                        statusText = 'Inactive';
+                        break;
+                    default:
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-small">${initials}</div>
+                            <div>${user.name || user.adminName || 'N/A'}</div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>${user.userType === 'company' ? 'Company' : 'Individual'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${regDate}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}">View</button>
+                            ${user.status === 'active' ? 
+                                `<button class="btn btn-warning btn-sm deactivate-user" data-id="${user.id}">Deactivate</button>` : 
+                                `<button class="btn btn-success btn-sm activate-user" data-id="${user.id}">Activate</button>`
+                            }
+                            <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}">Delete</button>
+                        </div>
+                    </td>
+                `;
+                
+                usersTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.view-user').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const userId = e.target.getAttribute('data-id');
+                    viewUser(userId);
+                });
+            });
+            
+            document.querySelectorAll('.activate-user').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const userId = e.target.getAttribute('data-id');
+                    activateUser(userId);
+                });
+            });
+            
+            document.querySelectorAll('.deactivate-user').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const userId = e.target.getAttribute('data-id');
+                    deactivateUser(userId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-user').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const userId = e.target.getAttribute('data-id');
+                    deleteUser(userId);
+                });
+            });
+        }
+
+        function renderPagination() {
+            pagination.innerHTML = '';
+            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+            
+            if (totalPages <= 1) return;
+            
+            // Previous button
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '&laquo;';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderUsersTable();
+                    renderPagination();
                 }
             });
-        }
-
-        function getStatusText(status) {
-            switch(status) {
-                case 'pending': return 'Pending';
-                case 'approved': return 'Active';
-                case 'rejected': return 'Deactivated';
-                default: return 'Pending';
-            }
-        }
-
-        // User Management Functions
-        function approveUser(userId) {
-            selectedUserId = userId;
-            const user = users.find(u => u.id === userId);
-            const userName = getUserName(user);
+            pagination.appendChild(prevButton);
             
-            confirmationTitle.textContent = 'Approve User';
-            confirmationText.textContent = `Are you sure you want to approve ${userName}? This will activate their account.`;
-            pendingAction = 'approve';
-            confirmationModal.style.display = 'flex';
-        }
-
-        function rejectUser(userId) {
-            selectedUserId = userId;
-            const user = users.find(u => u.id === userId);
-            const userName = getUserName(user);
-            
-            confirmationTitle.textContent = 'Reject User';
-            confirmationText.textContent = `Are you sure you want to reject ${userName}? This will deactivate their account.`;
-            pendingAction = 'reject';
-            confirmationModal.style.display = 'flex';
-        }
-
-        function deactivateUser(userId) {
-            selectedUserId = userId;
-            const user = users.find(u => u.id === userId);
-            const userName = getUserName(user);
-            
-            confirmationTitle.textContent = 'Deactivate User';
-            confirmationText.textContent = `Are you sure you want to deactivate ${userName}? They will no longer be able to access the system.`;
-            pendingAction = 'deactivate';
-            confirmationModal.style.display = 'flex';
-        }
-
-        function reactivateUser(userId) {
-            selectedUserId = userId;
-            const user = users.find(u => u.id === userId);
-            const userName = getUserName(user);
-            
-            confirmationTitle.textContent = 'Reactivate User';
-            confirmationText.textContent = `Are you sure you want to reactivate ${userName}? This will change their status to pending approval.`;
-            pendingAction = 'reactivate';
-            confirmationModal.style.display = 'flex';
-        }
-
-        function executePendingAction() {
-            if (!selectedUserId || !pendingAction) return;
-
-            const user = users.find(u => u.id === selectedUserId);
-            const userName = getUserName(user);
-            let newStatus, actionText;
-
-            switch(pendingAction) {
-                case 'approve':
-                    newStatus = 'approved';
-                    actionText = 'approved';
-                    break;
-                case 'reject':
-                case 'deactivate':
-                    newStatus = 'rejected';
-                    actionText = 'deactivated';
-                    break;
-                case 'reactivate':
-                    newStatus = 'pending';
-                    actionText = 'reactivated';
-                    break;
-                default:
-                    return;
-            }
-
-            // Update user status in Firestore
-            const updateData = {
-                status: newStatus,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            // Add timestamp for approval/rejection
-            if (pendingAction === 'approve') {
-                updateData.approvedAt = firebase.firestore.FieldValue.serverTimestamp();
-            } else if (pendingAction === 'reject' || pendingAction === 'deactivate') {
-                updateData.rejectedAt = firebase.firestore.FieldValue.serverTimestamp();
-            }
-
-            db.collection('users').doc(selectedUserId).update(updateData)
-                .then(() => {
-                    showAlert(`Successfully ${actionText} ${userName}`, "success");
-                    
-                    // Update local data
-                    const userIndex = users.findIndex(u => u.id === selectedUserId);
-                    if (userIndex !== -1) {
-                        users[userIndex].status = newStatus;
-                        if (pendingAction === 'approve') {
-                            users[userIndex].approvedAt = firebase.firestore.Timestamp.now();
-                        } else if (pendingAction === 'reject' || pendingAction === 'deactivate') {
-                            users[userIndex].rejectedAt = firebase.firestore.Timestamp.now();
-                        }
-                    }
-                    
-                    // Refresh the view
-                    filterUsers();
-                    updateStats();
-                    
-                    // Close modals
-                    confirmationModal.style.display = 'none';
-                    userModal.style.display = 'none';
-                })
-                .catch((error) => {
-                    console.error(`Error ${pendingAction} user:`, error);
-                    showAlert(`Failed to ${pendingAction} user: ${error.message}`, "error");
-                    confirmationModal.style.display = 'none';
+            // Page buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    renderUsersTable();
+                    renderPagination();
                 });
-
-            // Reset pending action
-            pendingAction = null;
-            selectedUserId = null;
-        }
-
-        function updateStats() {
-            let individualCount = 0;
-            let companyCount = 0;
-            let pendingCount = 0;
+                pagination.appendChild(pageButton);
+            }
             
-            users.forEach(user => {
-                if (user.userType === 'individual') individualCount++;
-                if (user.userType === 'company') companyCount++;
-                if (user.status === 'pending') pendingCount++;
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '&raquo;';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderUsersTable();
+                    renderPagination();
+                }
             });
-            
-            totalUsers.textContent = users.length;
-            individualUsers.textContent = individualCount;
-            companyUsers.textContent = companyCount;
-            pendingUsers.textContent = pendingCount;
+            pagination.appendChild(nextButton);
         }
 
         function viewUser(userId) {
             const user = users.find(u => u.id === userId);
-            if (!user) {
-                showAlert('User not found', "error");
-                return;
-            }
+            if (!user) return;
             
-            // Build modal content
-            let userDetails = '';
+            currentEditingUserId = userId;
+            modalTitle.textContent = 'User Details';
             
-            if (user.userType === 'individual') {
-                userDetails = `
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Full Name:</div>
-                        <div class="user-detail-value">${user.name || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Email:</div>
-                        <div class="user-detail-value">${user.email || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Phone:</div>
-                        <div class="user-detail-value">${user.phone || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Address:</div>
-                        <div class="user-detail-value">${user.address || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Purpose:</div>
-                        <div class="user-detail-value">${user.purpose || 'N/A'}</div>
-                    </div>
-                `;
+            // Fill form with user data
+            modalUserName.value = user.name || user.adminName || 'N/A';
+            modalUserEmail.value = user.email || 'N/A';
+            modalUserType.value = user.userType === 'company' ? 'Company' : 'Individual';
+            modalUserStatus.value = user.status || 'pending';
+            modalUserAddress.value = user.address || user.companyAddress || 'N/A';
+            modalUserPhone.value = user.phone || user.adminPhone || 'N/A';
+            
+            // Show company info if it's a company user
+            if (user.userType === 'company') {
+                companyInfoGroup.style.display = 'block';
+                modalCompanyName.value = user.companyName || 'N/A';
             } else {
-                userDetails = `
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Company Name:</div>
-                        <div class="user-detail-value">${user.companyName || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Admin Name:</div>
-                        <div class="user-detail-value">${user.adminName || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Company Email:</div>
-                        <div class="user-detail-value">${user.email || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Admin Phone:</div>
-                        <div class="user-detail-value">${user.adminPhone || 'N/A'}</div>
-                    </div>
-                    <div class="user-detail-row">
-                        <div class="user-detail-label">Company Address:</div>
-                        <div class="user-detail-value">${user.companyAddress || 'N/A'}</div>
-                    </div>
-                `;
+                companyInfoGroup.style.display = 'none';
             }
             
-            userDetails += `
-                <div class="user-detail-row">
-                    <div class="user-detail-label">User Type:</div>
-                    <div class="user-detail-value">${user.userType === 'individual' ? 'Individual' : 'Company'}</div>
-                </div>
-                <div class="user-detail-row">
-                    <div class="user-detail-label">Status:</div>
-                    <div class="user-detail-value">
-                        <span class="status-badge status-${user.status || 'pending'}">
-                            ${getStatusText(user.status)}
-                        </span>
-                    </div>
-                </div>
-                <div class="user-detail-row">
-                    <div class="user-detail-label">Registration Date:</div>
-                    <div class="user-detail-value">
-                        ${user.createdAt ? user.createdAt.toDate().toLocaleString() : 'N/A'}
-                    </div>
-                </div>
-                ${user.approvedAt ? `
-                <div class="user-detail-row">
-                    <div class="user-detail-label">Approved Date:</div>
-                    <div class="user-detail-value">
-                        ${user.approvedAt.toDate().toLocaleString()}
-                    </div>
-                </div>
-                ` : ''}
-                ${user.rejectedAt ? `
-                <div class="user-detail-row">
-                    <div class="user-detail-label">Deactivated Date:</div>
-                    <div class="user-detail-value">
-                        ${user.rejectedAt.toDate().toLocaleString()}
-                    </div>
-                </div>
-                ` : ''}
-            `;
-            
-            modalBody.innerHTML = userDetails;
-            
-            // Build modal footer with action buttons
-            let actionButtons = '';
-            if (user.status === 'pending') {
-                actionButtons = `
-                    <button class="btn btn-approve" onclick="approveUser('${user.id}')">
-                        <i class="fas fa-check"></i> Approve
-                    </button>
-                    <button class="btn btn-reject" onclick="rejectUser('${user.id}')">
-                        <i class="fas fa-times"></i> Reject
-                    </button>
-                `;
-            } else if (user.status === 'approved') {
-                actionButtons = `
-                    <button class="btn btn-reject" onclick="deactivateUser('${user.id}')">
-                        <i class="fas fa-ban"></i> Deactivate
-                    </button>
-                `;
-            } else if (user.status === 'rejected') {
-                actionButtons = `
-                    <button class="btn btn-reactivate" onclick="reactivateUser('${user.id}')">
-                        <i class="fas fa-redo"></i> Reactivate
-                    </button>
-                `;
-            }
-            
-            modalFooter.innerHTML = actionButtons + `
-                <button class="btn btn-view" onclick="userModal.style.display='none'">
-                    <i class="fas fa-times"></i> Close
-                </button>
-            `;
-            
-            // Show modal
             userModal.style.display = 'flex';
         }
 
-        // Export Functions
-        function exportToCSV() {
-            const headers = ['Name', 'Type', 'Email', 'Phone', 'Status', 'Registration Date'];
-            let csvContent = headers.join(',') + '\n';
+        function showAddUserModal() {
+            currentEditingUserId = null;
+            modalTitle.textContent = 'Add New User';
             
-            users.forEach(user => {
-                const row = [
-                    getUserName(user),
-                    user.userType,
-                    user.email || '',
-                    user.phone || user.adminPhone || '',
-                    getStatusText(user.status),
-                    user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'N/A'
-                ];
-                csvContent += row.map(field => `"${field}"`).join(',') + '\n';
-            });
+            // Clear form
+            modalUserName.value = '';
+            modalUserEmail.value = '';
+            modalUserType.value = 'individual';
+            modalUserStatus.value = 'pending';
+            modalUserAddress.value = '';
+            modalUserPhone.value = '';
+            modalCompanyName.value = '';
+            companyInfoGroup.style.display = 'none';
             
-            downloadFile(csvContent, 'users.csv', 'text/csv');
-            showAlert('Users data exported as CSV successfully!', 'success');
+            userModal.style.display = 'flex';
         }
 
-        function exportToPDF() {
-            // Simple PDF export simulation
-            const content = `
-                TaskFlow Pro - User Report
-                Generated on: ${new Date().toLocaleDateString()}
-                Total Users: ${users.length}
-                
-                ${users.map(user => `
-                Name: ${getUserName(user)}
-                Type: ${user.userType}
-                Email: ${user.email || 'N/A'}
-                Phone: ${user.phone || user.adminPhone || 'N/A'}
-                Status: ${getStatusText(user.status)}
-                Registered: ${user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'N/A'}
-                ${user.approvedAt ? `Approved: ${user.approvedAt.toDate().toLocaleDateString()}` : ''}
-                ${user.rejectedAt ? `Deactivated: ${user.rejectedAt.toDate().toLocaleDateString()}` : ''}
-                ----------------------------------------
-                `).join('')}
-            `;
-            
-            downloadFile(content, 'users.pdf', 'application/pdf');
-            showAlert('Users data exported as PDF successfully!', 'success');
-        }
-
-        function exportToJSON() {
-            const jsonData = users.map(user => ({
-                id: user.id,
-                name: getUserName(user),
-                type: user.userType,
-                email: user.email,
-                phone: user.phone || user.adminPhone,
-                status: user.status,
-                registrationDate: user.createdAt ? user.createdAt.toDate().toISOString() : null,
-                approvedDate: user.approvedAt ? user.approvedAt.toDate().toISOString() : null,
-                rejectedDate: user.rejectedAt ? user.rejectedAt.toDate().toISOString() : null
-            }));
-            
-            downloadFile(JSON.stringify(jsonData, null, 2), 'users.json', 'application/json');
-            showAlert('Users data exported as JSON successfully!', 'success');
-        }
-
-        function downloadFile(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function getUserName(user) {
-            if (user.userType === 'individual') {
-                return user.name || 'Unknown User';
-            } else {
-                return user.adminName || user.companyName || 'Unknown Company';
+        function saveUserChanges() {
+            if (!currentEditingUserId) {
+                // This is a new user
+                showAlert("Adding new users directly from admin panel is not implemented in this version.", "error");
+                return;
             }
+            
+            const user = users.find(u => u.id === currentEditingUserId);
+            if (!user) return;
+            
+            const newStatus = modalUserStatus.value;
+            
+            db.collection('users').doc(currentEditingUserId).update({
+                status: newStatus
+            })
+            .then(() => {
+                showAlert(`User status updated to ${newStatus} successfully.`, "success");
+                userModal.style.display = 'none';
+                loadUsers(); // Reload users to reflect changes
+            })
+            .catch((error) => {
+                console.error("Error updating user:", error);
+                showAlert("Failed to update user. Please try again.", "error");
+            });
         }
 
-        function getUserInitials(user) {
-            const name = getUserName(user);
-            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || 'UU';
+        function activateUser(userId) {
+            if (!confirm("Are you sure you want to activate this user?")) return;
+            
+            db.collection('users').doc(userId).update({
+                status: 'active'
+            })
+            .then(() => {
+                showAlert("User activated successfully.", "success");
+                loadUsers(); // Reload users to reflect changes
+            })
+            .catch((error) => {
+                console.error("Error activating user:", error);
+                showAlert("Failed to activate user. Please try again.", "error");
+            });
         }
 
-        function showLoading() {
-            loadingState.style.display = 'flex';
-            hideEmptyState();
+        function deactivateUser(userId) {
+            if (!confirm("Are you sure you want to deactivate this user?")) return;
+            
+            db.collection('users').doc(userId).update({
+                status: 'inactive'
+            })
+            .then(() => {
+                showAlert("User deactivated successfully.", "success");
+                loadUsers(); // Reload users to reflect changes
+            })
+            .catch((error) => {
+                console.error("Error deactivating user:", error);
+                showAlert("Failed to deactivate user. Please try again.", "error");
+            });
         }
 
-        function hideLoading() {
-            loadingState.style.display = 'none';
+        function deleteUser(userId) {
+            if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
+            
+            db.collection('users').doc(userId).delete()
+            .then(() => {
+                showAlert("User deleted successfully.", "success");
+                loadUsers(); // Reload users to reflect changes
+            })
+            .catch((error) => {
+                console.error("Error deleting user:", error);
+                showAlert("Failed to delete user. Please try again.", "error");
+            });
         }
 
-        function showEmptyState() {
-            emptyState.style.display = 'block';
-        }
-
-        function hideEmptyState() {
-            emptyState.style.display = 'none';
+        function handleLogout() {
+            if (auth) {
+                auth.signOut()
+                    .then(() => {
+                        window.location.href = 'index.html'; // Redirect to login page
+                    })
+                    .catch((error) => {
+                        console.error("Logout error:", error);
+                        showAlert("Failed to logout. Please try again.", "error");
+                    });
+            } else {
+                window.location.href = 'index.html';
+            }
         }
 
         function showAlert(message, type) {
-            // Hide all alerts first
-            infoAlert.style.display = 'none';
-            successAlert.style.display = 'none';
-            errorAlert.style.display = 'none';
-            
+            hideAlerts();
             if (type === 'success') {
                 successMessage.textContent = message;
                 successAlert.style.display = 'block';
-            } else if (type === 'error') {
+            } else {
                 errorMessage.textContent = message;
                 errorAlert.style.display = 'block';
-            } else if (type === 'info') {
-                infoMessage.textContent = message;
-                infoAlert.style.display = 'block';
             }
-            
-            // Auto hide success alerts after 5 seconds
-            if (type === 'success') {
-                setTimeout(() => {
-                    successAlert.style.display = 'none';
-                }, 5000);
-            }
+            setTimeout(hideAlerts, 5000);
         }
 
-        // Initialize the admin panel
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTableTitle();
-            loadUsers();
+        function hideAlerts() {
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === userModal) {
+                userModal.style.display = 'none';
+            }
         });
     </script>
 </body>
