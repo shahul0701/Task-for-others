@@ -959,21 +959,38 @@
     </footer>
 
     <script>
-        // Firebase configuration
+        // Firebase configuration - UPDATED
         const firebaseConfig = {
             apiKey: "AIzaSyDYIqCBf1qwo1dUaHVs572MiXO82vmy6lE",
             authDomain: "task-for-169b3.firebaseapp.com",
             projectId: "task-for-169b3",
-            storageBucket: "task-for-169b3.firebasestorage.app",
+            storageBucket: "task-for-169b3.appspot.com", // FIXED
             messagingSenderId: "784532517839",
             appId: "1:784532517839:web:3b7c665126908f2a70d8ba",
             measurementId: "G-MHVLPKVWRQ"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        // Initialize Firebase with error handling
+        try {
+            // Check if Firebase is already initialized
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+                console.log("Firebase initialized successfully");
+            } else {
+                firebase.app(); // if already initialized, use that one
+                console.log("Firebase already initialized");
+            }
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            showAlert("Firebase configuration error. Please check console for details.", 'error');
+        }
+
         const auth = firebase.auth();
         const db = firebase.firestore();
+
+        // Verify initialization
+        console.log("Firebase auth:", auth ? "OK" : "FAILED");
+        console.log("Firebase firestore:", db ? "OK" : "FAILED");
 
         // DOM Elements
         const individualBtn = document.getElementById('individualBtn');
@@ -994,6 +1011,8 @@
         const headerLoginBtn = document.getElementById('headerLoginBtn');
         const headerSignupBtn = document.getElementById('headerSignupBtn');
         const heroSignupBtn = document.getElementById('heroSignupBtn');
+        const forgotPassword = document.getElementById('forgotPassword');
+        const companyForgotPassword = document.getElementById('companyForgotPassword');
 
         // Current state
         let isIndividual = true;
@@ -1039,6 +1058,19 @@
             updateUI();
         });
 
+        // Forgot password handlers
+        forgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('individualEmail').value;
+            handleForgotPassword(email, 'individual');
+        });
+
+        companyForgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('companyEmail').value;
+            handleForgotPassword(email, 'company');
+        });
+
         // Form submission handlers
         individualSignIn.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1055,6 +1087,8 @@
             const purpose = document.getElementById('individualPurpose').value;
             const email = document.getElementById('individualEmailSignUp').value;
             const password = document.getElementById('individualPasswordSignUp').value;
+            
+            showAlert('Creating your account...', 'success');
             
             // Create user in Firebase Auth
             auth.createUserWithEmailAndPassword(email, password)
@@ -1080,10 +1114,10 @@
                     showAlert('Account created successfully! Please check your email for verification.', 'success');
                     
                     // Send email verification
-                    auth.currentUser.sendEmailVerification()
-                        .then(() => {
-                            console.log('Email verification sent');
-                        });
+                    return auth.currentUser.sendEmailVerification();
+                })
+                .then(() => {
+                    console.log('Email verification sent');
                     
                     // Show approval message
                     showApprovalMessage();
@@ -1096,7 +1130,23 @@
                 })
                 .catch((error) => {
                     console.error("Error creating user: ", error);
-                    showAlert("Error creating account: " + error.message, 'error');
+                    let errorMsg = "Error creating account: ";
+                    
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMsg += 'This email is already registered.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMsg += 'Invalid email address.';
+                            break;
+                        case 'auth/weak-password':
+                            errorMsg += 'Password is too weak.';
+                            break;
+                        default:
+                            errorMsg += error.message;
+                    }
+                    
+                    showAlert(errorMsg, 'error');
                 });
         });
 
@@ -1115,6 +1165,8 @@
             const adminPhone = document.getElementById('adminPhone').value;
             const email = document.getElementById('companyEmailSignUp').value;
             const password = document.getElementById('companyPasswordSignUp').value;
+            
+            showAlert('Creating company account...', 'success');
             
             // Create user in Firebase Auth
             auth.createUserWithEmailAndPassword(email, password)
@@ -1140,10 +1192,10 @@
                     showAlert('Company account created successfully! Please check your email for verification.', 'success');
                     
                     // Send email verification
-                    auth.currentUser.sendEmailVerification()
-                        .then(() => {
-                            console.log('Email verification sent');
-                        });
+                    return auth.currentUser.sendEmailVerification();
+                })
+                .then(() => {
+                    console.log('Email verification sent');
                     
                     // Show approval message
                     showApprovalMessage();
@@ -1162,7 +1214,23 @@
                 })
                 .catch((error) => {
                     console.error("Error creating company: ", error);
-                    showAlert("Error creating account: " + error.message, 'error');
+                    let errorMsg = "Error creating account: ";
+                    
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMsg += 'This email is already registered.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMsg += 'Invalid email address.';
+                            break;
+                        case 'auth/weak-password':
+                            errorMsg += 'Password is too weak.';
+                            break;
+                        default:
+                            errorMsg += error.message;
+                    }
+                    
+                    showAlert(errorMsg, 'error');
                 });
         });
 
@@ -1201,38 +1269,99 @@
         }
 
         function signInUser(email, password, userType) {
+            showAlert('Signing in...', 'success');
+            
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    const user = userCredential.user;
+                    
                     // Check if email is verified
-                    if (!userCredential.user.emailVerified) {
-                        showAlert('Please verify your email address before logging in.', 'error');
+                    if (!user.emailVerified) {
+                        showAlert('Please verify your email address before logging in. Check your inbox for the verification email.', 'error');
+                        // Optionally: resend verification email
+                        user.sendEmailVerification().then(() => {
+                            console.log('Verification email resent');
+                        });
                         auth.signOut();
                         return;
                     }
                     
-                    // Check user type and status in Firestore
-                    return db.collection('users').doc(userCredential.user.uid).get();
+                    // Check user status in Firestore
+                    return db.collection('users').doc(user.uid).get();
                 })
                 .then((doc) => {
-                    if (doc.exists) {
+                    if (doc && doc.exists) {
                         const userData = doc.data();
                         if (userData.status === 'approved') {
-                            // Redirect to dashboard or main application
                             showAlert('Login successful! Redirecting to dashboard...', 'success');
-                            // In a real app, you would redirect here
-                            // window.location.href = '/dashboard';
+                            // Here you would redirect to your dashboard
+                            // window.location.href = '/dashboard.html';
                         } else {
-                            showAlert('Your account is still pending approval. Please wait for administrator approval.', 'error');
+                            showAlert('Your account is pending approval. We will notify you once approved.', 'error');
                             auth.signOut();
                         }
                     } else {
-                        showAlert('User data not found. Please contact support.', 'error');
+                        showAlert('User profile not found. Please contact support.', 'error');
                         auth.signOut();
                     }
                 })
                 .catch((error) => {
-                    console.error("Error signing in: ", error);
-                    showAlert("Error signing in: " + error.message, 'error');
+                    console.error("Sign-in error:", error);
+                    let errorMessage = "Sign-in failed. ";
+                    
+                    switch (error.code) {
+                        case 'auth/invalid-email':
+                            errorMessage += 'Invalid email address.';
+                            break;
+                        case 'auth/user-disabled':
+                            errorMessage += 'This account has been disabled.';
+                            break;
+                        case 'auth/user-not-found':
+                            errorMessage += 'No account found with this email.';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage += 'Incorrect password.';
+                            break;
+                        case 'auth/configuration-not-found':
+                            errorMessage += 'Authentication not configured. Please try again later.';
+                            break;
+                        case 'auth/network-request-failed':
+                            errorMessage += 'Network error. Please check your connection.';
+                            break;
+                        default:
+                            errorMessage += error.message;
+                    }
+                    
+                    showAlert(errorMessage, 'error');
+                });
+        }
+
+        function handleForgotPassword(email, userType) {
+            if (!email) {
+                showAlert('Please enter your email address first.', 'error');
+                return;
+            }
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showAlert('Password reset email sent! Check your inbox.', 'success');
+                })
+                .catch((error) => {
+                    console.error("Password reset error:", error);
+                    let errorMsg = "Error sending reset email: ";
+                    
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMsg += 'No account found with this email.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMsg += 'Invalid email address.';
+                            break;
+                        default:
+                            errorMsg += error.message;
+                    }
+                    
+                    showAlert(errorMsg, 'error');
                 });
         }
 
@@ -1310,6 +1439,19 @@
                 // You can update UI to show user is logged in
             } else {
                 console.log('User is logged out');
+            }
+        });
+
+        // Test Firebase connection on load
+        window.addEventListener('load', () => {
+            console.log("Testing Firebase connection...");
+            
+            // Simple test to see if Firebase is working
+            if (auth && db) {
+                console.log("Firebase services loaded successfully");
+            } else {
+                console.error("Firebase services failed to load");
+                showAlert("Firebase services not loaded properly. Please refresh the page.", 'error');
             }
         });
     </script>
