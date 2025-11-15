@@ -10,7 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        /* Your existing CSS styles remain the same */
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
@@ -47,13 +46,617 @@
             padding: 0 20px;
         }
 
-        /* All your existing CSS styles... */
-        /* (Keep all your original CSS styles here) */
-        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 0;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--success);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--success);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3aa8d0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 201, 240, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e9f7 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 30px;
+            max-width: 90%;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .dashboard-preview {
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            transition: var(--transition);
+        }
+
+        .dashboard-preview:hover {
+            transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--gray);
+        }
+
+        /* Login Section */
+        .login-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e9f7 100%);
+        }
+
+        .login-container {
+            display: flex;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .login-info {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-info h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .login-info p {
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .login-benefits {
+            list-style: none;
+        }
+
+        .login-benefits li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .login-benefits i {
+            color: var(--success);
+        }
+
+        .login-form-container {
+            flex: 1;
+            padding: 50px;
+        }
+
+        .user-type-selector {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 50px;
+            background: var(--light-gray);
+            padding: 5px;
+        }
+
+        .user-type {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .user-type.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .individual.active {
+            color: var(--individual);
+        }
+
+        .company.active {
+            color: var(--company);
+        }
+
+        .toggle-form {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 50px;
+            background: var(--light-gray);
+            padding: 5px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            background: transparent;
+            border: none;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .approval-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--light);
+            border-radius: var(--radius);
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .success-icon {
+            font-size: 3.5rem;
+            color: #4BB543;
+            margin-bottom: 20px;
+        }
+
+        .approval-message h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .approval-message p {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .contact-info p {
+            margin: 8px 0;
+            color: var(--gray);
+        }
+
+        .contact-info a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-config {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero p {
+                max-width: 100%;
+            }
+            
+            .login-container {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Your existing HTML structure remains the same -->
+    <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
@@ -78,6 +681,7 @@
         </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
@@ -96,6 +700,7 @@
         </div>
     </section>
 
+    <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
             <div class="section-title">
@@ -149,6 +754,7 @@
         </div>
     </section>
 
+    <!-- Login Section -->
     <section class="login-section" id="login">
         <div class="container">
             <div class="section-title">
@@ -168,15 +774,14 @@
                     </ul>
                 </div>
                 <div class="login-form-container">
+                    <!-- Alert Messages -->
                     <div class="alert alert-success" id="successAlert">
                         <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
                     </div>
                     <div class="alert alert-error" id="errorAlert">
                         <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
                     </div>
-
-                    <!-- Add this configuration alert -->
-                    <div class="alert alert-error" id="configAlert" style="display: none;">
+                    <div class="alert alert-config" id="configAlert">
                         <i class="fas fa-cog"></i> <span id="configMessage"></span>
                     </div>
 
@@ -290,6 +895,7 @@
                         <button type="submit" class="submit-btn">Sign Up</button>
                     </form>
                     
+                    <!-- Approval Message -->
                     <div class="approval-message" id="approvalMessage">
                         <div class="success-icon">
                             <i class="fas fa-check-circle"></i>
@@ -302,6 +908,7 @@
                         <p>Email: <a href="#" id="emailCreator">testtocreateapp@gmail.com</a></p>
                     </div>
                     
+                    <!-- Contact Information -->
                     <div class="contact-info">
                         <p>Need help? Contact us:</p>
                         <p><i class="fas fa-phone"></i> <a href="tel:7550124452">7550124452</a></p>
@@ -312,6 +919,7 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -452,6 +1060,19 @@
             updateUI();
         });
 
+        // Forgot password handlers
+        forgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('individualEmail').value;
+            handleForgotPassword(email, 'individual');
+        });
+
+        companyForgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('companyEmail').value;
+            handleForgotPassword(email, 'company');
+        });
+
         // Form submission handlers
         individualSignIn.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -491,7 +1112,40 @@
             createCompanyUser(companyName, companyAddress, adminName, adminPhone, email, password);
         });
 
-        // Improved user creation function
+        // Email draft functionality
+        emailCreator.addEventListener('click', (e) => {
+            e.preventDefault();
+            prepareEmailDraft();
+        });
+
+        contactEmail.addEventListener('click', (e) => {
+            e.preventDefault();
+            prepareEmailDraft();
+        });
+
+        // Functions
+        function updateUI() {
+            // Update user type buttons
+            individualBtn.classList.toggle('active', isIndividual);
+            companyBtn.classList.toggle('active', !isIndividual);
+            
+            // Update form toggle buttons
+            signinBtn.classList.toggle('active', isSignIn);
+            signupBtn.classList.toggle('active', !isSignIn);
+            
+            // Show/hide forms
+            individualSignIn.classList.toggle('active', isIndividual && isSignIn);
+            individualSignUp.classList.toggle('active', isIndividual && !isSignIn);
+            companySignIn.classList.toggle('active', !isIndividual && isSignIn);
+            companySignUp.classList.toggle('active', !isIndividual && !isSignIn);
+            
+            // Hide approval message when switching forms
+            approvalMessage.style.display = 'none';
+            
+            // Hide alerts
+            hideAlerts();
+        }
+
         function createUserWithEmail(name, address, phone, purpose, email, password, userType) {
             showAlert('Creating your account...', 'success');
             
@@ -575,7 +1229,78 @@
                 });
         }
 
-        // Enhanced error handling
+        function signInUser(email, password, userType) {
+            showAlert('Signing in...', 'success');
+            
+            if (!auth) {
+                showAlert('Authentication service not available. Please refresh the page.', 'error');
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    if (!user.emailVerified) {
+                        showAlert('Please verify your email address before logging in. Check your inbox.', 'error');
+                        user.sendEmailVerification();
+                        auth.signOut();
+                        return;
+                    }
+                    
+                    return db.collection('users').doc(user.uid).get();
+                })
+                .then((doc) => {
+                    if (doc && doc.exists) {
+                        const userData = doc.data();
+                        if (userData.status === 'approved') {
+                            showAlert('Login successful! Redirecting to dashboard...', 'success');
+                            // Here you would redirect to your dashboard
+                            // window.location.href = '/dashboard.html';
+                        } else {
+                            showAlert('Your account is pending approval. We will notify you once approved.', 'error');
+                            auth.signOut();
+                        }
+                    } else {
+                        showAlert('User profile not found. Please contact support.', 'error');
+                        auth.signOut();
+                    }
+                })
+                .catch((error) => {
+                    console.error("Sign-in error:", error);
+                    handleAuthError(error, 'signin');
+                });
+        }
+
+        function handleForgotPassword(email, userType) {
+            if (!email) {
+                showAlert('Please enter your email address first.', 'error');
+                return;
+            }
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showAlert('Password reset email sent! Check your inbox.', 'success');
+                })
+                .catch((error) => {
+                    console.error("Password reset error:", error);
+                    let errorMsg = "Error sending reset email: ";
+                    
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMsg += 'No account found with this email.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMsg += 'Invalid email address.';
+                            break;
+                        default:
+                            errorMsg += error.message;
+                    }
+                    
+                    showAlert(errorMsg, 'error');
+                });
+        }
+
         function handleAuthError(error, action) {
             let errorMsg = "";
             
@@ -607,75 +1332,14 @@
             showAlert(errorMsg, 'error');
         }
 
-        function signInUser(email, password, userType) {
-            showAlert('Signing in...', 'success');
-            
-            if (!auth) {
-                showAlert('Authentication service not available. Please refresh the page.', 'error');
-                return;
-            }
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    if (!user.emailVerified) {
-                        showAlert('Please verify your email address before logging in. Check your inbox.', 'error');
-                        user.sendEmailVerification();
-                        auth.signOut();
-                        return;
-                    }
-                    
-                    return db.collection('users').doc(user.uid).get();
-                })
-                .then((doc) => {
-                    if (doc && doc.exists) {
-                        const userData = doc.data();
-                        if (userData.status === 'approved') {
-                            showAlert('Login successful! Redirecting to dashboard...', 'success');
-                            // Redirect would happen here
-                        } else {
-                            showAlert('Your account is pending approval. We will notify you once approved.', 'error');
-                            auth.signOut();
-                        }
-                    } else {
-                        showAlert('User profile not found. Please contact support.', 'error');
-                        auth.signOut();
-                    }
-                })
-                .catch((error) => {
-                    console.error("Sign-in error:", error);
-                    handleAuthError(error, 'signin');
-                });
-        }
-
-        // Configuration alert function
-        function showConfigAlert(message) {
-            configMessage.textContent = message;
-            configAlert.style.display = 'block';
-        }
-
-        // Other functions remain the same...
-        function updateUI() {
-            individualBtn.classList.toggle('active', isIndividual);
-            companyBtn.classList.toggle('active', !isIndividual);
-            signinBtn.classList.toggle('active', isSignIn);
-            signupBtn.classList.toggle('active', !isSignIn);
-            
-            individualSignIn.classList.toggle('active', isIndividual && isSignIn);
-            individualSignUp.classList.toggle('active', isIndividual && !isSignIn);
-            companySignIn.classList.toggle('active', !isIndividual && isSignIn);
-            companySignUp.classList.toggle('active', !isIndividual && !isSignIn);
-            
-            approvalMessage.style.display = 'none';
-            hideAlerts();
-        }
-
         function showApprovalMessage() {
+            // Hide all forms
             individualSignIn.style.display = 'none';
             individualSignUp.style.display = 'none';
             companySignIn.style.display = 'none';
             companySignUp.style.display = 'none';
+            
+            // Show approval message
             approvalMessage.style.display = 'block';
         }
 
@@ -709,17 +1373,34 @@
             setTimeout(hideAlerts, 5000);
         }
 
+        function showConfigAlert(message) {
+            configMessage.textContent = message;
+            configAlert.style.display = 'block';
+        }
+
         function hideAlerts() {
             successAlert.style.display = 'none';
             errorAlert.style.display = 'none';
             configAlert.style.display = 'none';
         }
 
-        // Initialize
+        // Initialize the UI
         updateUI();
 
-        // Test Firebase on load
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User is logged in:', user.email);
+                // You can update UI to show user is logged in
+            } else {
+                console.log('User is logged out');
+            }
+        });
+
+        // Test Firebase connection on load
         window.addEventListener('load', () => {
+            console.log("Testing Firebase connection...");
+            
             if (auth && db) {
                 console.log("Firebase services loaded successfully");
             } else {
