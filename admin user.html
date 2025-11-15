@@ -519,7 +519,7 @@
                 </div>
                 <div class="admin-info">
                     <div class="admin-avatar">A</div>
-                    <span>Admin User</span>
+                    <span id="adminEmail">Loading...</span>
                     <button class="logout-btn" id="logoutBtn">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -654,7 +654,7 @@
             apiKey: "AIzaSyDYIqCBf1qwo1dUaHVs572MiXO82vmy6lE",
             authDomain: "task-for-169b3.firebaseapp.com",
             projectId: "task-for-169b3",
-            storageBucket: "task-for-169b3.firebasestorage.app",
+            storageBucket: "task-for-169b3.appspot.com",
             messagingSenderId: "784532517839",
             appId: "1:784532517839:web:3b7c665126908f2a70d8ba",
             measurementId: "G-MHVLPKVWRQ"
@@ -680,6 +680,7 @@
         const errorAlert = document.getElementById('errorAlert');
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
+        const adminEmail = document.getElementById('adminEmail');
         
         // Stats elements
         const totalUsers = document.getElementById('totalUsers');
@@ -901,6 +902,22 @@
                         ${user.createdAt ? user.createdAt.toDate().toLocaleString() : 'N/A'}
                     </div>
                 </div>
+                ${user.approvedAt ? `
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Approved Date:</div>
+                    <div class="user-detail-value">
+                        ${user.approvedAt.toDate().toLocaleString()}
+                    </div>
+                </div>
+                ` : ''}
+                ${user.rejectedAt ? `
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Rejected Date:</div>
+                    <div class="user-detail-value">
+                        ${user.rejectedAt.toDate().toLocaleString()}
+                    </div>
+                </div>
+                ` : ''}
             `;
             
             modalBody.innerHTML = userDetails;
@@ -938,39 +955,69 @@
         }
 
         function approveUser(userId) {
-            if (!confirm('Are you sure you want to approve this user?')) return;
+            const user = users.find(u => u.id === userId);
+            const action = user.status === 'rejected' ? 'activate' : 'approve';
+            
+            if (!confirm(`Are you sure you want to ${action} this user?`)) return;
             
             db.collection('users').doc(userId).update({
                 status: 'approved',
-                approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                rejectedAt: null // Clear rejected date if exists
             })
             .then(() => {
-                showAlert('User approved successfully!', 'success');
+                showAlert(`User ${action}d successfully!`, 'success');
                 loadUsers();
                 userModal.style.display = 'none';
+                
+                // Send approval email notification (you can implement this)
+                sendUserNotification(userId, 'approved');
             })
             .catch((error) => {
-                console.error("Error approving user: ", error);
-                showAlert("Error approving user: " + error.message, 'error');
+                console.error(`Error ${action}ing user: `, error);
+                showAlert(`Error ${action}ing user: ` + error.message, 'error');
             });
         }
 
         function rejectUser(userId) {
-            if (!confirm('Are you sure you want to reject/deactivate this user?')) return;
+            const user = users.find(u => u.id === userId);
+            const action = user.status === 'approved' ? 'deactivate' : 'reject';
+            
+            if (!confirm(`Are you sure you want to ${action} this user?`)) return;
             
             db.collection('users').doc(userId).update({
                 status: 'rejected',
-                rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                approvedAt: null // Clear approved date if exists
             })
             .then(() => {
-                showAlert('User rejected successfully!', 'success');
+                showAlert(`User ${action}ed successfully!`, 'success');
                 loadUsers();
                 userModal.style.display = 'none';
+                
+                // Send rejection email notification (you can implement this)
+                sendUserNotification(userId, 'rejected');
             })
             .catch((error) => {
-                console.error("Error rejecting user: ", error);
-                showAlert("Error rejecting user: " + error.message, 'error');
+                console.error(`Error ${action}ing user: `, error);
+                showAlert(`Error ${action}ing user: ` + error.message, 'error');
             });
+        }
+
+        function sendUserNotification(userId, action) {
+            // This is a placeholder for sending email notifications
+            // You can integrate with EmailJS, SendGrid, or any email service
+            console.log(`User ${userId} ${action} - Notification would be sent here`);
+            
+            // Example implementation with EmailJS:
+            /*
+            emailjs.send('service_id', 'template_id', {
+                to_email: user.email,
+                user_name: getUserName(user),
+                action: action,
+                admin_email: auth.currentUser.email
+            });
+            */
         }
 
         function filterUsers() {
@@ -985,10 +1032,12 @@
                 const userName = getUserName(user).toLowerCase();
                 const userEmail = user.email.toLowerCase();
                 const userType = user.userType;
+                const companyName = (user.companyName || '').toLowerCase();
                 
                 return userName.includes(searchTerm) || 
                        userEmail.includes(searchTerm) ||
-                       userType.includes(searchTerm);
+                       userType.includes(searchTerm) ||
+                       companyName.includes(searchTerm);
             });
             
             renderUsers(filteredUsers);
@@ -1063,7 +1112,8 @@
         // Check if user is admin and logged in
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // Check if user is admin (you might want to add admin field to users)
+                // Check if user is admin
+                adminEmail.textContent = user.email;
                 console.log('Admin user logged in:', user.email);
                 loadUsers();
             } else {
