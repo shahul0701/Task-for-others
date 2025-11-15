@@ -89,7 +89,7 @@
             font-weight: 600;
         }
 
-        .logout-btn {
+        .home-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -97,9 +97,13 @@
             border-radius: 50px;
             cursor: pointer;
             transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .logout-btn:hover {
+        .home-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
@@ -483,6 +487,12 @@
             border: 1px solid #ffeaa7;
         }
 
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -522,31 +532,26 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Access Denied */
-        .access-denied {
-            text-align: center;
-            padding: 100px 20px;
-            background: white;
+        /* Read-only Notice */
+        .read-only-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin: 40px auto;
-            max-width: 500px;
-        }
-
-        .access-denied i {
-            font-size: 5rem;
-            color: var(--danger);
+            padding: 15px 20px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .access-denied h2 {
-            color: var(--dark);
-            margin-bottom: 15px;
+        .read-only-notice i {
+            color: #856404;
+            font-size: 1.2rem;
         }
 
-        .access-denied p {
-            color: var(--gray);
-            margin-bottom: 25px;
+        .read-only-notice p {
+            color: #856404;
+            margin: 0;
         }
 
         /* Responsive Styles */
@@ -596,11 +601,13 @@
                     <span>TaskFlow Pro Admin</span>
                 </div>
                 <div class="admin-info">
-                    <div class="admin-avatar">A</div>
-                    <span id="adminEmail">Loading...</span>
-                    <button class="logout-btn" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
+                    <div class="admin-avatar">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <span>View Only Mode</span>
+                    <a href="index.html" class="home-btn">
+                        <i class="fas fa-home"></i> Main Site
+                    </a>
                 </div>
             </div>
         </div>
@@ -609,127 +616,117 @@
     <!-- Admin Dashboard -->
     <section class="admin-dashboard">
         <div class="container">
-            <!-- Access Denied Message -->
-            <div class="access-denied" id="accessDenied" style="display: none;">
-                <i class="fas fa-ban"></i>
-                <h2>Access Denied</h2>
-                <p>You don't have permission to access the admin panel. Please contact the system administrator.</p>
-                <button class="btn btn-view" onclick="window.location.href='index.html'">
-                    <i class="fas fa-arrow-left"></i> Back to Main Site
-                </button>
+            <!-- Read-only Notice -->
+            <div class="read-only-notice">
+                <i class="fas fa-info-circle"></i>
+                <p><strong>View Only Mode:</strong> This admin panel is in read-only mode. All user data is displayed for viewing purposes only.</p>
             </div>
 
-            <!-- Admin Content (hidden by default) -->
-            <div id="adminContent" style="display: none;">
-                <div class="dashboard-header">
-                    <h1 class="dashboard-title">User Management Dashboard</h1>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search users by name, email, or company...">
-                    </div>
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">User Management Dashboard</h1>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search users by name, email, or company...">
                 </div>
+            </div>
 
-                <!-- Stats Cards -->
-                <div class="stats-cards">
-                    <div class="stat-card">
-                        <div class="stat-icon total">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="totalUsers">0</h3>
-                            <p>Total Users</p>
-                        </div>
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon individual">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="individualUsers">0</h3>
-                            <p>Individual Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon company">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="companyUsers">0</h3>
-                            <p>Company Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon pending">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="pendingUsers">0</h3>
-                            <p>Pending Approval</p>
-                        </div>
+                    <div class="stat-info">
+                        <h3 id="totalUsers">0</h3>
+                        <p>Total Users</p>
                     </div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-icon individual">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="individualUsers">0</h3>
+                        <p>Individual Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon company">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="companyUsers">0</h3>
+                        <p>Company Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingUsers">0</h3>
+                        <p>Pending Approval</p>
+                    </div>
+                </div>
+            </div>
 
-                <!-- Alert Messages -->
-                <div class="alert alert-success" id="successAlert">
-                    <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
-                </div>
-                <div class="alert alert-error" id="errorAlert">
-                    <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
-                </div>
-                <div class="alert alert-warning" id="warningAlert">
-                    <i class="fas fa-exclamation-triangle"></i> <span id="warningMessage"></span>
-                </div>
+            <!-- Alert Messages -->
+            <div class="alert alert-info" id="infoAlert">
+                <i class="fas fa-info-circle"></i> <span id="infoMessage">View Only Mode: Data is displayed for monitoring purposes</span>
+            </div>
+            <div class="alert alert-error" id="errorAlert">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
+            </div>
 
-                <!-- Filter Tabs -->
-                <div class="filter-tabs">
-                    <div class="filter-tab active" data-filter="all">All Users</div>
-                    <div class="filter-tab" data-filter="pending">Pending Approval</div>
-                    <div class="filter-tab" data-filter="approved">Active Users</div>
-                    <div class="filter-tab" data-filter="rejected">Deactivated</div>
-                    <div class="filter-tab" data-filter="individual">Individual</div>
-                    <div class="filter-tab" data-filter="company">Company</div>
-                </div>
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <div class="filter-tab active" data-filter="all">All Users</div>
+                <div class="filter-tab" data-filter="pending">Pending Approval</div>
+                <div class="filter-tab" data-filter="approved">Active Users</div>
+                <div class="filter-tab" data-filter="rejected">Deactivated</div>
+                <div class="filter-tab" data-filter="individual">Individual</div>
+                <div class="filter-tab" data-filter="company">Company</div>
+            </div>
 
-                <!-- Users Table -->
-                <div class="users-section">
-                    <div class="section-header">
-                        <h2 class="section-title" id="tableTitle">All Users</h2>
-                        <div class="table-actions">
-                            <button class="btn btn-view" id="refreshBtn">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                        </div>
+            <!-- Users Table -->
+            <div class="users-section">
+                <div class="section-header">
+                    <h2 class="section-title" id="tableTitle">All Users</h2>
+                    <div class="table-actions">
+                        <button class="btn btn-view" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Registration Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- Loading State -->
+                    <div class="loading" id="loadingState">
+                        <div class="spinner"></div>
                     </div>
                     
-                    <div class="table-container">
-                        <table class="users-table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Type</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Status</th>
-                                    <th>Registration Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <!-- Users will be loaded here -->
-                            </tbody>
-                        </table>
-                        
-                        <!-- Loading State -->
-                        <div class="loading" id="loadingState">
-                            <div class="spinner"></div>
-                        </div>
-                        
-                        <!-- Empty State -->
-                        <div class="empty-state" id="emptyState" style="display: none;">
-                            <i class="fas fa-users"></i>
-                            <h3>No Users Found</h3>
-                            <p id="emptyStateMessage">There are no users registered in the system yet.</p>
-                        </div>
+                    <!-- Empty State -->
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <i class="fas fa-users"></i>
+                        <h3>No Users Found</h3>
+                        <p id="emptyStateMessage">There are no users registered in the system yet.</p>
                     </div>
                 </div>
             </div>
@@ -764,9 +761,8 @@
             measurementId: "G-MHVLPKVWRQ"
         };
 
-        // Initialize Firebase
+        // Initialize Firebase (without auth)
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
 
         // DOM Elements
@@ -776,20 +772,14 @@
         const emptyStateMessage = document.getElementById('emptyStateMessage');
         const searchInput = document.getElementById('searchInput');
         const refreshBtn = document.getElementById('refreshBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
         const userModal = document.getElementById('userModal');
         const closeModal = document.getElementById('closeModal');
         const modalBody = document.getElementById('modalBody');
         const modalFooter = document.getElementById('modalFooter');
-        const successAlert = document.getElementById('successAlert');
+        const infoAlert = document.getElementById('infoAlert');
         const errorAlert = document.getElementById('errorAlert');
-        const warningAlert = document.getElementById('warningAlert');
-        const successMessage = document.getElementById('successMessage');
+        const infoMessage = document.getElementById('infoMessage');
         const errorMessage = document.getElementById('errorMessage');
-        const warningMessage = document.getElementById('warningMessage');
-        const adminEmail = document.getElementById('adminEmail');
-        const adminContent = document.getElementById('adminContent');
-        const accessDenied = document.getElementById('accessDenied');
         const tableTitle = document.getElementById('tableTitle');
         const filterTabs = document.querySelectorAll('.filter-tab');
         
@@ -802,7 +792,6 @@
         // Current user data
         let users = [];
         let currentUser = null;
-        let isUserAdmin = false;
         let currentFilter = 'all';
         let currentSearchTerm = '';
 
@@ -813,7 +802,6 @@
         });
 
         refreshBtn.addEventListener('click', loadUsers);
-        logoutBtn.addEventListener('click', logout);
         closeModal.addEventListener('click', () => {
             userModal.style.display = 'none';
         });
@@ -854,48 +842,11 @@
             tableTitle.textContent = titles[currentFilter] || 'All Users';
         }
 
-        async function checkAdminAccess(userId) {
-            try {
-                const adminDoc = await db.collection('admins').doc(userId).get();
-                return adminDoc.exists;
-            } catch (error) {
-                console.error("Error checking admin access:", error);
-                return false;
-            }
-        }
-
-        // Function to create admin user automatically (for testing)
-        async function setupAdminUser(user) {
-            try {
-                // Check if admin document already exists
-                const adminDoc = await db.collection('admins').doc(user.uid).get();
-                
-                if (!adminDoc.exists) {
-                    // Create admin document
-                    await db.collection('admins').doc(user.uid).set({
-                        email: user.email,
-                        name: 'Admin User',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        role: 'super-admin'
-                    });
-                    console.log('Admin user created successfully');
-                    return true;
-                } else {
-                    console.log('Admin user already exists');
-                    return true;
-                }
-            } catch (error) {
-                console.error('Error creating admin user:', error);
-                // If we can't create admin, check if user is already admin
-                const isAdmin = await checkAdminAccess(user.uid);
-                return isAdmin;
-            }
-        }
-
         function loadUsers() {
-            if (!isUserAdmin) return;
-            
             showLoading();
+            
+            // Show info message
+            infoAlert.style.display = 'block';
             
             db.collection('users')
                 .orderBy('createdAt', 'desc')
@@ -1032,26 +983,8 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-view" onclick="viewUser('${user.id}')">
-                                <i class="fas fa-eye"></i> View
+                                <i class="fas fa-eye"></i> View Details
                             </button>
-                            ${user.status === 'pending' ? `
-                                <button class="btn btn-approve" onclick="approveUser('${user.id}')">
-                                    <i class="fas fa-check"></i> Approve
-                                </button>
-                                <button class="btn btn-reject" onclick="rejectUser('${user.id}')">
-                                    <i class="fas fa-times"></i> Reject
-                                </button>
-                            ` : ''}
-                            ${user.status === 'approved' ? `
-                                <button class="btn btn-reject" onclick="rejectUser('${user.id}')">
-                                    <i class="fas fa-times"></i> Deactivate
-                                </button>
-                            ` : ''}
-                            ${user.status === 'rejected' ? `
-                                <button class="btn btn-approve" onclick="approveUser('${user.id}')">
-                                    <i class="fas fa-check"></i> Activate
-                                </button>
-                            ` : ''}
                         </div>
                     </td>
                 `;
@@ -1157,87 +1090,15 @@
             
             modalBody.innerHTML = userDetails;
             
-            // Build modal footer with actions
-            let footerActions = '';
-            
-            if (user.status === 'pending') {
-                footerActions = `
-                    <button class="btn btn-approve" onclick="approveUser('${user.id}')">
-                        <i class="fas fa-check"></i> Approve User
-                    </button>
-                    <button class="btn btn-reject" onclick="rejectUser('${user.id}')">
-                        <i class="fas fa-times"></i> Reject User
-                    </button>
-                `;
-            } else if (user.status === 'approved') {
-                footerActions = `
-                    <button class="btn btn-reject" onclick="rejectUser('${user.id}')">
-                        <i class="fas fa-times"></i> Deactivate User
-                    </button>
-                `;
-            } else {
-                footerActions = `
-                    <button class="btn btn-approve" onclick="approveUser('${user.id}')">
-                        <i class="fas fa-check"></i> Activate User
-                    </button>
-                `;
-            }
-            
-            // Add close button
-            footerActions += `
+            // Build modal footer with only close button (read-only mode)
+            modalFooter.innerHTML = `
                 <button class="btn btn-view" onclick="userModal.style.display='none'">
                     <i class="fas fa-times"></i> Close
                 </button>
             `;
             
-            modalFooter.innerHTML = footerActions;
-            
             // Show modal
             userModal.style.display = 'flex';
-        }
-
-        function approveUser(userId) {
-            const user = users.find(u => u.id === userId);
-            const action = user.status === 'rejected' ? 'activate' : 'approve';
-            
-            if (!confirm(`Are you sure you want to ${action} this user? This will allow them to access the system.`)) return;
-            
-            db.collection('users').doc(userId).update({
-                status: 'approved',
-                approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                rejectedAt: null // Clear rejected date if exists
-            })
-            .then(() => {
-                showAlert(`User ${action === 'activate' ? 'activated' : 'approved'} successfully! The user can now access the system.`, 'success');
-                loadUsers();
-                userModal.style.display = 'none';
-            })
-            .catch((error) => {
-                console.error(`Error ${action}ing user: `, error);
-                showAlert(`Error ${action}ing user: ` + error.message, 'error');
-            });
-        }
-
-        function rejectUser(userId) {
-            const user = users.find(u => u.id === userId);
-            const action = user.status === 'approved' ? 'deactivate' : 'reject';
-            
-            if (!confirm(`Are you sure you want to ${action} this user? ${action === 'deactivate' ? 'They will lose access to the system.' : 'This will prevent them from accessing the system.'}`)) return;
-            
-            db.collection('users').doc(userId).update({
-                status: 'rejected',
-                rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                approvedAt: null // Clear approved date if exists
-            })
-            .then(() => {
-                showAlert(`User ${action === 'deactivate' ? 'deactivated' : 'rejected'} successfully! ${action === 'deactivate' ? 'The user can no longer access the system.' : 'The user will not be able to access the system.'}`, 'success');
-                loadUsers();
-                userModal.style.display = 'none';
-            })
-            .catch((error) => {
-                console.error(`Error ${action}ing user: `, error);
-                showAlert(`Error ${action}ing user: ` + error.message, 'error');
-            });
         }
 
         function getUserName(user) {
@@ -1251,17 +1112,6 @@
         function getUserInitials(user) {
             const name = getUserName(user);
             return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-        }
-
-        function logout() {
-            auth.signOut()
-                .then(() => {
-                    window.location.href = 'index.html';
-                })
-                .catch((error) => {
-                    console.error("Error signing out: ", error);
-                    showAlert("Error signing out: " + error.message, 'error');
-                });
         }
 
         function showLoading() {
@@ -1282,61 +1132,19 @@
         }
 
         function showAlert(message, type) {
-            hideAlerts();
-            
-            if (type === 'success') {
-                successMessage.textContent = message;
-                successAlert.style.display = 'block';
-            } else if (type === 'error') {
+            if (type === 'error') {
                 errorMessage.textContent = message;
                 errorAlert.style.display = 'block';
-            } else if (type === 'warning') {
-                warningMessage.textContent = message;
-                warningAlert.style.display = 'block';
+                setTimeout(() => {
+                    errorAlert.style.display = 'none';
+                }, 5000);
             }
-            
-            // Auto hide after 5 seconds
-            setTimeout(hideAlerts, 5000);
         }
 
-        function hideAlerts() {
-            successAlert.style.display = 'none';
-            errorAlert.style.display = 'none';
-            warningAlert.style.display = 'none';
-        }
-
-        // Check if user is admin and logged in
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                adminEmail.textContent = user.email;
-                console.log('User logged in:', user.email);
-                
-                // For testing: Create admin user automatically
-                // Remove this in production and set up admins manually
-                const adminCreated = await setupAdminUser(user);
-                
-                if (adminCreated) {
-                    // Check if user is admin
-                    isUserAdmin = await checkAdminAccess(user.uid);
-                    
-                    if (isUserAdmin) {
-                        console.log('User is admin, loading admin panel...');
-                        adminContent.style.display = 'block';
-                        accessDenied.style.display = 'none';
-                        updateTableTitle();
-                        loadUsers();
-                    } else {
-                        console.log('User is not admin, showing access denied');
-                        adminContent.style.display = 'none';
-                        accessDenied.style.display = 'block';
-                        showAlert('You do not have admin privileges.', 'warning');
-                    }
-                } else {
-                    showAlert('Error setting up admin access.', 'error');
-                }
-            } else {
-                window.location.href = 'index.html';
-            }
+        // Initialize the admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTableTitle();
+            loadUsers();
         });
     </script>
 </body>
