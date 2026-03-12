@@ -61,8 +61,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
         .logo {
@@ -79,8 +77,7 @@
 
         .admin-nav {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .admin-nav a {
@@ -136,7 +133,7 @@
 
         /* Sidebar */
         .sidebar {
-            width: 280px;
+            width: 250px;
             background: white;
             box-shadow: var(--shadow);
             padding: 30px 0;
@@ -182,8 +179,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
         .content-header h1 {
@@ -191,15 +186,9 @@
             color: var(--dark);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
         .stats-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -251,89 +240,6 @@
             font-size: 0.9rem;
         }
 
-        /* Filter Bar */
-        .filter-bar {
-            background: white;
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-group label {
-            font-weight: 500;
-            color: var(--dark);
-            min-width: 70px;
-        }
-
-        .filter-select, .filter-input {
-            padding: 10px 15px;
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            flex: 1;
-        }
-
-        .filter-select:focus, .filter-input:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-        }
-
-        .clear-filters {
-            background: var(--light-gray);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .clear-filters:hover {
-            background: var(--gray);
-            color: white;
-        }
-
-        /* Bulk Actions */
-        .bulk-actions {
-            background: white;
-            border-radius: var(--radius);
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            display: none;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .bulk-actions.active {
-            display: flex;
-        }
-
-        .selected-count {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .bulk-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
         /* Table Styles */
         .table-container {
             background: white;
@@ -348,8 +254,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
         .table-header h2 {
@@ -366,10 +270,6 @@
             width: 300px;
         }
 
-        .search-box i {
-            color: var(--gray);
-        }
-
         .search-box input {
             border: none;
             background: transparent;
@@ -378,14 +278,9 @@
             margin-left: 10px;
         }
 
-        .table-responsive {
-            overflow-x: auto;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px;
         }
 
         thead {
@@ -407,10 +302,6 @@
 
         tr:last-child td {
             border-bottom: none;
-        }
-
-        tr:hover {
-            background: var(--light);
         }
 
         .user-cell {
@@ -437,7 +328,6 @@
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 600;
-            display: inline-block;
         }
 
         .status-active {
@@ -457,8 +347,7 @@
 
         .action-buttons {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .btn {
@@ -512,17 +401,6 @@
             background: #e76f51;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-
         /* Modal Styles */
         .modal {
             display: none;
@@ -535,18 +413,15 @@
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
-            padding: 20px;
         }
 
         .modal-content {
             background: white;
             border-radius: var(--radius);
-            width: 600px;
-            max-width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
+            width: 500px;
+            max-width: 90%;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
         }
 
         .modal-header {
@@ -555,10 +430,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
         }
 
         .modal-header h3 {
@@ -572,11 +443,6 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--gray);
-            transition: var(--transition);
-        }
-
-        .close-modal:hover {
-            color: var(--danger);
         }
 
         .modal-body {
@@ -589,9 +455,6 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            position: sticky;
-            bottom: 0;
-            background: white;
         }
 
         .form-group {
@@ -620,35 +483,12 @@
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
 
-        .form-control[readonly] {
-            background: var(--light);
-            cursor: not-allowed;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
         /* Alert Styles */
         .alert {
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
             display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
         }
 
         .alert-success {
@@ -663,19 +503,12 @@
             border: 1px solid #f5c6cb;
         }
 
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
         /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
             padding: 20px;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .pagination button {
@@ -685,7 +518,6 @@
             border-radius: 5px;
             cursor: pointer;
             transition: var(--transition);
-            min-width: 40px;
         }
 
         .pagination button.active {
@@ -694,47 +526,8 @@
             border-color: var(--primary);
         }
 
-        .pagination button:hover:not(.active):not(:disabled) {
+        .pagination button:hover:not(.active) {
             background: var(--light);
-        }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Checkbox */
-        .checkbox-cell {
-            width: 40px;
-            text-align: center;
-        }
-
-        .checkbox {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
         }
 
         /* Responsive Styles */
@@ -763,7 +556,6 @@
                 white-space: nowrap;
                 border-left: none;
                 border-bottom: 4px solid transparent;
-                padding: 12px 20px;
             }
             
             .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -775,52 +567,33 @@
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                align-items: flex-start;
+                gap: 15px;
             }
             
             .admin-nav {
+                order: 3;
                 width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .user-info {
-                width: 100%;
-                justify-content: space-between;
+                justify-content: center;
+                margin-top: 10px;
             }
             
             .stats-cards {
                 grid-template-columns: 1fr;
             }
             
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filter-group {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .filter-group label {
-                min-width: auto;
-            }
-            
-            .filter-select, .filter-input {
-                width: 100%;
-            }
-            
             .table-header {
                 flex-direction: column;
-                align-items: stretch;
+                gap: 15px;
+                align-items: flex-start;
             }
             
             .search-box {
                 width: 100%;
             }
             
-            .info-grid {
-                grid-template-columns: 1fr;
+            table {
+                display: block;
+                overflow-x: auto;
             }
         }
     </style>
@@ -832,19 +605,18 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-tasks"></i>
-                    <span>TaskFlow Pro Admin</span>
+                    <span>TaskFlow Pro</span>
                 </div>
                 <div class="admin-nav">
-                    <a href="#" class="active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</a>
-                    <a href="#" data-section="users"><i class="fas fa-users"></i> Users</a>
-                    <a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> Reports</a>
-                    <a href="#" data-section="logs"><i class="fas fa-history"></i> Activity Logs</a>
-                    <a href="#" data-section="settings"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="#" class="active">Dashboard</a>
+                    <a href="#">Users</a>
+                    <a href="#">Reports</a>
+                    <a href="#">Settings</a>
                 </div>
                 <div class="user-info">
-                    <div class="user-avatar" id="adminAvatar">A</div>
-                    <div id="adminName">Admin User</div>
-                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <div class="user-avatar">A</div>
+                    <div>Admin User</div>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
                 </div>
             </div>
         </div>
@@ -855,21 +627,62 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="#" data-section="users"><i class="fas fa-users"></i> User Management</a></li>
-                <li><a href="#" data-section="pending"><i class="fas fa-user-clock"></i> Pending Approvals</a></li>
-                <li><a href="#" data-section="companies"><i class="fas fa-building"></i> Companies</a></li>
-                <li><a href="#" data-section="individuals"><i class="fas fa-user"></i> Individuals</a></li>
-                <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> Analytics</a></li>
-                <li><a href="#" data-section="logs"><i class="fas fa-history"></i> Activity Logs</a></li>
-                <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> System Settings</a></li>
-                <li><a href="#" data-section="notifications"><i class="fas fa-bell"></i> Notifications</a></li>
-                <li><a href="#" data-section="help"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+                <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> User Management</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> System Settings</a></li>
+                <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Help & Support</a></li>
             </ul>
         </div>
 
         <!-- Content Area -->
         <div class="content">
+            <div class="content-header">
+                <h1>User Management</h1>
+                <button class="btn btn-primary" id="addUserBtn">Add New User</button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalUsers">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeUsers">0</h3>
+                        <p>Active Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingUsers">0</h3>
+                        <p>Pending Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon danger">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inactiveUsers">0</h3>
+                        <p>Inactive Users</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Alerts -->
             <div class="alert alert-success" id="successAlert">
                 <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
@@ -877,240 +690,33 @@
             <div class="alert alert-error" id="errorAlert">
                 <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
             </div>
-            <div class="alert alert-warning" id="warningAlert">
-                <i class="fas fa-exclamation-triangle"></i> <span id="warningMessage"></span>
-            </div>
 
-            <!-- Loading Spinner -->
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner"></div>
-                <p>Loading data...</p>
-            </div>
-
-            <!-- Dashboard Section -->
-            <div id="dashboardSection" style="display: block;">
-                <div class="content-header">
-                    <h1>Dashboard Overview</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-outline" id="refreshStats"><i class="fas fa-sync-alt"></i> Refresh</button>
-                        <button class="btn btn-primary" id="exportReport"><i class="fas fa-download"></i> Export Report</button>
+            <!-- Users Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>All Users</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search users...">
                     </div>
                 </div>
-
-                <!-- Stats Cards -->
-                <div class="stats-cards">
-                    <div class="stat-card">
-                        <div class="stat-icon primary">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="totalUsers">0</h3>
-                            <p>Total Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon success">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="activeUsers">0</h3>
-                            <p>Active Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon warning">
-                            <i class="fas fa-user-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="pendingUsers">0</h3>
-                            <p>Pending Approval</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon danger">
-                            <i class="fas fa-user-times"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="inactiveUsers">0</h3>
-                            <p>Inactive Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--secondary);">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="companyUsers">0</h3>
-                            <p>Companies</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: var(--warning);">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="individualUsers">0</h3>
-                            <p>Individuals</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Users Table -->
-                <div class="table-container">
-                    <div class="table-header">
-                        <h2>Recent Users</h2>
-                        <a href="#" class="btn btn-primary btn-sm" data-section="users">View All</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Email</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Registered</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentUsersTable">
-                                <tr>
-                                    <td colspan="6" style="text-align: center;">Loading...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Users Management Section (Default View) -->
-            <div id="usersSection" style="display: block;">
-                <div class="content-header">
-                    <h1>User Management</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="addUserBtn"><i class="fas fa-plus"></i> Add New User</button>
-                        <button class="btn btn-outline" id="refreshUsers"><i class="fas fa-sync-alt"></i> Refresh</button>
-                    </div>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="stats-cards">
-                    <div class="stat-card">
-                        <div class="stat-icon primary">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="usersTotalUsers">0</h3>
-                            <p>Total Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon success">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="usersActiveUsers">0</h3>
-                            <p>Active Users</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon warning">
-                            <i class="fas fa-user-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="usersPendingUsers">0</h3>
-                            <p>Pending</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon danger">
-                            <i class="fas fa-user-times"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="usersInactiveUsers">0</h3>
-                            <p>Inactive</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <label>Type:</label>
-                        <select id="userTypeFilter" class="filter-select">
-                            <option value="all">All Types</option>
-                            <option value="individual">Individuals</option>
-                            <option value="company">Companies</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Status:</label>
-                        <select id="userStatusFilter" class="filter-select">
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Date:</label>
-                        <select id="dateFilter" class="filter-select">
-                            <option value="all">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                        </select>
-                    </div>
-                    <button class="clear-filters" id="clearFilters"><i class="fas fa-times"></i> Clear</button>
-                </div>
-
-                <!-- Bulk Actions -->
-                <div class="bulk-actions" id="bulkActions">
-                    <span class="selected-count" id="selectedCount">0 users selected</span>
-                    <div class="bulk-buttons">
-                        <button class="btn btn-success btn-sm" id="bulkApprove"><i class="fas fa-check"></i> Approve</button>
-                        <button class="btn btn-warning btn-sm" id="bulkActivate"><i class="fas fa-play"></i> Activate</button>
-                        <button class="btn btn-danger btn-sm" id="bulkDeactivate"><i class="fas fa-pause"></i> Deactivate</button>
-                        <button class="btn btn-danger btn-sm" id="bulkDelete"><i class="fas fa-trash"></i> Delete</button>
-                        <button class="btn btn-outline btn-sm" id="bulkEmail"><i class="fas fa-envelope"></i> Email</button>
-                        <button class="btn btn-outline btn-sm" id="clearSelection"><i class="fas fa-times"></i> Clear</button>
-                    </div>
-                </div>
-
-                <!-- Users Table -->
-                <div class="table-container">
-                    <div class="table-header">
-                        <h2>All Users</h2>
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchInput" placeholder="Search users by name, email...">
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="checkbox-cell">
-                                        <input type="checkbox" id="selectAll" class="checkbox">
-                                    </th>
-                                    <th>User</th>
-                                    <th>Email</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Phone</th>
-                                    <th>Registered</th>
-                                    <th>Last Login</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <!-- Users will be populated here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="pagination">
-                        <!-- Pagination will be generated here -->
-                    </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Registration Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be populated here -->
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be generated here -->
                 </div>
             </div>
         </div>
@@ -1124,217 +730,42 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="info-grid">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" id="modalUserName" class="form-control" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="modalUserEmail" class="form-control" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>User Type</label>
-                        <input type="text" id="modalUserType" class="form-control" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select id="modalUserStatus" class="form-control">
-                            <option value="pending">Pending</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone</label>
-                        <input type="text" id="modalUserPhone" class="form-control" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Email Verified</label>
-                        <input type="text" id="modalEmailVerified" class="form-control" readonly>
-                    </div>
-                </div>
-                
                 <div class="form-group">
-                    <label>Address</label>
-                    <textarea id="modalUserAddress" class="form-control" rows="2" readonly></textarea>
+                    <label for="modalUserName">Name</label>
+                    <input type="text" id="modalUserName" class="form-control" readonly>
                 </div>
-
-                <div id="companyDetails" style="display: none;">
-                    <h4 style="margin: 20px 0 15px;">Company Details</h4>
-                    <div class="info-grid">
-                        <div class="form-group">
-                            <label>Company Name</label>
-                            <input type="text" id="modalCompanyName" class="form-control" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label>Admin Name</label>
-                            <input type="text" id="modalAdminName" class="form-control" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="individualDetails" style="display: none;">
-                    <h4 style="margin: 20px 0 15px;">Individual Details</h4>
-                    <div class="info-grid">
-                        <div class="form-group">
-                            <label>Purpose</label>
-                            <input type="text" id="modalPurpose" class="form-control" readonly>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="form-group">
-                    <label>Registration Date</label>
-                    <input type="text" id="modalCreatedAt" class="form-control" readonly>
+                    <label for="modalUserEmail">Email</label>
+                    <input type="email" id="modalUserEmail" class="form-control" readonly>
                 </div>
-
-                <!-- Password Reset Section -->
-                <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--light-gray);">
-                    <label>Password Management</label>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-warning" id="resetPasswordBtn"><i class="fas fa-key"></i> Send Password Reset</button>
-                        <button class="btn btn-outline" id="viewAuthInfo"><i class="fas fa-info-circle"></i> Auth Info</button>
-                    </div>
-                    <div id="authInfo" style="display: none; margin-top: 15px; padding: 15px; background: var(--light); border-radius: 8px;">
-                        <p><strong>UID:</strong> <span id="userUID"></span></p>
-                        <p><strong>Auth Provider:</strong> Email/Password</p>
-                        <p><strong>Account Created:</strong> <span id="authCreatedAt"></span></p>
-                        <p><strong>Last Sign In:</strong> <span id="lastSignIn"></span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="saveUserBtn"><i class="fas fa-save"></i> Save Changes</button>
-                <button class="btn btn-success" id="sendNotificationBtn"><i class="fas fa-bell"></i> Send Notification</button>
-                <button class="btn" id="cancelModalBtn"><i class="fas fa-times"></i> Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add/Edit User Modal -->
-    <div class="modal" id="addEditUserModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="addEditModalTitle">Add New User</h3>
-                <button class="close-modal" id="closeAddEditModal">&times;</button>
-            </div>
-            <div class="modal-body">
                 <div class="form-group">
-                    <label>User Type</label>
-                    <select id="addEditUserType" class="form-control">
-                        <option value="individual">Individual</option>
-                        <option value="company">Company</option>
-                    </select>
+                    <label for="modalUserType">User Type</label>
+                    <input type="text" id="modalUserType" class="form-control" readonly>
                 </div>
-
-                <div id="addEditIndividualFields">
-                    <div class="form-group">
-                        <label>Full Name *</label>
-                        <input type="text" id="addEditName" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Purpose</label>
-                        <select id="addEditPurpose" class="form-control">
-                            <option value="personal">Personal</option>
-                            <option value="business">Business</option>
-                            <option value="education">Education</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="addEditCompanyFields" style="display: none;">
-                    <div class="form-group">
-                        <label>Company Name *</label>
-                        <input type="text" id="addEditCompanyName" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Admin Name *</label>
-                        <input type="text" id="addEditAdminName" class="form-control">
-                    </div>
-                </div>
-
                 <div class="form-group">
-                    <label>Email Address *</label>
-                    <input type="email" id="addEditEmail" class="form-control" required>
-                </div>
-
-                <div class="form-group" id="passwordField">
-                    <label>Password *</label>
-                    <input type="password" id="addEditPassword" class="form-control" minlength="6">
-                    <small style="color: var(--gray);">Minimum 6 characters</small>
-                </div>
-
-                <div class="form-group">
-                    <label>Phone Number *</label>
-                    <input type="tel" id="addEditPhone" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Address *</label>
-                    <textarea id="addEditAddress" class="form-control" rows="2" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="addEditStatus" class="form-control">
+                    <label for="modalUserStatus">Status</label>
+                    <select id="modalUserStatus" class="form-control">
                         <option value="pending">Pending</option>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                     </select>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="saveNewUserBtn"><i class="fas fa-save"></i> Create User</button>
-                <button class="btn" id="cancelAddEditModal"><i class="fas fa-times"></i> Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Email Modal -->
-    <div class="modal" id="emailModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Send Email</h3>
-                <button class="close-modal" id="closeEmailModal">&times;</button>
-            </div>
-            <div class="modal-body">
                 <div class="form-group">
-                    <label>To</label>
-                    <input type="text" id="emailTo" class="form-control" readonly>
+                    <label for="modalUserAddress">Address</label>
+                    <textarea id="modalUserAddress" class="form-control" rows="3" readonly></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Subject</label>
-                    <input type="text" id="emailSubject" class="form-control" value="Account Update - TaskFlow Pro">
+                    <label for="modalUserPhone">Phone</label>
+                    <input type="text" id="modalUserPhone" class="form-control" readonly>
                 </div>
-                <div class="form-group">
-                    <label>Message</label>
-                    <textarea id="emailMessage" class="form-control" rows="6"></textarea>
+                <div class="form-group" id="companyInfoGroup" style="display: none;">
+                    <label for="modalCompanyName">Company Name</label>
+                    <input type="text" id="modalCompanyName" class="form-control" readonly>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="sendEmailBtn"><i class="fas fa-paper-plane"></i> Send Email</button>
-                <button class="btn" id="cancelEmailModal">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-content" style="width: 400px;">
-            <div class="modal-header">
-                <h3>Confirm Delete</h3>
-                <button class="close-modal" id="closeDeleteModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p style="margin-bottom: 15px;">Are you sure you want to delete this user? This action cannot be undone.</p>
-                <p><strong>User:</strong> <span id="deleteUserName"></span></p>
-                <p><strong>Email:</strong> <span id="deleteUserEmail"></span></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" id="confirmDeleteBtn"><i class="fas fa-trash"></i> Delete</button>
-                <button class="btn" id="cancelDeleteModal">Cancel</button>
+                <button class="btn btn-primary" id="saveUserBtn">Save Changes</button>
+                <button class="btn" id="cancelModalBtn">Cancel</button>
             </div>
         </div>
     </div>
@@ -1362,132 +793,38 @@
             console.log("Firebase initialized successfully");
         } catch (error) {
             console.error("Firebase initialization error:", error);
+            showAlert("Firebase failed to initialize. Please check your configuration.", "error");
         }
 
         // DOM Elements
-        // Navigation
         const logoutBtn = document.getElementById('logoutBtn');
-        const adminName = document.getElementById('adminName');
-        const adminAvatar = document.getElementById('adminAvatar');
-        
-        // Sections
-        const dashboardSection = document.getElementById('dashboardSection');
-        const usersSection = document.getElementById('usersSection');
-        const navLinks = document.querySelectorAll('[data-section]');
-        const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
-        
-        // Dashboard elements
+        const addUserBtn = document.getElementById('addUserBtn');
+        const usersTableBody = document.getElementById('usersTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const userModal = document.getElementById('userModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const saveUserBtn = document.getElementById('saveUserBtn');
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
         const totalUsers = document.getElementById('totalUsers');
         const activeUsers = document.getElementById('activeUsers');
         const pendingUsers = document.getElementById('pendingUsers');
         const inactiveUsers = document.getElementById('inactiveUsers');
-        const companyUsers = document.getElementById('companyUsers');
-        const individualUsers = document.getElementById('individualUsers');
-        const recentUsersTable = document.getElementById('recentUsersTable');
-        const refreshStats = document.getElementById('refreshStats');
-        
-        // User management elements
-        const usersTotalUsers = document.getElementById('usersTotalUsers');
-        const usersActiveUsers = document.getElementById('usersActiveUsers');
-        const usersPendingUsers = document.getElementById('usersPendingUsers');
-        const usersInactiveUsers = document.getElementById('usersInactiveUsers');
-        const usersTableBody = document.getElementById('usersTableBody');
-        const searchInput = document.getElementById('searchInput');
-        const userTypeFilter = document.getElementById('userTypeFilter');
-        const userStatusFilter = document.getElementById('userStatusFilter');
-        const dateFilter = document.getElementById('dateFilter');
-        const clearFilters = document.getElementById('clearFilters');
-        const refreshUsers = document.getElementById('refreshUsers');
-        const addUserBtn = document.getElementById('addUserBtn');
-        const selectAll = document.getElementById('selectAll');
-        const bulkActions = document.getElementById('bulkActions');
-        const selectedCount = document.getElementById('selectedCount');
-        const bulkApprove = document.getElementById('bulkApprove');
-        const bulkActivate = document.getElementById('bulkActivate');
-        const bulkDeactivate = document.getElementById('bulkDeactivate');
-        const bulkDelete = document.getElementById('bulkDelete');
-        const bulkEmail = document.getElementById('bulkEmail');
-        const clearSelection = document.getElementById('clearSelection');
         const pagination = document.getElementById('pagination');
-        
-        // Modals
-        const userModal = document.getElementById('userModal');
-        const addEditUserModal = document.getElementById('addEditUserModal');
-        const emailModal = document.getElementById('emailModal');
-        const deleteModal = document.getElementById('deleteModal');
-        
-        // Modal close buttons
-        const closeModal = document.getElementById('closeModal');
-        const cancelModalBtn = document.getElementById('cancelModalBtn');
-        const closeAddEditModal = document.getElementById('closeAddEditModal');
-        const cancelAddEditModal = document.getElementById('cancelAddEditModal');
-        const closeEmailModal = document.getElementById('closeEmailModal');
-        const cancelEmailModal = document.getElementById('cancelEmailModal');
-        const closeDeleteModal = document.getElementById('closeDeleteModal');
-        const cancelDeleteModal = document.getElementById('cancelDeleteModal');
-        
-        // Modal action buttons
-        const saveUserBtn = document.getElementById('saveUserBtn');
-        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
-        const viewAuthInfo = document.getElementById('viewAuthInfo');
-        const sendNotificationBtn = document.getElementById('sendNotificationBtn');
-        const saveNewUserBtn = document.getElementById('saveNewUserBtn');
-        const sendEmailBtn = document.getElementById('sendEmailBtn');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        
-        // Modal fields
+
+        // Modal form fields
         const modalTitle = document.getElementById('modalTitle');
         const modalUserName = document.getElementById('modalUserName');
         const modalUserEmail = document.getElementById('modalUserEmail');
         const modalUserType = document.getElementById('modalUserType');
         const modalUserStatus = document.getElementById('modalUserStatus');
-        const modalUserPhone = document.getElementById('modalUserPhone');
         const modalUserAddress = document.getElementById('modalUserAddress');
-        const modalEmailVerified = document.getElementById('modalEmailVerified');
+        const modalUserPhone = document.getElementById('modalUserPhone');
         const modalCompanyName = document.getElementById('modalCompanyName');
-        const modalAdminName = document.getElementById('modalAdminName');
-        const modalPurpose = document.getElementById('modalPurpose');
-        const modalCreatedAt = document.getElementById('modalCreatedAt');
-        const userUID = document.getElementById('userUID');
-        const authCreatedAt = document.getElementById('authCreatedAt');
-        const lastSignIn = document.getElementById('lastSignIn');
-        const companyDetails = document.getElementById('companyDetails');
-        const individualDetails = document.getElementById('individualDetails');
-        const authInfo = document.getElementById('authInfo');
-        
-        // Add/Edit modal fields
-        const addEditModalTitle = document.getElementById('addEditModalTitle');
-        const addEditUserType = document.getElementById('addEditUserType');
-        const addEditIndividualFields = document.getElementById('addEditIndividualFields');
-        const addEditCompanyFields = document.getElementById('addEditCompanyFields');
-        const addEditName = document.getElementById('addEditName');
-        const addEditPurpose = document.getElementById('addEditPurpose');
-        const addEditCompanyName = document.getElementById('addEditCompanyName');
-        const addEditAdminName = document.getElementById('addEditAdminName');
-        const addEditEmail = document.getElementById('addEditEmail');
-        const addEditPassword = document.getElementById('addEditPassword');
-        const addEditPhone = document.getElementById('addEditPhone');
-        const addEditAddress = document.getElementById('addEditAddress');
-        const addEditStatus = document.getElementById('addEditStatus');
-        const passwordField = document.getElementById('passwordField');
-        
-        // Email modal fields
-        const emailTo = document.getElementById('emailTo');
-        const emailSubject = document.getElementById('emailSubject');
-        const emailMessage = document.getElementById('emailMessage');
-        
-        // Delete modal fields
-        const deleteUserName = document.getElementById('deleteUserName');
-        const deleteUserEmail = document.getElementById('deleteUserEmail');
-        
-        // Alerts
-        const successAlert = document.getElementById('successAlert');
-        const errorAlert = document.getElementById('errorAlert');
-        const warningAlert = document.getElementById('warningAlert');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-        const warningMessage = document.getElementById('warningMessage');
-        const loadingSpinner = document.getElementById('loadingSpinner');
+        const companyInfoGroup = document.getElementById('companyInfoGroup');
 
         // Global variables
         let users = [];
@@ -1495,171 +832,24 @@
         let currentPage = 1;
         const usersPerPage = 10;
         let currentEditingUserId = null;
-        let selectedUsers = new Set();
-        let currentAdmin = null;
-        let deleteUserId = null;
-
-        // Check authentication on load
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // Check if user is admin
-                checkIfAdmin(user);
-            } else {
-                // Redirect to login
-                window.location.href = 'index.html';
-            }
-        });
-
-        function checkIfAdmin(user) {
-            // For demo purposes, we'll check if the user is the admin
-            // You can modify this to check a specific admin collection
-            db.collection('users').doc(user.uid).get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        const userData = doc.data();
-                        // For demo, treat as admin if email contains "admin" or if it's the creator email
-                        if (user.email.includes('admin') || user.email === 'testtocreateapp@gmail.com') {
-                            currentAdmin = user;
-                            adminName.textContent = userData.name || 'Admin User';
-                            adminAvatar.textContent = (userData.name || 'A')[0].toUpperCase();
-                            loadUsers();
-                        } else {
-                            // Not admin, redirect to user dashboard
-                            window.location.href = 'ind.html';
-                        }
-                    } else {
-                        // User not found in database, redirect to login
-                        auth.signOut();
-                        window.location.href = 'index.html';
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error checking admin status:", error);
-                    showAlert("Error verifying admin status", "error");
-                });
-        }
 
         // Event Listeners
         logoutBtn.addEventListener('click', handleLogout);
-        
-        // Navigation
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = link.getAttribute('data-section');
-                showSection(section);
-            });
-        });
-        
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = link.getAttribute('data-section');
-                showSection(section);
-            });
-        });
-        
-        // Refresh buttons
-        refreshStats.addEventListener('click', loadUsers);
-        refreshUsers.addEventListener('click', loadUsers);
-        
-        // Filters
-        searchInput.addEventListener('input', filterUsers);
-        userTypeFilter.addEventListener('change', filterUsers);
-        userStatusFilter.addEventListener('change', filterUsers);
-        dateFilter.addEventListener('change', filterUsers);
-        clearFilters.addEventListener('click', clearAllFilters);
-        
-        // Add user
-        addUserBtn.addEventListener('click', () => showAddEditModal('add'));
-        
-        // Bulk actions
-        selectAll.addEventListener('change', toggleSelectAll);
-        clearSelection.addEventListener('click', clearSelectedUsers);
-        bulkApprove.addEventListener('click', () => bulkUpdateStatus('pending', 'active'));
-        bulkActivate.addEventListener('click', () => bulkUpdateStatus('inactive', 'active'));
-        bulkDeactivate.addEventListener('click', () => bulkUpdateStatus('active', 'inactive'));
-        bulkDelete.addEventListener('click', bulkDeleteUsers);
-        bulkEmail.addEventListener('click', bulkEmailUsers);
-        
-        // Modal close buttons
+        addUserBtn.addEventListener('click', showAddUserModal);
         closeModal.addEventListener('click', () => userModal.style.display = 'none');
         cancelModalBtn.addEventListener('click', () => userModal.style.display = 'none');
-        closeAddEditModal.addEventListener('click', () => addEditUserModal.style.display = 'none');
-        cancelAddEditModal.addEventListener('click', () => addEditUserModal.style.display = 'none');
-        closeEmailModal.addEventListener('click', () => emailModal.style.display = 'none');
-        cancelEmailModal.addEventListener('click', () => emailModal.style.display = 'none');
-        closeDeleteModal.addEventListener('click', () => deleteModal.style.display = 'none');
-        cancelDeleteModal.addEventListener('click', () => deleteModal.style.display = 'none');
-        
-        // Modal action buttons
         saveUserBtn.addEventListener('click', saveUserChanges);
-        resetPasswordBtn.addEventListener('click', resetUserPassword);
-        viewAuthInfo.addEventListener('click', toggleAuthInfo);
-        sendNotificationBtn.addEventListener('click', showEmailModal);
-        saveNewUserBtn.addEventListener('click', createNewUser);
-        sendEmailBtn.addEventListener('click', sendEmail);
-        confirmDeleteBtn.addEventListener('click', confirmDelete);
-        
-        // User type toggle in add/edit modal
-        addEditUserType.addEventListener('change', toggleUserTypeFields);
-        
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === userModal) userModal.style.display = 'none';
-            if (e.target === addEditUserModal) addEditUserModal.style.display = 'none';
-            if (e.target === emailModal) emailModal.style.display = 'none';
-            if (e.target === deleteModal) deleteModal.style.display = 'none';
+        searchInput.addEventListener('input', filterUsers);
+
+        // Initialize the admin panel
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
         });
 
         // Functions
-        function showSection(section) {
-            // Hide all sections
-            dashboardSection.style.display = 'none';
-            usersSection.style.display = 'none';
-            
-            // Show selected section
-            if (section === 'dashboard') {
-                dashboardSection.style.display = 'block';
-                usersSection.style.display = 'none';
-            } else if (section === 'users' || section === 'pending' || section === 'companies' || section === 'individuals') {
-                dashboardSection.style.display = 'none';
-                usersSection.style.display = 'block';
-                
-                // Apply filters based on section
-                if (section === 'pending') {
-                    userTypeFilter.value = 'all';
-                    userStatusFilter.value = 'pending';
-                } else if (section === 'companies') {
-                    userTypeFilter.value = 'company';
-                    userStatusFilter.value = 'all';
-                } else if (section === 'individuals') {
-                    userTypeFilter.value = 'individual';
-                    userStatusFilter.value = 'all';
-                } else {
-                    userTypeFilter.value = 'all';
-                    userStatusFilter.value = 'all';
-                }
-                
-                filterUsers();
-            }
-            
-            // Update active states
-            navLinks.forEach(link => {
-                link.classList.toggle('active', link.getAttribute('data-section') === section);
-            });
-            
-            sidebarLinks.forEach(link => {
-                link.classList.toggle('active', link.getAttribute('data-section') === section);
-            });
-        }
-
         function loadUsers() {
-            showLoading();
-            
             if (!db) {
-                hideLoading();
-                showAlert("Database not available", "error");
+                showAlert("Database not available. Please check Firebase configuration.", "error");
                 return;
             }
 
@@ -1669,140 +859,43 @@
                     querySnapshot.forEach((doc) => {
                         const user = doc.data();
                         user.id = doc.id;
-                        
-                        // Convert timestamps
-                        if (user.createdAt) {
-                            user.createdAtDate = user.createdAt.toDate();
-                        }
-                        
                         users.push(user);
                     });
                     
-                    updateAllStats();
+                    updateUserStats();
                     filterUsers();
-                    updateRecentUsers();
-                    hideLoading();
                 })
                 .catch((error) => {
                     console.error("Error loading users:", error);
-                    showAlert("Failed to load users: " + error.message, "error");
-                    hideLoading();
+                    showAlert("Failed to load users. Please try again.", "error");
                 });
         }
 
-        function updateAllStats() {
+        function updateUserStats() {
             const total = users.length;
             const active = users.filter(user => user.status === 'active').length;
             const pending = users.filter(user => user.status === 'pending').length;
             const inactive = users.filter(user => user.status === 'inactive').length;
-            const companies = users.filter(user => user.userType === 'company').length;
-            const individuals = users.filter(user => user.userType === 'individual').length;
             
-            // Dashboard stats
             totalUsers.textContent = total;
             activeUsers.textContent = active;
             pendingUsers.textContent = pending;
             inactiveUsers.textContent = inactive;
-            companyUsers.textContent = companies;
-            individualUsers.textContent = individuals;
-            
-            // User management stats
-            usersTotalUsers.textContent = total;
-            usersActiveUsers.textContent = active;
-            usersPendingUsers.textContent = pending;
-            usersInactiveUsers.textContent = inactive;
-        }
-
-        function updateRecentUsers() {
-            recentUsersTable.innerHTML = '';
-            const recent = users.slice(0, 5);
-            
-            if (recent.length === 0) {
-                recentUsersTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">No users found</td></tr>';
-                return;
-            }
-            
-            recent.forEach(user => {
-                const row = document.createElement('tr');
-                const initials = getInitials(user);
-                const regDate = user.createdAtDate ? user.createdAtDate.toLocaleDateString() : 'N/A';
-                const statusClass = getStatusClass(user.status);
-                const statusText = getStatusText(user.status);
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="user-cell">
-                            <div class="user-avatar-small">${initials}</div>
-                            <div>${user.name || user.adminName || user.companyName || 'N/A'}</div>
-                        </div>
-                    </td>
-                    <td>${user.email || 'N/A'}</td>
-                    <td>${user.userType === 'company' ? 'Company' : 'Individual'}</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    <td>${regDate}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}">View</button>
-                        </div>
-                    </td>
-                `;
-                
-                recentUsersTable.appendChild(row);
-            });
-            
-            // Add event listeners
-            document.querySelectorAll('#recentUsersTable .view-user').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    viewUser(userId);
-                });
-            });
         }
 
         function filterUsers() {
             const searchTerm = searchInput.value.toLowerCase();
-            const typeFilter = userTypeFilter.value;
-            const statusFilter = userStatusFilter.value;
-            const dateFilterValue = dateFilter.value;
             
-            filteredUsers = users.filter(user => {
-                // Search filter
-                const searchMatch = !searchTerm || 
-                    (user.name && user.name.toLowerCase().includes(searchTerm)) ||
-                    (user.email && user.email.toLowerCase().includes(searchTerm)) ||
-                    (user.companyName && user.companyName.toLowerCase().includes(searchTerm)) ||
-                    (user.adminName && user.adminName.toLowerCase().includes(searchTerm)) ||
-                    (user.phone && user.phone.includes(searchTerm)) ||
-                    (user.adminPhone && user.adminPhone.includes(searchTerm));
-                
-                if (!searchMatch) return false;
-                
-                // Type filter
-                if (typeFilter !== 'all' && user.userType !== typeFilter) return false;
-                
-                // Status filter
-                if (statusFilter !== 'all' && user.status !== statusFilter) return false;
-                
-                // Date filter
-                if (dateFilterValue !== 'all' && user.createdAtDate) {
-                    const now = new Date();
-                    const userDate = user.createdAtDate;
-                    
-                    if (dateFilterValue === 'today') {
-                        if (userDate.toDateString() !== now.toDateString()) return false;
-                    } else if (dateFilterValue === 'week') {
-                        const weekAgo = new Date(now.setDate(now.getDate() - 7));
-                        if (userDate < weekAgo) return false;
-                    } else if (dateFilterValue === 'month') {
-                        const monthAgo = new Date(now.setMonth(now.getMonth() - 1));
-                        if (userDate < monthAgo) return false;
-                    }
-                }
-                
-                return true;
-            });
+            if (searchTerm) {
+                filteredUsers = users.filter(user => 
+                    user.name?.toLowerCase().includes(searchTerm) || 
+                    user.email?.toLowerCase().includes(searchTerm) ||
+                    user.companyName?.toLowerCase().includes(searchTerm)
+                );
+            } else {
+                filteredUsers = [...users];
+            }
             
-            currentPage = 1;
             renderUsersTable();
             renderPagination();
         }
@@ -1817,7 +910,7 @@
             if (usersToShow.length === 0) {
                 usersTableBody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 30px;">
+                        <td colspan="6" style="text-align: center; padding: 30px;">
                             No users found
                         </td>
                     </tr>
@@ -1827,35 +920,58 @@
             
             usersToShow.forEach(user => {
                 const row = document.createElement('tr');
-                const initials = getInitials(user);
-                const regDate = user.createdAtDate ? user.createdAtDate.toLocaleDateString() : 'N/A';
-                const statusClass = getStatusClass(user.status);
-                const statusText = getStatusText(user.status);
-                const emailVerified = user.emailVerified ? 'Yes' : 'No';
-                const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never';
+                
+                // Get initials for avatar
+                const initials = user.name ? 
+                    user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 
+                    'U';
+                
+                // Format date
+                const regDate = user.createdAt ? 
+                    new Date(user.createdAt.toDate()).toLocaleDateString() : 
+                    'N/A';
+                
+                // Status badge
+                let statusClass = '';
+                let statusText = '';
+                
+                switch(user.status) {
+                    case 'active':
+                        statusClass = 'status-active';
+                        statusText = 'Active';
+                        break;
+                    case 'pending':
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                        break;
+                    case 'inactive':
+                        statusClass = 'status-inactive';
+                        statusText = 'Inactive';
+                        break;
+                    default:
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                }
                 
                 row.innerHTML = `
-                    <td class="checkbox-cell">
-                        <input type="checkbox" class="checkbox user-checkbox" data-id="${user.id}" ${selectedUsers.has(user.id) ? 'checked' : ''}>
-                    </td>
                     <td>
                         <div class="user-cell">
                             <div class="user-avatar-small">${initials}</div>
-                            <div>${user.name || user.adminName || user.companyName || 'N/A'}</div>
+                            <div>${user.name || user.adminName || 'N/A'}</div>
                         </div>
                     </td>
-                    <td>${user.email || 'N/A'}</td>
-                    <td>${user.userType === 'company' ? '<i class="fas fa-building"></i> Company' : '<i class="fas fa-user"></i> Individual'}</td>
+                    <td>${user.email}</td>
+                    <td>${user.userType === 'company' ? 'Company' : 'Individual'}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    <td>${user.phone || user.adminPhone || 'N/A'}</td>
                     <td>${regDate}</td>
-                    <td>${lastLogin}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}" title="View Details"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-warning btn-sm edit-user" data-id="${user.id}" title="Edit User"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-success btn-sm reset-password-user" data-id="${user.id}" title="Reset Password"><i class="fas fa-key"></i></button>
-                            <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}" title="Delete User"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}">View</button>
+                            ${user.status === 'active' ? 
+                                `<button class="btn btn-warning btn-sm deactivate-user" data-id="${user.id}">Deactivate</button>` : 
+                                `<button class="btn btn-success btn-sm activate-user" data-id="${user.id}">Activate</button>`
+                            }
+                            <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}">Delete</button>
                         </div>
                     </td>
                 `;
@@ -1863,40 +979,34 @@
                 usersTableBody.appendChild(row);
             });
             
-            // Add event listeners
-            document.querySelectorAll('.user-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', handleCheckboxChange);
-            });
-            
+            // Add event listeners to action buttons
             document.querySelectorAll('.view-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.currentTarget.getAttribute('data-id');
+                    const userId = e.target.getAttribute('data-id');
                     viewUser(userId);
                 });
             });
             
-            document.querySelectorAll('.edit-user').forEach(btn => {
+            document.querySelectorAll('.activate-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.currentTarget.getAttribute('data-id');
-                    editUser(userId);
+                    const userId = e.target.getAttribute('data-id');
+                    activateUser(userId);
                 });
             });
             
-            document.querySelectorAll('.reset-password-user').forEach(btn => {
+            document.querySelectorAll('.deactivate-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.currentTarget.getAttribute('data-id');
-                    resetUserPasswordById(userId);
+                    const userId = e.target.getAttribute('data-id');
+                    deactivateUser(userId);
                 });
             });
             
             document.querySelectorAll('.delete-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.currentTarget.getAttribute('data-id');
-                    showDeleteModal(userId);
+                    const userId = e.target.getAttribute('data-id');
+                    deleteUser(userId);
                 });
             });
-            
-            updateBulkActions();
         }
 
         function renderPagination() {
@@ -1952,206 +1062,53 @@
             currentEditingUserId = userId;
             modalTitle.textContent = 'User Details';
             
-            // Basic info
-            modalUserName.value = user.name || user.adminName || user.companyName || 'N/A';
+            // Fill form with user data
+            modalUserName.value = user.name || user.adminName || 'N/A';
             modalUserEmail.value = user.email || 'N/A';
             modalUserType.value = user.userType === 'company' ? 'Company' : 'Individual';
             modalUserStatus.value = user.status || 'pending';
-            modalUserPhone.value = user.phone || user.adminPhone || 'N/A';
             modalUserAddress.value = user.address || user.companyAddress || 'N/A';
-            modalEmailVerified.value = user.emailVerified ? 'Yes' : 'No';
+            modalUserPhone.value = user.phone || user.adminPhone || 'N/A';
             
-            // Registration date
-            if (user.createdAtDate) {
-                modalCreatedAt.value = user.createdAtDate.toLocaleString();
-            } else {
-                modalCreatedAt.value = 'N/A';
-            }
-            
-            // User UID
-            userUID.textContent = user.id;
-            
-            // Company or individual details
+            // Show company info if it's a company user
             if (user.userType === 'company') {
-                companyDetails.style.display = 'block';
-                individualDetails.style.display = 'none';
+                companyInfoGroup.style.display = 'block';
                 modalCompanyName.value = user.companyName || 'N/A';
-                modalAdminName.value = user.adminName || 'N/A';
             } else {
-                companyDetails.style.display = 'none';
-                individualDetails.style.display = 'block';
-                modalPurpose.value = user.purpose || 'N/A';
+                companyInfoGroup.style.display = 'none';
             }
-            
-            // Get auth info if available
-            getUserAuthInfo(user.email);
             
             userModal.style.display = 'flex';
         }
 
-        function editUser(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user) return;
+        function showAddUserModal() {
+            currentEditingUserId = null;
+            modalTitle.textContent = 'Add New User';
             
-            currentEditingUserId = userId;
-            addEditModalTitle.textContent = 'Edit User';
+            // Clear form
+            modalUserName.value = '';
+            modalUserEmail.value = '';
+            modalUserType.value = 'individual';
+            modalUserStatus.value = 'pending';
+            modalUserAddress.value = '';
+            modalUserPhone.value = '';
+            modalCompanyName.value = '';
+            companyInfoGroup.style.display = 'none';
             
-            // Set user type
-            addEditUserType.value = user.userType || 'individual';
-            toggleUserTypeFields();
-            
-            // Fill fields
-            addEditName.value = user.name || '';
-            addEditPurpose.value = user.purpose || 'personal';
-            addEditCompanyName.value = user.companyName || '';
-            addEditAdminName.value = user.adminName || '';
-            addEditEmail.value = user.email || '';
-            addEditPassword.value = ''; // Don't fill password for security
-            addEditPassword.placeholder = 'Leave blank to keep current';
-            addEditPhone.value = user.phone || user.adminPhone || '';
-            addEditAddress.value = user.address || user.companyAddress || '';
-            addEditStatus.value = user.status || 'pending';
-            
-            // Hide password field for existing users (optional to change)
-            passwordField.style.display = 'block';
-            
-            addEditUserModal.style.display = 'flex';
-        }
-
-        function showAddEditModal(mode) {
-            if (mode === 'add') {
-                currentEditingUserId = null;
-                addEditModalTitle.textContent = 'Add New User';
-                
-                // Reset form
-                addEditUserType.value = 'individual';
-                toggleUserTypeFields();
-                addEditName.value = '';
-                addEditPurpose.value = 'personal';
-                addEditCompanyName.value = '';
-                addEditAdminName.value = '';
-                addEditEmail.value = '';
-                addEditPassword.value = '';
-                addEditPassword.placeholder = 'Enter password';
-                addEditPhone.value = '';
-                addEditAddress.value = '';
-                addEditStatus.value = 'pending';
-                
-                // Show password field for new users
-                passwordField.style.display = 'block';
-            }
-            
-            addEditUserModal.style.display = 'flex';
-        }
-
-        function toggleUserTypeFields() {
-            const type = addEditUserType.value;
-            
-            if (type === 'individual') {
-                addEditIndividualFields.style.display = 'block';
-                addEditCompanyFields.style.display = 'none';
-                addEditName.required = true;
-                addEditCompanyName.required = false;
-                addEditAdminName.required = false;
-            } else {
-                addEditIndividualFields.style.display = 'none';
-                addEditCompanyFields.style.display = 'block';
-                addEditName.required = false;
-                addEditCompanyName.required = true;
-                addEditAdminName.required = true;
-            }
-        }
-
-        function createNewUser() {
-            // Validate form
-            const type = addEditUserType.value;
-            const email = addEditEmail.value;
-            const password = addEditPassword.value;
-            const phone = addEditPhone.value;
-            const address = addEditAddress.value;
-            const status = addEditStatus.value;
-            
-            if (!email || !password || !phone || !address) {
-                showAlert("Please fill all required fields", "error");
-                return;
-            }
-            
-            if (password.length < 6) {
-                showAlert("Password must be at least 6 characters", "error");
-                return;
-            }
-            
-            if (type === 'individual') {
-                const name = addEditName.value;
-                const purpose = addEditPurpose.value;
-                
-                if (!name) {
-                    showAlert("Please enter name", "error");
-                    return;
-                }
-                
-                createUserInAuth(email, password, {
-                    name: name,
-                    address: address,
-                    phone: phone,
-                    purpose: purpose,
-                    userType: 'individual',
-                    status: status
-                });
-            } else {
-                const companyName = addEditCompanyName.value;
-                const adminName = addEditAdminName.value;
-                
-                if (!companyName || !adminName) {
-                    showAlert("Please fill all company details", "error");
-                    return;
-                }
-                
-                createUserInAuth(email, password, {
-                    companyName: companyName,
-                    companyAddress: address,
-                    adminName: adminName,
-                    adminPhone: phone,
-                    userType: 'company',
-                    status: status
-                });
-            }
-        }
-
-        function createUserInAuth(email, password, userData) {
-            showLoading();
-            
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    // Save to Firestore
-                    return db.collection('users').doc(user.uid).set({
-                        uid: user.uid,
-                        ...userData,
-                        email: email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        emailVerified: false
-                    });
-                })
-                .then(() => {
-                    showAlert("User created successfully!", "success");
-                    addEditUserModal.style.display = 'none';
-                    loadUsers();
-                })
-                .catch((error) => {
-                    console.error("Error creating user:", error);
-                    showAlert("Failed to create user: " + error.message, "error");
-                    hideLoading();
-                });
+            userModal.style.display = 'flex';
         }
 
         function saveUserChanges() {
-            if (!currentEditingUserId) return;
+            if (!currentEditingUserId) {
+                // This is a new user
+                showAlert("Adding new users directly from admin panel is not implemented in this version.", "error");
+                return;
+            }
+            
+            const user = users.find(u => u.id === currentEditingUserId);
+            if (!user) return;
             
             const newStatus = modalUserStatus.value;
-            
-            showLoading();
             
             db.collection('users').doc(currentEditingUserId).update({
                 status: newStatus
@@ -2159,373 +1116,99 @@
             .then(() => {
                 showAlert(`User status updated to ${newStatus} successfully.`, "success");
                 userModal.style.display = 'none';
-                
-                // Log activity
-                logAdminActivity('status_update', currentEditingUserId, `Status changed to ${newStatus}`);
-                
                 loadUsers(); // Reload users to reflect changes
             })
             .catch((error) => {
                 console.error("Error updating user:", error);
-                showAlert("Failed to update user: " + error.message, "error");
-                hideLoading();
+                showAlert("Failed to update user. Please try again.", "error");
             });
         }
 
-        function resetUserPassword() {
-            const email = modalUserEmail.value;
+        function activateUser(userId) {
+            if (!confirm("Are you sure you want to activate this user?")) return;
             
-            if (!email || email === 'N/A') return;
-            
-            if (!confirm(`Send password reset email to ${email}?`)) return;
-            
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    showAlert(`Password reset email sent to ${email}`, "success");
-                    
-                    // Log activity
-                    logAdminActivity('password_reset', currentEditingUserId, 'Password reset requested');
-                })
-                .catch((error) => {
-                    console.error("Error sending password reset:", error);
-                    showAlert("Failed to send password reset: " + error.message, "error");
-                });
-        }
-
-        function resetUserPasswordById(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user || !user.email) return;
-            
-            if (!confirm(`Send password reset email to ${user.email}?`)) return;
-            
-            auth.sendPasswordResetEmail(user.email)
-                .then(() => {
-                    showAlert(`Password reset email sent to ${user.email}`, "success");
-                    
-                    // Log activity
-                    logAdminActivity('password_reset', userId, 'Password reset requested');
-                })
-                .catch((error) => {
-                    console.error("Error sending password reset:", error);
-                    showAlert("Failed to send password reset: " + error.message, "error");
-                });
-        }
-
-        function getUserAuthInfo(email) {
-            // In a real app, you might need a backend function to get this info
-            // For demo, we'll just show basic info
-            authInfo.style.display = 'none';
-        }
-
-        function toggleAuthInfo() {
-            if (authInfo.style.display === 'none') {
-                authInfo.style.display = 'block';
-                viewAuthInfo.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Auth Info';
-            } else {
-                authInfo.style.display = 'none';
-                viewAuthInfo.innerHTML = '<i class="fas fa-info-circle"></i> View Auth Info';
-            }
-        }
-
-        function showEmailModal() {
-            if (!currentEditingUserId) return;
-            
-            const user = users.find(u => u.id === currentEditingUserId);
-            if (!user) return;
-            
-            emailTo.value = user.email || '';
-            emailSubject.value = 'Account Update - TaskFlow Pro';
-            emailMessage.value = `Dear ${user.name || user.adminName || 'User'},\n\n`;
-            
-            emailModal.style.display = 'flex';
-        }
-
-        function sendEmail() {
-            const to = emailTo.value;
-            const subject = emailSubject.value;
-            const message = emailMessage.value;
-            
-            if (!to || !subject || !message) {
-                showAlert("Please fill all fields", "error");
-                return;
-            }
-            
-            // In a real app, you'd use a backend function to send emails
-            // For demo, we'll open mailto
-            const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-            window.open(mailtoLink);
-            
-            showAlert("Email client opened", "success");
-            emailModal.style.display = 'none';
-            
-            // Log activity
-            logAdminActivity('email_sent', currentEditingUserId, 'Email sent');
-        }
-
-        function showDeleteModal(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user) return;
-            
-            deleteUserId = userId;
-            deleteUserName.textContent = user.name || user.adminName || user.companyName || 'Unknown';
-            deleteUserEmail.textContent = user.email || 'No email';
-            
-            deleteModal.style.display = 'flex';
-        }
-
-        function confirmDelete() {
-            if (!deleteUserId) return;
-            
-            showLoading();
-            
-            // Delete from Firestore
-            db.collection('users').doc(deleteUserId).delete()
-                .then(() => {
-                    // Note: This doesn't delete from Auth
-                    // To delete from Auth, you'd need a backend function
-                    showAlert("User deleted from database successfully.", "success");
-                    
-                    // Log activity
-                    logAdminActivity('user_deleted', deleteUserId, 'User deleted');
-                    
-                    deleteModal.style.display = 'none';
-                    loadUsers();
-                })
-                .catch((error) => {
-                    console.error("Error deleting user:", error);
-                    showAlert("Failed to delete user: " + error.message, "error");
-                    hideLoading();
-                });
-        }
-
-        function handleCheckboxChange(e) {
-            const userId = e.target.getAttribute('data-id');
-            
-            if (e.target.checked) {
-                selectedUsers.add(userId);
-            } else {
-                selectedUsers.delete(userId);
-            }
-            
-            updateBulkActions();
-        }
-
-        function toggleSelectAll(e) {
-            const checkboxes = document.querySelectorAll('.user-checkbox');
-            
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = e.target.checked;
-                const userId = checkbox.getAttribute('data-id');
-                
-                if (e.target.checked) {
-                    selectedUsers.add(userId);
-                } else {
-                    selectedUsers.delete(userId);
-                }
+            db.collection('users').doc(userId).update({
+                status: 'active'
+            })
+            .then(() => {
+                showAlert("User activated successfully.", "success");
+                loadUsers(); // Reload users to reflect changes
+            })
+            .catch((error) => {
+                console.error("Error activating user:", error);
+                showAlert("Failed to activate user. Please try again.", "error");
             });
-            
-            updateBulkActions();
         }
 
-        function updateBulkActions() {
-            const count = selectedUsers.size;
+        function deactivateUser(userId) {
+            if (!confirm("Are you sure you want to deactivate this user?")) return;
             
-            if (count > 0) {
-                selectedCount.textContent = `${count} user${count > 1 ? 's' : ''} selected`;
-                bulkActions.classList.add('active');
-            } else {
-                bulkActions.classList.remove('active');
-                selectAll.checked = false;
-            }
-        }
-
-        function clearSelectedUsers() {
-            selectedUsers.clear();
-            
-            document.querySelectorAll('.user-checkbox').forEach(checkbox => {
-                checkbox.checked = false;
+            db.collection('users').doc(userId).update({
+                status: 'inactive'
+            })
+            .then(() => {
+                showAlert("User deactivated successfully.", "success");
+                loadUsers(); // Reload users to reflect changes
+            })
+            .catch((error) => {
+                console.error("Error deactivating user:", error);
+                showAlert("Failed to deactivate user. Please try again.", "error");
             });
-            
-            updateBulkActions();
         }
 
-        function bulkUpdateStatus(currentStatus, newStatus) {
-            if (selectedUsers.size === 0) return;
+        function deleteUser(userId) {
+            if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
             
-            const confirmMessage = `Update ${selectedUsers.size} user(s) from ${currentStatus} to ${newStatus}?`;
-            if (!confirm(confirmMessage)) return;
-            
-            showLoading();
-            
-            const batch = db.batch();
-            
-            selectedUsers.forEach(userId => {
-                const userRef = db.collection('users').doc(userId);
-                batch.update(userRef, { status: newStatus });
-            });
-            
-            batch.commit()
-                .then(() => {
-                    showAlert(`${selectedUsers.size} user(s) updated to ${newStatus}`, "success");
-                    
-                    // Log activity
-                    logAdminActivity('bulk_status_update', null, `${selectedUsers.size} users updated to ${newStatus}`);
-                    
-                    clearSelectedUsers();
-                    loadUsers();
-                })
-                .catch((error) => {
-                    console.error("Error in bulk update:", error);
-                    showAlert("Failed to update users: " + error.message, "error");
-                    hideLoading();
-                });
-        }
-
-        function bulkDeleteUsers() {
-            if (selectedUsers.size === 0) return;
-            
-            if (!confirm(`Are you sure you want to delete ${selectedUsers.size} user(s)? This cannot be undone.`)) return;
-            
-            showLoading();
-            
-            const batch = db.batch();
-            
-            selectedUsers.forEach(userId => {
-                const userRef = db.collection('users').doc(userId);
-                batch.delete(userRef);
-            });
-            
-            batch.commit()
-                .then(() => {
-                    showAlert(`${selectedUsers.size} user(s) deleted`, "success");
-                    
-                    // Log activity
-                    logAdminActivity('bulk_delete', null, `${selectedUsers.size} users deleted`);
-                    
-                    clearSelectedUsers();
-                    loadUsers();
-                })
-                .catch((error) => {
-                    console.error("Error in bulk delete:", error);
-                    showAlert("Failed to delete users: " + error.message, "error");
-                    hideLoading();
-                });
-        }
-
-        function bulkEmailUsers() {
-            if (selectedUsers.size === 0) return;
-            
-            const emails = Array.from(selectedUsers).map(userId => {
-                const user = users.find(u => u.id === userId);
-                return user ? user.email : null;
-            }).filter(email => email);
-            
-            if (emails.length === 0) {
-                showAlert("No valid email addresses found", "error");
-                return;
-            }
-            
-            const mailtoLink = `mailto:${emails.join(';')}?subject=TaskFlow Pro Update`;
-            window.open(mailtoLink);
-        }
-
-        function clearAllFilters() {
-            searchInput.value = '';
-            userTypeFilter.value = 'all';
-            userStatusFilter.value = 'all';
-            dateFilter.value = 'all';
-            filterUsers();
-        }
-
-        function logAdminActivity(action, targetId, details) {
-            // In a real app, you'd save this to a logs collection
-            console.log('Admin Activity:', {
-                admin: currentAdmin?.uid,
-                action: action,
-                target: targetId,
-                details: details,
-                timestamp: new Date()
+            db.collection('users').doc(userId).delete()
+            .then(() => {
+                showAlert("User deleted successfully.", "success");
+                loadUsers(); // Reload users to reflect changes
+            })
+            .catch((error) => {
+                console.error("Error deleting user:", error);
+                showAlert("Failed to delete user. Please try again.", "error");
             });
         }
 
         function handleLogout() {
-            auth.signOut()
-                .then(() => {
-                    window.location.href = 'index.html';
-                })
-                .catch((error) => {
-                    console.error("Logout error:", error);
-                    showAlert("Failed to logout. Please try again.", "error");
-                });
-        }
-
-        // Helper functions
-        function getInitials(user) {
-            if (user.name) {
-                return user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            } else if (user.adminName) {
-                return user.adminName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            } else if (user.companyName) {
-                return user.companyName.substring(0, 2).toUpperCase();
-            }
-            return 'U';
-        }
-
-        function getStatusClass(status) {
-            switch(status) {
-                case 'active': return 'status-active';
-                case 'pending': return 'status-pending';
-                case 'inactive': return 'status-inactive';
-                default: return 'status-pending';
-            }
-        }
-
-        function getStatusText(status) {
-            switch(status) {
-                case 'active': return 'Active';
-                case 'pending': return 'Pending';
-                case 'inactive': return 'Inactive';
-                default: return 'Pending';
+            if (auth) {
+                auth.signOut()
+                    .then(() => {
+                        window.location.href = 'index.html'; // Redirect to login page
+                    })
+                    .catch((error) => {
+                        console.error("Logout error:", error);
+                        showAlert("Failed to logout. Please try again.", "error");
+                    });
+            } else {
+                window.location.href = 'index.html';
             }
         }
 
         function showAlert(message, type) {
             hideAlerts();
-            
             if (type === 'success') {
                 successMessage.textContent = message;
                 successAlert.style.display = 'block';
-            } else if (type === 'error') {
+            } else {
                 errorMessage.textContent = message;
                 errorAlert.style.display = 'block';
-            } else {
-                warningMessage.textContent = message;
-                warningAlert.style.display = 'block';
             }
-            
             setTimeout(hideAlerts, 5000);
         }
 
         function hideAlerts() {
             successAlert.style.display = 'none';
             errorAlert.style.display = 'none';
-            warningAlert.style.display = 'none';
         }
 
-        function showLoading() {
-            loadingSpinner.style.display = 'block';
-            usersTableBody.style.opacity = '0.5';
-        }
-
-        function hideLoading() {
-            loadingSpinner.style.display = 'none';
-            usersTableBody.style.opacity = '1';
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            showSection('dashboard');
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === userModal) {
+                userModal.style.display = 'none';
+            }
         });
     </script>
 </body>
 </html>
+
