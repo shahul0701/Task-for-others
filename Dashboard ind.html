@@ -743,8 +743,26 @@
         </div>
     </div>
 
+    <!-- Account Not Activated Modal -->
+    <div class="modal" id="notActivatedModal" style="display: none;">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Account Not Active</h3>
+                <button class="close-modal" onclick="document.getElementById('notActivatedModal').style.display='none'">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Your account is not activated yet. Please contact support:</p>
+                <p><strong>Phone:</strong> <a href="tel:7550124452">7550124452</a></p>
+                <p><strong>Email:</strong> <a href="mailto:testtocreateapp@gmail.com">testtocreateapp@gmail.com</a></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="document.getElementById('notActivatedModal').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Firebase configuration (same as your other pages)
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDYIqCBf1qwo1dUaHVs572MiXO82vmy6lE",
             authDomain: "task-for-169b3.firebaseapp.com",
@@ -766,7 +784,6 @@
             console.log("Firebase initialized successfully");
         } catch (error) {
             console.error("Firebase initialization error:", error);
-            showAlert("Firebase failed to initialize. Please check your configuration.", "error");
         }
 
         // DOM Elements
@@ -785,6 +802,7 @@
         const pendingTasksCount = document.getElementById('pendingTasksCount');
         const userAvatar = document.getElementById('userAvatar');
         const userName = document.getElementById('userName');
+        const notActivatedModal = document.getElementById('notActivatedModal');
 
         // Stats elements
         const totalTasks = document.getElementById('totalTasks');
@@ -819,7 +837,7 @@
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     currentUser = user;
-                    checkUserApproval(user.uid);
+                    checkUserStatus(user.uid);
                 } else {
                     // Redirect to login if not authenticated
                     window.location.href = 'index.html';
@@ -827,41 +845,80 @@
             });
         }
 
-        function checkUserApproval(uid) {
+        // ===========================================
+        // FIXED: Check user status - accepts 'active' OR 'approved'
+        // ===========================================
+        function checkUserStatus(uid) {
             db.collection('users').doc(uid).get()
                 .then((doc) => {
                     if (doc.exists) {
                         const userData = doc.data();
-                        if (userData.status === 'approved') {
-                            // User is approved, load dashboard
+                        
+                        // FIXED: Check for 'active' OR 'approved' status
+                        if (userData.status === 'active' || userData.status === 'approved') {
+                            // User is active, load dashboard
                             loadUserData(userData);
                             loadTasks();
+                        } else if (userData.status === 'pending') {
+                            // Show pending message
+                            showNotActivatedMessage("Your account is pending approval. Please contact administrator.");
+                            setTimeout(() => {
+                                auth.signOut();
+                                window.location.href = 'index.html';
+                            }, 3000);
                         } else {
-                            // User not approved, redirect to login
-                            showAlert("Your account is pending approval. Please contact administrator.", "error");
+                            // Unknown status
+                            showNotActivatedMessage("Your account is not active. Please contact support.");
                             setTimeout(() => {
                                 auth.signOut();
                                 window.location.href = 'index.html';
                             }, 3000);
                         }
                     } else {
-                        showAlert("User profile not found. Please contact support.", "error");
+                        // If no user data exists, create it with active status
+                        createUserProfile(uid);
                     }
                 })
                 .catch((error) => {
-                    console.error("Error checking user approval:", error);
+                    console.error("Error checking user status:", error);
                     showAlert("Error loading user data. Please try again.", "error");
                 });
         }
 
+        // ===========================================
+        // NEW: Create user profile if it doesn't exist
+        // ===========================================
+        function createUserProfile(uid) {
+            const user = auth.currentUser;
+            
+            db.collection('users').doc(uid).set({
+                uid: uid,
+                email: user.email,
+                name: user.email.split('@')[0],
+                userType: 'individual',
+                status: 'active',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                console.log("User profile created");
+                // Reload user data
+                checkUserStatus(uid);
+            })
+            .catch((error) => {
+                console.error("Error creating user profile:", error);
+                showAlert("Error creating user profile.", "error");
+            });
+        }
+
         function loadUserData(userData) {
             // Set user name and avatar
-            const name = userData.name || userData.adminName || 'User';
+            const name = userData.name || userData.adminName || userData.email?.split('@')[0] || 'User';
             userName.textContent = name;
             
             // Set avatar initials
-            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
-            userAvatar.textContent = initials;
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            userAvatar.textContent = initials || 'U';
             
             // Show welcome message
             welcomeAlert.style.display = 'block';
@@ -887,7 +944,9 @@
                 })
                 .catch((error) => {
                     console.error("Error loading tasks:", error);
-                    showAlert("Failed to load tasks. Please try again.", "error");
+                    // If tasks collection doesn't exist, just show empty state
+                    updateTaskStats();
+                    renderTasks();
                 });
         }
 
@@ -920,9 +979,9 @@
         function renderPendingTasks() {
             pendingTasksList.innerHTML = '';
             
-            const pendingTasks = userTasks.filter(task => task.status === 'pending');
+            const pending = userTasks.filter(task => task.status === 'pending');
             
-            if (pendingTasks.length === 0) {
+            if (pending.length === 0) {
                 pendingTasksList.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-check-circle"></i>
@@ -933,7 +992,7 @@
                 return;
             }
             
-            pendingTasks.forEach(task => {
+            pending.forEach(task => {
                 const taskElement = createTaskElement(task);
                 pendingTasksList.appendChild(taskElement);
             });
@@ -942,11 +1001,11 @@
         function renderCompletedTasks() {
             completedTasksList.innerHTML = '';
             
-            const completedTasks = userTasks
+            const completed = userTasks
                 .filter(task => task.status === 'completed')
-                .slice(0, 5); // Show only recent 5 completed tasks
+                .slice(0, 5);
             
-            if (completedTasks.length === 0) {
+            if (completed.length === 0) {
                 completedTasksList.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-tasks"></i>
@@ -957,7 +1016,7 @@
                 return;
             }
             
-            completedTasks.forEach(task => {
+            completed.forEach(task => {
                 const taskElement = createTaskElement(task);
                 completedTasksList.appendChild(taskElement);
             });
@@ -1001,17 +1060,20 @@
             // Add event listeners to action buttons
             if (task.status === 'pending') {
                 taskDiv.querySelector('.complete-task').addEventListener('click', (e) => {
+                    e.stopPropagation();
                     const taskId = e.target.getAttribute('data-id');
                     completeTask(taskId);
                 });
             } else {
                 taskDiv.querySelector('.reopen-task').addEventListener('click', (e) => {
+                    e.stopPropagation();
                     const taskId = e.target.getAttribute('data-id');
                     reopenTask(taskId);
                 });
             }
             
             taskDiv.querySelector('.delete-task').addEventListener('click', (e) => {
+                e.stopPropagation();
                 const taskId = e.target.getAttribute('data-id');
                 deleteTask(taskId);
             });
@@ -1026,6 +1088,7 @@
             // Set minimum date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('taskDueDate').min = today;
+            document.getElementById('taskDueDate').value = today;
             
             taskModal.style.display = 'flex';
         }
@@ -1061,7 +1124,7 @@
                 .then(() => {
                     showAlert("Task created successfully!", "success");
                     taskModal.style.display = 'none';
-                    loadTasks(); // Reload tasks to show the new one
+                    loadTasks();
                 })
                 .catch((error) => {
                     console.error("Error creating task:", error);
@@ -1077,7 +1140,7 @@
             })
             .then(() => {
                 showAlert("Task completed successfully!", "success");
-                loadTasks(); // Reload tasks to reflect changes
+                loadTasks();
             })
             .catch((error) => {
                 console.error("Error completing task:", error);
@@ -1093,7 +1156,7 @@
             })
             .then(() => {
                 showAlert("Task reopened successfully!", "success");
-                loadTasks(); // Reload tasks to reflect changes
+                loadTasks();
             })
             .catch((error) => {
                 console.error("Error reopening task:", error);
@@ -1105,14 +1168,14 @@
             if (!confirm("Are you sure you want to delete this task? This action cannot be undone.")) return;
             
             db.collection('tasks').doc(taskId).delete()
-            .then(() => {
-                showAlert("Task deleted successfully!", "success");
-                loadTasks(); // Reload tasks to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error deleting task:", error);
-                showAlert("Failed to delete task. Please try again.", "error");
-            });
+                .then(() => {
+                    showAlert("Task deleted successfully!", "success");
+                    loadTasks();
+                })
+                .catch((error) => {
+                    console.error("Error deleting task:", error);
+                    showAlert("Failed to delete task. Please try again.", "error");
+                });
         }
 
         function handleLogout() {
@@ -1147,10 +1210,17 @@
             errorAlert.style.display = 'none';
         }
 
+        function showNotActivatedMessage(message) {
+            notActivatedModal.style.display = 'flex';
+        }
+
         // Close modal when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === taskModal) {
                 taskModal.style.display = 'none';
+            }
+            if (e.target === notActivatedModal) {
+                notActivatedModal.style.display = 'none';
             }
         });
 
@@ -1158,7 +1228,36 @@
         window.addEventListener('load', () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('taskDueDate').min = today;
+            document.getElementById('taskDueDate').value = today;
         });
+
+        // ===========================================
+        // FIX EXISTING USERS FUNCTION
+        // Run this in browser console to fix all users
+        // ===========================================
+        window.fixAllUsers = function() {
+            if (!db) return;
+            
+            db.collection('users').get().then((snapshot) => {
+                const batch = db.batch();
+                let count = 0;
+                snapshot.forEach(doc => {
+                    const userData = doc.data();
+                    if (userData.status === 'pending' || userData.status === 'approved') {
+                        batch.update(doc.ref, { status: 'active' });
+                        count++;
+                    }
+                });
+                return batch.commit().then(() => {
+                    alert(`Fixed ${count} users! They can now log in.`);
+                });
+            }).catch(err => {
+                console.error("Error fixing users:", err);
+                alert("Error fixing users: " + err.message);
+            });
+        };
+
+        console.log("🔧 To fix existing users, run: fixAllUsers()");
     </script>
 </body>
 </html>
