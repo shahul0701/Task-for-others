@@ -420,7 +420,7 @@
             border-radius: var(--radius);
             padding: 20px;
             margin-bottom: 25px;
-            display: flex;
+            display: none;
             gap: 20px;
             flex-wrap: wrap;
             align-items: center;
@@ -486,13 +486,14 @@
             border-color: var(--primary);
         }
 
-        /* Account Types Management */
+        /* Account Types Panel */
         .account-types-panel {
             background: white;
             border-radius: var(--radius);
             padding: 20px;
             margin-bottom: 25px;
             border: 1px solid var(--light-gray);
+            display: none;
         }
 
         .panel-header {
@@ -1028,6 +1029,39 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            gap: 5px;
+        }
+
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid var(--light-gray);
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+        }
+
+        .pagination button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .form-row,
@@ -1201,7 +1235,7 @@
             </div>
 
             <!-- Department Management (Collapsible) -->
-            <div class="dept-management" id="deptManagement" style="display: none;">
+            <div class="dept-management" id="deptManagement">
                 <div class="dept-tags" id="deptTags"></div>
                 <button class="add-dept-btn" onclick="showAddDepartmentModal()">
                     <i class="fas fa-plus"></i> Add Department
@@ -1209,7 +1243,7 @@
             </div>
 
             <!-- Account Types Panel -->
-            <div class="account-types-panel" id="accountTypesPanel" style="display: none;">
+            <div class="account-types-panel" id="accountTypesPanel">
                 <div class="panel-header">
                     <h3><i class="fas fa-book"></i> Account Types</h3>
                     <button class="btn btn-primary btn-sm" onclick="showAddAccountTypeModal()">
@@ -1349,7 +1383,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Next Due Date</label>
+                            <label>Due Date</label>
                             <input type="date" id="taskDueDate" class="form-control" required>
                         </div>
                     </div>
@@ -1404,7 +1438,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Department Name</label>
+                    <label>Department Name <span style="color: var(--danger);">*</span></label>
                     <input type="text" id="deptName" class="form-control" placeholder="e.g., Accounts Payable">
                 </div>
                 <div class="form-group">
@@ -1417,7 +1451,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="saveDeptBtn">Add Department</button>
+                <button class="btn btn-primary" id="saveDeptBtn"><i class="fas fa-save"></i> Add Department</button>
                 <button class="btn" id="cancelDeptModalBtn">Cancel</button>
             </div>
         </div>
@@ -1432,7 +1466,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Account Type Name</label>
+                    <label>Account Type Name <span style="color: var(--danger);">*</span></label>
                     <input type="text" id="accountTypeName" class="form-control" placeholder="e.g., Accounts Receivable">
                 </div>
                 <div class="form-group">
@@ -1445,7 +1479,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="saveAccountTypeBtn">Add Account Type</button>
+                <button class="btn btn-primary" id="saveAccountTypeBtn"><i class="fas fa-save"></i> Add Account Type</button>
                 <button class="btn" id="cancelAccountModalBtn">Cancel</button>
             </div>
         </div>
@@ -1505,6 +1539,17 @@
             }
             auth = firebase.auth();
             db = firebase.firestore();
+            
+            // Enable offline persistence for better performance
+            db.enablePersistence()
+                .catch((err) => {
+                    if (err.code == 'failed-precondition') {
+                        console.log('Persistence failed');
+                    } else if (err.code == 'unimplemented') {
+                        console.log('Persistence not available');
+                    }
+                });
+                
             console.log("✅ Firebase initialized");
         } catch (error) {
             console.error("❌ Firebase error:", error);
@@ -1578,6 +1623,18 @@
         const taskTags = document.getElementById('taskTags');
         const createRecurring = document.getElementById('createRecurring');
 
+        // Modal close buttons
+        const closeTaskModalBtn = document.getElementById('closeTaskModalBtn');
+        const cancelTaskModalBtn = document.getElementById('cancelTaskModalBtn');
+        const closeDeptModalBtn = document.getElementById('closeDeptModalBtn');
+        const cancelDeptModalBtn = document.getElementById('cancelDeptModalBtn');
+        const closeAccountModalBtn = document.getElementById('closeAccountModalBtn');
+        const cancelAccountModalBtn = document.getElementById('cancelAccountModalBtn');
+        const closePdfModalBtn = document.getElementById('closePdfModalBtn');
+        const closePdfModalBtn2 = document.getElementById('closePdfModalBtn2');
+        const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
+        const cancelDeleteModalBtn = document.getElementById('cancelDeleteModalBtn');
+
         // Global variables
         let currentUser = null;
         let allTasks = [];
@@ -1603,14 +1660,95 @@
             auth.onAuthStateChanged(user => {
                 if (user) {
                     currentUser = user;
+                    document.getElementById('taskAssignedBy').value = user.email || 'Self';
                     loadUserData();
-                    loadDepartments();
-                    loadAccountTypes();
-                    loadTasks();
+                    initializeCollections();
                 } else {
                     window.location.href = 'index.html';
                 }
             });
+        }
+
+        function initializeCollections() {
+            // Show loading
+            showLoading();
+            
+            // Create a batch to initialize collections
+            const batch = db.batch();
+            
+            // Check and initialize departments collection
+            db.collection('departments').limit(1).get()
+                .then(snapshot => {
+                    if (snapshot.empty) {
+                        // Add sample departments
+                        const sampleDepts = [
+                            { name: 'Accounts Payable', code: 'AP', description: 'Manage vendor payments and invoices', isSample: true },
+                            { name: 'Accounts Receivable', code: 'AR', description: 'Manage customer payments and collections', isSample: true },
+                            { name: 'General Ledger', code: 'GL', description: 'Maintain chart of accounts and journal entries', isSample: true },
+                            { name: 'Tax Department', code: 'TAX', description: 'Handle tax compliance and reporting', isSample: true },
+                            { name: 'Payroll', code: 'PR', description: 'Process employee salaries and benefits', isSample: true }
+                        ];
+                        
+                        sampleDepts.forEach(dept => {
+                            const docRef = db.collection('departments').doc();
+                            batch.set(docRef, {
+                                ...dept,
+                                userId: currentUser.uid,
+                                userEmail: currentUser.email,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        });
+                    }
+                })
+                .catch(err => console.log('Departments collection check:', err));
+
+            // Check and initialize accountTypes collection
+            db.collection('accountTypes').limit(1).get()
+                .then(snapshot => {
+                    if (snapshot.empty) {
+                        // Add sample account types
+                        const sampleAccounts = [
+                            { name: 'Cash', format: 'CASH-{number}', description: 'Cash and bank accounts', isSample: true },
+                            { name: 'Accounts Receivable', format: 'AR-{number}', description: 'Customer receivables', isSample: true },
+                            { name: 'Inventory', format: 'INV-{number}', description: 'Product inventory', isSample: true },
+                            { name: 'Fixed Assets', format: 'FA-{number}', description: 'Property, plant and equipment', isSample: true },
+                            { name: 'Accounts Payable', format: 'AP-{number}', description: 'Vendor payables', isSample: true },
+                            { name: 'Accrued Liabilities', format: 'AL-{number}', description: 'Accrued expenses', isSample: true },
+                            { name: 'Equity', format: 'EQ-{number}', description: 'Owner\'s equity', isSample: true },
+                            { name: 'Revenue', format: 'REV-{number}', description: 'Sales and revenue', isSample: true },
+                            { name: 'Cost of Goods Sold', format: 'COGS-{number}', description: 'Direct costs', isSample: true },
+                            { name: 'Operating Expenses', format: 'EXP-{number}', description: 'Operating expenses', isSample: true }
+                        ];
+                        
+                        sampleAccounts.forEach(account => {
+                            const docRef = db.collection('accountTypes').doc();
+                            batch.set(docRef, {
+                                ...account,
+                                userId: currentUser.uid,
+                                userEmail: currentUser.email,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        });
+                    }
+                })
+                .catch(err => console.log('AccountTypes collection check:', err));
+
+            // Commit the batch
+            batch.commit()
+                .then(() => {
+                    console.log('Collections initialized');
+                    // Load data
+                    loadDepartments();
+                    loadAccountTypes();
+                    loadTasks();
+                })
+                .catch(err => {
+                    console.error('Error initializing collections:', err);
+                    // Still try to load data
+                    loadDepartments();
+                    loadAccountTypes();
+                    loadTasks();
+                });
         }
 
         function loadUserData() {
@@ -1624,6 +1762,17 @@
                         
                         const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
                         userAvatar.textContent = initials || 'U';
+                    } else {
+                        // Create user document if it doesn't exist
+                        db.collection('users').doc(currentUser.uid).set({
+                            email: currentUser.email,
+                            name: currentUser.email.split('@')[0],
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }).then(() => {
+                            userDisplayName.textContent = currentUser.email.split('@')[0];
+                            welcomeName.textContent = currentUser.email.split('@')[0];
+                            userAvatar.textContent = currentUser.email.charAt(0).toUpperCase();
+                        });
                     }
                 })
                 .catch(err => console.error("Error loading user:", err));
@@ -1633,40 +1782,78 @@
         function loadDepartments() {
             db.collection('departments')
                 .where('userId', '==', currentUser.uid)
+                .orderBy('name')
                 .get()
                 .then(snapshot => {
                     departments = [];
                     snapshot.forEach(doc => {
-                        departments.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
+                        // Skip sample documents if they exist
+                        const data = doc.data();
+                        if (!data.isSample) {
+                            departments.push({
+                                id: doc.id,
+                                ...data
+                            });
+                        }
                     });
+                    
+                    // If no real departments, show sample ones
+                    if (departments.length === 0) {
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            departments.push({
+                                id: doc.id,
+                                ...data
+                            });
+                        });
+                    }
                     
                     updateDepartmentFilters();
                     renderDepartmentTags();
                 })
-                .catch(err => console.error("Error loading departments:", err));
+                .catch(err => {
+                    console.error("Error loading departments:", err);
+                    showError("Failed to load departments");
+                });
         }
 
         // Load Account Types
         function loadAccountTypes() {
             db.collection('accountTypes')
                 .where('userId', '==', currentUser.uid)
+                .orderBy('name')
                 .get()
                 .then(snapshot => {
                     accountTypes = [];
                     snapshot.forEach(doc => {
-                        accountTypes.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
+                        // Skip sample documents if they exist
+                        const data = doc.data();
+                        if (!data.isSample) {
+                            accountTypes.push({
+                                id: doc.id,
+                                ...data
+                            });
+                        }
                     });
+                    
+                    // If no real account types, show sample ones
+                    if (accountTypes.length === 0) {
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            accountTypes.push({
+                                id: doc.id,
+                                ...data
+                            });
+                        });
+                    }
                     
                     updateAccountTypeFilters();
                     renderAccountTypesGrid();
                 })
-                .catch(err => console.error("Error loading account types:", err));
+                .catch(err => {
+                    console.error("Error loading account types:", err);
+                    showError("Failed to load account types");
+                });
         }
 
         // Update Department Filters
@@ -1674,13 +1861,13 @@
             // Update department filter in nav
             deptFilter.innerHTML = '<option value="all">All Departments</option>';
             departments.forEach(dept => {
-                deptFilter.innerHTML += `<option value="${dept.id}">${dept.name}</option>`;
+                deptFilter.innerHTML += `<option value="${dept.id}">${dept.name} ${dept.code ? '('+dept.code+')' : ''}</option>`;
             });
 
             // Update department dropdown in task form
             taskDepartment.innerHTML = '<option value="">Select Department</option>';
             departments.forEach(dept => {
-                taskDepartment.innerHTML += `<option value="${dept.id}">${dept.name}</option>`;
+                taskDepartment.innerHTML += `<option value="${dept.id}">${dept.name} ${dept.code ? '('+dept.code+')' : ''}</option>`;
             });
         }
 
@@ -1725,9 +1912,9 @@
                         <div class="account-info">
                             <h4>${type.name}</h4>
                             <p>${type.format || 'No format'}</p>
+                            <small>${type.description || ''}</small>
                         </div>
                         <div class="actions">
-                            <i class="fas fa-edit" onclick="editAccountType('${type.id}')"></i>
                             <i class="fas fa-trash" onclick="showDeleteAccountModal('${type.id}', '${type.name}')"></i>
                         </div>
                     </div>
@@ -1758,7 +1945,7 @@
                         allTasks.push(task);
                     });
                     
-                    // Sort by due date for upcoming tasks
+                    // Sort by due date
                     allTasks.sort((a, b) => {
                         const dateA = a.dueDate ? new Date(a.dueDate) : new Date(9999, 11, 31);
                         const dateB = b.dueDate ? new Date(b.dueDate) : new Date(9999, 11, 31);
@@ -1800,6 +1987,8 @@
             
             if (upcoming.length > 0) {
                 renderUpcomingTasks(upcoming);
+            } else {
+                upcomingTasks.innerHTML = '<div class="empty-state"><p>No upcoming tasks</p></div>';
             }
         }
 
@@ -1903,7 +2092,8 @@
                 filteredTasks = filteredTasks.filter(t => 
                     (t.title?.toLowerCase().includes(searchTerm)) ||
                     (t.description?.toLowerCase().includes(searchTerm)) ||
-                    (t.accountNumber?.toLowerCase().includes(searchTerm))
+                    (t.accountNumber?.toLowerCase().includes(searchTerm)) ||
+                    (t.tags?.toLowerCase().includes(searchTerm))
                 );
             }
             
@@ -1949,7 +2139,7 @@
                     <div class="empty-state">
                         <i class="fas fa-calculator"></i>
                         <h3>No accounting tasks found</h3>
-                        <p>Create your first task to get started!</p>
+                        <p>${filteredTasks.length === 0 ? 'Create your first task to get started!' : 'Try adjusting your filters'}</p>
                         <button class="btn btn-primary" onclick="document.getElementById('addTaskBtn').click()">
                             <i class="fas fa-plus-circle"></i> Create Task
                         </button>
@@ -1960,17 +2150,6 @@
             
             tasksWrapper.className = currentViewMode === 'grid' ? 'tasks-grid' : 'tasks-list';
             tasksWrapper.innerHTML = pageTasks.map(task => createTaskHTML(task)).join('');
-            
-            // Add event listeners
-            pageTasks.forEach(task => {
-                const element = document.querySelector(`[data-task-id="${task.id}"]`);
-                if (element) {
-                    element.querySelector('.view-task')?.addEventListener('click', () => viewTask(task.id));
-                    element.querySelector('.edit-task')?.addEventListener('click', () => editTask(task.id));
-                    element.querySelector('.complete-task')?.addEventListener('click', () => completeTask(task.id));
-                    element.querySelector('.delete-task')?.addEventListener('click', () => showDeleteTaskModal(task.id, task.title));
-                }
-            });
         }
 
         // Create Task HTML
@@ -2047,18 +2226,18 @@
                         
                         <div class="task-footer">
                             <div class="task-actions">
-                                <button class="btn btn-primary btn-sm view-task" title="View Details">
+                                <button class="btn btn-primary btn-sm view-task" onclick="viewTask('${task.id}')" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-warning btn-sm edit-task" title="Edit">
+                                <button class="btn btn-warning btn-sm edit-task" onclick="editTask('${task.id}')" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 ${task.status !== 'completed' ? `
-                                    <button class="btn btn-success btn-sm complete-task" title="Complete">
+                                    <button class="btn btn-success btn-sm complete-task" onclick="completeTask('${task.id}')" title="Complete">
                                         <i class="fas fa-check"></i>
                                     </button>
                                 ` : ''}
-                                <button class="btn btn-danger btn-sm delete-task" title="Delete">
+                                <button class="btn btn-danger btn-sm delete-task" onclick="showDeleteTaskModal('${task.id}', '${task.title}')" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -2111,31 +2290,6 @@
             return date.toISOString().split('T')[0];
         }
 
-        // Create Recurring Tasks
-        function createRecurringTasks(taskData, numberOfInstances = 12) {
-            const tasks = [];
-            let currentDueDate = taskData.dueDate;
-            
-            for (let i = 1; i <= numberOfInstances; i++) {
-                if (i > 1) {
-                    currentDueDate = calculateNextDueDate(currentDueDate, taskData.recurrence);
-                    if (!currentDueDate) break;
-                }
-                
-                const newTask = {
-                    ...taskData,
-                    dueDate: currentDueDate,
-                    recurrenceInstance: i,
-                    parentTaskId: taskData.parentTaskId || taskData.id,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                tasks.push(newTask);
-            }
-            
-            return tasks;
-        }
-
         // Save Task
         function saveTask() {
             const title = taskTitle.value.trim();
@@ -2150,6 +2304,12 @@
                 showError("Please select a due date");
                 return;
             }
+            
+            // Show loading state
+            const saveBtn = document.getElementById('saveTaskBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
             
             const taskData = {
                 title: title,
@@ -2166,6 +2326,7 @@
                 notes: taskNotes.value.trim(),
                 tags: taskTags.value,
                 userId: currentUser.uid,
+                userEmail: currentUser.email,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
@@ -2175,63 +2336,154 @@
                     .then(() => {
                         showSuccess("Task updated successfully!");
                         taskModal.style.display = 'none';
-                        
-                        // Create recurring instances if needed
-                        if (createRecurring.checked && taskData.recurrence !== 'one-time') {
-                            const recurringTasks = createRecurringTasks({
-                                ...taskData,
-                                parentTaskId: currentEditingTask.id
-                            }, 12);
-                            
-                            const batch = db.batch();
-                            recurringTasks.forEach(task => {
-                                const ref = db.collection('tasks').doc();
-                                batch.set(ref, task);
-                            });
-                            
-                            return batch.commit().then(() => {
-                                showSuccess("Recurring tasks created!");
-                            });
-                        }
+                        loadTasks();
                     })
-                    .then(() => loadTasks())
                     .catch(err => {
                         console.error("Error updating task:", err);
-                        showError("Failed to update task");
+                        showError("Failed to update task: " + err.message);
+                    })
+                    .finally(() => {
+                        saveBtn.innerHTML = originalText;
+                        saveBtn.disabled = false;
                     });
             } else {
                 // Create new task
                 taskData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 
                 db.collection('tasks').add(taskData)
-                    .then(docRef => {
+                    .then(() => {
                         showSuccess("Task created successfully!");
                         taskModal.style.display = 'none';
-                        
-                        // Create recurring instances if needed
-                        if (createRecurring.checked && taskData.recurrence !== 'one-time') {
-                            const recurringTasks = createRecurringTasks({
-                                ...taskData,
-                                parentTaskId: docRef.id
-                            }, 12);
-                            
-                            const batch = db.batch();
-                            recurringTasks.forEach(task => {
-                                const ref = db.collection('tasks').doc();
-                                batch.set(ref, task);
-                            });
-                            
-                            return batch.commit().then(() => {
-                                showSuccess("Recurring tasks created!");
-                            });
-                        }
+                        loadTasks();
                     })
-                    .then(() => loadTasks())
                     .catch(err => {
                         console.error("Error creating task:", err);
-                        showError("Failed to create task");
+                        showError("Failed to create task: " + err.message);
+                    })
+                    .finally(() => {
+                        saveBtn.innerHTML = originalText;
+                        saveBtn.disabled = false;
                     });
             }
+        }
+
+        // Save Department - FIXED VERSION
+        function saveDepartment() {
+            const name = document.getElementById('deptName').value.trim();
+            const code = document.getElementById('deptCode').value.trim();
+            const description = document.getElementById('deptDescription').value.trim();
+            
+            if (!name) {
+                showError("Please enter department name");
+                return;
+            }
+            
+            // Show loading state
+            const saveBtn = document.getElementById('saveDeptBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+            
+            const deptData = {
+                name: name,
+                code: code || '',
+                description: description || '',
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Add to Firestore
+            db.collection('departments').add(deptData)
+                .then((docRef) => {
+                    console.log("Department added with ID:", docRef.id);
+                    showSuccess(`Department "${name}" added successfully!`);
+                    departmentModal.style.display = 'none';
+                    
+                    // Reset form
+                    document.getElementById('deptName').value = '';
+                    document.getElementById('deptCode').value = '';
+                    document.getElementById('deptDescription').value = '';
+                    
+                    // Reload departments
+                    loadDepartments();
+                })
+                .catch(err => {
+                    console.error("Error adding department:", err);
+                    
+                    // More specific error messages
+                    if (err.code === 'permission-denied') {
+                        showError("Permission denied. Please check Firebase security rules.");
+                    } else if (err.code === 'unavailable') {
+                        showError("Network error. Please check your internet connection.");
+                    } else if (err.code === 'not-found') {
+                        showError("Database not found. Please check Firebase configuration.");
+                    } else {
+                        showError(`Failed to add department: ${err.message}`);
+                    }
+                })
+                .finally(() => {
+                    // Restore button
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
+                });
+        }
+
+        // Save Account Type
+        function saveAccountType() {
+            const name = document.getElementById('accountTypeName').value.trim();
+            const format = document.getElementById('accountNumberFormat').value.trim();
+            const description = document.getElementById('accountTypeDesc').value.trim();
+            
+            if (!name) {
+                showError("Please enter account type name");
+                return;
+            }
+            
+            // Show loading state
+            const saveBtn = document.getElementById('saveAccountTypeBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+            
+            const accountData = {
+                name: name,
+                format: format || '',
+                description: description || '',
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            db.collection('accountTypes').add(accountData)
+                .then((docRef) => {
+                    console.log("Account type added with ID:", docRef.id);
+                    showSuccess(`Account type "${name}" added successfully!`);
+                    accountTypeModal.style.display = 'none';
+                    
+                    // Reset form
+                    document.getElementById('accountTypeName').value = '';
+                    document.getElementById('accountNumberFormat').value = '';
+                    document.getElementById('accountTypeDesc').value = '';
+                    
+                    // Reload account types
+                    loadAccountTypes();
+                })
+                .catch(err => {
+                    console.error("Error adding account type:", err);
+                    
+                    if (err.code === 'permission-denied') {
+                        showError("Permission denied. Please check Firebase security rules.");
+                    } else {
+                        showError(`Failed to add account type: ${err.message}`);
+                    }
+                })
+                .finally(() => {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
+                });
         }
 
         // Complete Task
@@ -2243,30 +2495,6 @@
             })
             .then(() => {
                 showSuccess("Task completed! 🎉");
-                
-                // Check if it's a recurring task and create next instance
-                const task = allTasks.find(t => t.id === taskId);
-                if (task && task.recurrence && task.recurrence !== 'one-time') {
-                    const nextDueDate = calculateNextDueDate(task.dueDate, task.recurrence);
-                    if (nextDueDate) {
-                        const newTask = {
-                            ...task,
-                            id: null,
-                            status: 'not-started',
-                            dueDate: nextDueDate,
-                            recurrenceInstance: (task.recurrenceInstance || 1) + 1,
-                            parentTaskId: task.parentTaskId || task.id,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        };
-                        delete newTask.id;
-                        
-                        db.collection('tasks').add(newTask)
-                            .then(() => {
-                                showInfo("Next recurring task created!");
-                            });
-                    }
-                }
-                
                 loadTasks();
             })
             .catch(err => {
@@ -2285,8 +2513,15 @@
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
-            // Show task details in a modal or expanded view
-            alert(`Task: ${task.title}\nDepartment: ${getDepartmentName(task.department)}\nAccount: ${getAccountTypeName(task.accountType)} ${task.accountNumber || ''}\nDue: ${task.dueDate}`);
+            // Simple alert for now - can be enhanced with a detailed modal
+            alert(`Task: ${task.title}\n\n` +
+                  `Department: ${getDepartmentName(task.department)}\n` +
+                  `Account: ${getAccountTypeName(task.accountType)} ${task.accountNumber || ''}\n` +
+                  `Status: ${task.status}\n` +
+                  `Priority: ${task.priority}\n` +
+                  `Due: ${task.dueDate} ${task.dueTime || ''}\n` +
+                  `Assigned To: ${task.assignedTo || 'Unassigned'}\n\n` +
+                  `Description: ${task.description || 'No description'}`);
         }
 
         // Edit Task
@@ -2379,6 +2614,11 @@
 
         // Generate PDF Report
         function generatePDFReport() {
+            if (allTasks.length === 0) {
+                showWarning("No tasks to generate report");
+                return;
+            }
+            
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({
                 orientation: 'landscape',
@@ -2429,26 +2669,6 @@
                 doc.text(value.toString(), 55, yPos + 7);
                 doc.setFont('helvetica', 'normal');
                 yPos += 12;
-            });
-            
-            // Department breakdown
-            yPos = 40;
-            doc.setTextColor(30, 60, 114);
-            doc.setFontSize(12);
-            doc.text('Department Breakdown', 80, 30);
-            
-            const deptStats = departments.map(dept => {
-                const count = allTasks.filter(t => t.department === dept.id).length;
-                return [dept.name, count];
-            });
-            
-            doc.autoTable({
-                startY: 35,
-                margin: { left: 80 },
-                head: [['Department', 'Tasks']],
-                body: deptStats,
-                theme: 'grid',
-                headStyles: { fillColor: [30, 60, 114] }
             });
             
             // Tasks table
@@ -2502,74 +2722,12 @@
             departmentModal.style.display = 'flex';
         }
 
-        // Save Department
-        function saveDepartment() {
-            const name = document.getElementById('deptName').value.trim();
-            const code = document.getElementById('deptCode').value.trim();
-            const description = document.getElementById('deptDescription').value.trim();
-            
-            if (!name) {
-                showError("Please enter department name");
-                return;
-            }
-            
-            const deptData = {
-                name: name,
-                code: code,
-                description: description,
-                userId: currentUser.uid,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            db.collection('departments').add(deptData)
-                .then(() => {
-                    showSuccess("Department added successfully!");
-                    departmentModal.style.display = 'none';
-                    loadDepartments();
-                })
-                .catch(err => {
-                    console.error("Error adding department:", err);
-                    showError("Failed to add department");
-                });
-        }
-
         // Show Add Account Type Modal
         function showAddAccountTypeModal() {
             document.getElementById('accountTypeName').value = '';
             document.getElementById('accountNumberFormat').value = '';
             document.getElementById('accountTypeDesc').value = '';
             accountTypeModal.style.display = 'flex';
-        }
-
-        // Save Account Type
-        function saveAccountType() {
-            const name = document.getElementById('accountTypeName').value.trim();
-            const format = document.getElementById('accountNumberFormat').value.trim();
-            const description = document.getElementById('accountTypeDesc').value.trim();
-            
-            if (!name) {
-                showError("Please enter account type name");
-                return;
-            }
-            
-            const accountData = {
-                name: name,
-                format: format,
-                description: description,
-                userId: currentUser.uid,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            db.collection('accountTypes').add(accountData)
-                .then(() => {
-                    showSuccess("Account type added successfully!");
-                    accountTypeModal.style.display = 'none';
-                    loadAccountTypes();
-                })
-                .catch(err => {
-                    console.error("Error adding account type:", err);
-                    showError("Failed to add account type");
-                });
         }
 
         // Filter by Department
@@ -2737,20 +2895,20 @@
             document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
             
             // Close modals
-            document.getElementById('closeTaskModalBtn').addEventListener('click', () => taskModal.style.display = 'none');
-            document.getElementById('cancelTaskModalBtn').addEventListener('click', () => taskModal.style.display = 'none');
+            closeTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
+            cancelTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
             
-            document.getElementById('closeDeptModalBtn').addEventListener('click', () => departmentModal.style.display = 'none');
-            document.getElementById('cancelDeptModalBtn').addEventListener('click', () => departmentModal.style.display = 'none');
+            closeDeptModalBtn.addEventListener('click', () => departmentModal.style.display = 'none');
+            cancelDeptModalBtn.addEventListener('click', () => departmentModal.style.display = 'none');
             
-            document.getElementById('closeAccountModalBtn').addEventListener('click', () => accountTypeModal.style.display = 'none');
-            document.getElementById('cancelAccountModalBtn').addEventListener('click', () => accountTypeModal.style.display = 'none');
+            closeAccountModalBtn.addEventListener('click', () => accountTypeModal.style.display = 'none');
+            cancelAccountModalBtn.addEventListener('click', () => accountTypeModal.style.display = 'none');
             
-            document.getElementById('closePdfModalBtn').addEventListener('click', () => pdfPreviewModal.style.display = 'none');
-            document.getElementById('closePdfModalBtn2').addEventListener('click', () => pdfPreviewModal.style.display = 'none');
+            closePdfModalBtn.addEventListener('click', () => pdfPreviewModal.style.display = 'none');
+            closePdfModalBtn2.addEventListener('click', () => pdfPreviewModal.style.display = 'none');
             
-            document.getElementById('closeDeleteModalBtn').addEventListener('click', () => deleteModal.style.display = 'none');
-            document.getElementById('cancelDeleteModalBtn').addEventListener('click', () => deleteModal.style.display = 'none');
+            closeDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
+            cancelDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
         }
 
         // Make functions global
@@ -2769,10 +2927,6 @@
         window.toggleUpcomingPanel = toggleUpcomingPanel;
         window.toggleDeptManagement = toggleDeptManagement;
         window.toggleAccountTypes = toggleAccountTypes;
-        window.editAccountType = (id) => {
-            // Implement edit functionality
-            showInfo("Edit feature coming soon");
-        };
     </script>
 </body>
 </html>
