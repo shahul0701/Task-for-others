@@ -230,6 +230,7 @@
         .stat-icon.warning { background: var(--warning); }
         .stat-icon.danger { background: var(--danger); }
         .stat-icon.info { background: var(--info); }
+        .stat-icon.gray { background: var(--gray); }
 
         .stat-info h3 {
             font-size: 2rem;
@@ -1064,7 +1065,7 @@
                     </div>
                 </div>
                 <div class="stat-card" onclick="filterByStatus('not-started')">
-                    <div class="stat-icon" style="background: var(--gray);">
+                    <div class="stat-icon gray">
                         <i class="fas fa-circle"></i>
                     </div>
                     <div class="stat-info">
@@ -1635,12 +1636,15 @@
                 .catch(err => console.error("Error loading user:", err));
         }
 
+        // ===========================================
+        // FIXED: loadTasks() - Removed orderBy to avoid index requirement
+        // ===========================================
         function loadTasks() {
             showLoading();
             
+            // Removed .orderBy('createdAt', 'desc') to avoid requiring a composite index
             db.collection('tasks')
                 .where('userId', '==', currentUser.uid)
-                .orderBy('createdAt', 'desc')
                 .get()
                 .then(snapshot => {
                     allTasks = [];
@@ -1648,11 +1652,21 @@
                         const task = doc.data();
                         task.id = doc.id;
                         
-                        if (task.createdAt?.toDate) {
+                        // Convert Firestore timestamps to JavaScript Date objects
+                        if (task.createdAt && typeof task.createdAt.toDate === 'function') {
                             task.createdAtDate = task.createdAt.toDate();
+                        } else {
+                            task.createdAtDate = new Date();
                         }
                         
                         allTasks.push(task);
+                    });
+                    
+                    // Sort tasks manually in JavaScript by createdAt date (newest first)
+                    allTasks.sort((a, b) => {
+                        const dateA = a.createdAtDate || new Date(0);
+                        const dateB = b.createdAtDate || new Date(0);
+                        return dateB - dateA; // Descending order (newest first)
                     });
                     
                     updateStats();
@@ -1664,6 +1678,11 @@
                     console.error("Error loading tasks:", err);
                     showError("Failed to load tasks: " + err.message);
                     hideLoading();
+                    
+                    // If error is about missing index, show helpful message
+                    if (err.message.includes('index')) {
+                        showInfo("Creating database index... Please wait 2-5 minutes and refresh.");
+                    }
                 });
         }
 
@@ -1676,7 +1695,9 @@
             const overdue = allTasks.filter(t => {
                 if (t.status !== 'completed' && t.dueDate) {
                     const dueDate = new Date(t.dueDate);
-                    return dueDate < new Date();
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return dueDate < today;
                 }
                 return false;
             }).length;
@@ -1706,7 +1727,10 @@
                 case 'overdue':
                     filteredTasks = allTasks.filter(t => {
                         if (t.status !== 'completed' && t.dueDate) {
-                            return new Date(t.dueDate) < new Date();
+                            const dueDate = new Date(t.dueDate);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return dueDate < today;
                         }
                         return false;
                     });
@@ -1747,7 +1771,7 @@
             
             switch(sortFilter.value) {
                 case 'oldest':
-                    filteredTasks.sort((a, b) => a.createdAtDate - b.createdAtDate);
+                    filteredTasks.sort((a, b) => (a.createdAtDate || new Date(0)) - (b.createdAtDate || new Date(0)));
                     break;
                 case 'due-asc':
                     filteredTasks.sort((a, b) => {
@@ -1763,8 +1787,8 @@
                         return new Date(b.dueDate) - new Date(a.dueDate);
                     });
                     break;
-                default:
-                    filteredTasks.sort((a, b) => b.createdAtDate - a.createdAtDate);
+                default: // newest
+                    filteredTasks.sort((a, b) => (b.createdAtDate || new Date(0)) - (a.createdAtDate || new Date(0)));
             }
             
             currentPage = 1;
@@ -1941,7 +1965,7 @@
             viewTaskType.textContent = task.type ? task.type.charAt(0).toUpperCase() + task.type.slice(1) : 'General';
             viewTaskStatus.textContent = (task.status || 'not-started').replace('-', ' ').toUpperCase();
             
-            const companySpan = viewTaskCompany.querySelector('span');
+            const companySpan = document.querySelector('#viewTaskCompany span');
             companySpan.textContent = task.company || 'Not specified';
             
             viewTaskCreated.textContent = task.createdAtDate ? task.createdAtDate.toLocaleString() : 'Unknown';
