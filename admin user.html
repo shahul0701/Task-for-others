@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow Pro | Admin Panel</title>
+    <title>TaskFlow Pro | Admin Panel (Open Access)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -61,6 +61,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .logo {
@@ -77,7 +79,8 @@
 
         .admin-nav {
             display: flex;
-            gap: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .admin-nav a {
@@ -97,6 +100,9 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
         }
 
         .user-avatar {
@@ -111,7 +117,7 @@
             font-weight: 600;
         }
 
-        .logout-btn {
+        .home-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -119,9 +125,13 @@
             border-radius: 50px;
             cursor: pointer;
             transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .logout-btn:hover {
+        .home-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
@@ -133,7 +143,7 @@
 
         /* Sidebar */
         .sidebar {
-            width: 250px;
+            width: 280px;
             background: white;
             box-shadow: var(--shadow);
             padding: 30px 0;
@@ -155,6 +165,7 @@
             color: var(--dark);
             text-decoration: none;
             transition: var(--transition);
+            cursor: pointer;
         }
 
         .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -172,6 +183,7 @@
         .content {
             flex: 1;
             padding: 30px;
+            background: #f5f7fb;
         }
 
         .content-header {
@@ -179,6 +191,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .content-header h1 {
@@ -186,9 +200,15 @@
             color: var(--dark);
         }
 
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .stats-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -201,6 +221,12 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .stat-icon {
@@ -240,6 +266,105 @@
             font-size: 0.9rem;
         }
 
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--dark);
+            min-width: 70px;
+        }
+
+        .filter-select, .filter-input {
+            padding: 10px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            flex: 1;
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .clear-filters {
+            background: var(--light-gray);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .clear-filters:hover {
+            background: var(--gray);
+            color: white;
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: none;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-left: 4px solid var(--primary);
+        }
+
+        .bulk-actions.active {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .selected-count {
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+
+        .bulk-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         /* Table Styles */
         .table-container {
             background: white;
@@ -254,6 +379,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: white;
         }
 
         .table-header h2 {
@@ -268,6 +396,11 @@
             border-radius: 50px;
             padding: 10px 15px;
             width: 300px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .search-box i {
+            color: var(--gray);
         }
 
         .search-box input {
@@ -278,9 +411,14 @@
             margin-left: 10px;
         }
 
+        .table-responsive {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1300px;
         }
 
         thead {
@@ -293,15 +431,21 @@
             font-weight: 600;
             color: var(--dark);
             border-bottom: 1px solid var(--light-gray);
+            white-space: nowrap;
         }
 
         td {
             padding: 15px;
             border-bottom: 1px solid var(--light-gray);
+            white-space: nowrap;
         }
 
         tr:last-child td {
             border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--light);
         }
 
         .user-cell {
@@ -314,7 +458,7 @@
             width: 35px;
             height: 35px;
             border-radius: 50%;
-            background: var(--primary-light);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -328,6 +472,8 @@
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 600;
+            display: inline-block;
+            white-space: nowrap;
         }
 
         .status-active {
@@ -347,7 +493,8 @@
 
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -358,6 +505,9 @@
             transition: var(--transition);
             border: none;
             font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .btn-sm {
@@ -372,6 +522,7 @@
 
         .btn-primary:hover {
             background: var(--secondary);
+            transform: translateY(-2px);
         }
 
         .btn-success {
@@ -381,6 +532,7 @@
 
         .btn-success:hover {
             background: #3aa8d0;
+            transform: translateY(-2px);
         }
 
         .btn-danger {
@@ -390,6 +542,7 @@
 
         .btn-danger:hover {
             background: #c1121f;
+            transform: translateY(-2px);
         }
 
         .btn-warning {
@@ -399,6 +552,18 @@
 
         .btn-warning:hover {
             background: #e76f51;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
         }
 
         /* Modal Styles */
@@ -413,15 +578,30 @@
             z-index: 2000;
             align-items: center;
             justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
         }
 
         .modal-content {
             background: white;
             border-radius: var(--radius);
-            width: 500px;
-            max-width: 90%;
+            width: 700px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal-header {
@@ -430,6 +610,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
         }
 
         .modal-header h3 {
@@ -443,6 +627,18 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--gray);
+            transition: var(--transition);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+            background: var(--light);
         }
 
         .modal-body {
@@ -455,6 +651,9 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
+            position: sticky;
+            bottom: 0;
+            background: white;
         }
 
         .form-group {
@@ -483,12 +682,32 @@
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
 
+        .form-control[readonly] {
+            background: var(--light);
+            cursor: not-allowed;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
         /* Alert Styles */
         .alert {
-            padding: 12px 16px;
+            padding: 15px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
             display: none;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .alert-success {
@@ -503,12 +722,27 @@
             border: 1px solid #f5c6cb;
         }
 
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
         /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
             padding: 20px;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: white;
+            border-top: 1px solid var(--light-gray);
         }
 
         .pagination button {
@@ -518,6 +752,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: var(--transition);
+            min-width: 40px;
         }
 
         .pagination button.active {
@@ -526,8 +761,123 @@
             border-color: var(--primary);
         }
 
-        .pagination button:hover:not(.active) {
+        .pagination button:hover:not(.active):not(:disabled) {
             background: var(--light);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Checkbox */
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quick-action-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            background: var(--light);
+        }
+
+        .quick-action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .quick-action-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .quick-action-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .tab:hover {
+            background: var(--light);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
         }
 
         /* Responsive Styles */
@@ -556,6 +906,7 @@
                 white-space: nowrap;
                 border-left: none;
                 border-bottom: 4px solid transparent;
+                padding: 12px 20px;
             }
             
             .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -567,33 +918,61 @@
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                gap: 15px;
+                align-items: flex-start;
             }
             
             .admin-nav {
-                order: 3;
                 width: 100%;
-                justify-content: center;
-                margin-top: 10px;
+                justify-content: flex-start;
+            }
+            
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
             }
             
             .stats-cards {
                 grid-template-columns: 1fr;
             }
             
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-group label {
+                min-width: auto;
+            }
+            
+            .filter-select, .filter-input {
+                width: 100%;
+            }
+            
             .table-header {
                 flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
+                align-items: stretch;
             }
             
             .search-box {
                 width: 100%;
             }
             
-            table {
-                display: block;
-                overflow-x: auto;
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bulk-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .bulk-buttons {
+                justify-content: center;
             }
         }
     </style>
@@ -605,18 +984,21 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-tasks"></i>
-                    <span>TaskFlow Pro</span>
+                    <span>TaskFlow Pro Admin</span>
                 </div>
                 <div class="admin-nav">
-                    <a href="#" class="active">Dashboard</a>
-                    <a href="#">Users</a>
-                    <a href="#">Reports</a>
-                    <a href="#">Settings</a>
+                    <a href="#" class="active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="#" data-section="users"><i class="fas fa-users"></i> Users</a>
+                    <a href="#" data-section="pending"><i class="fas fa-user-clock"></i> Pending</a>
+                    <a href="#" data-section="companies"><i class="fas fa-building"></i> Companies</a>
+                    <a href="#" data-section="individuals"><i class="fas fa-user"></i> Individuals</a>
                 </div>
                 <div class="user-info">
-                    <div class="user-avatar">A</div>
-                    <div>Admin User</div>
-                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div>Admin Panel (Open Access)</div>
+                    <a href="index.html" class="home-btn"><i class="fas fa-home"></i> Main Site</a>
                 </div>
             </div>
         </div>
@@ -627,96 +1009,307 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> User Management</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> System Settings</a></li>
-                <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
-                <li><a href="#"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+                <li><a class="active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a data-section="users"><i class="fas fa-users"></i> User Management</a></li>
+                <li><a data-section="pending"><i class="fas fa-user-clock"></i> Pending Approvals</a></li>
+                <li><a data-section="companies"><i class="fas fa-building"></i> Companies</a></li>
+                <li><a data-section="individuals"><i class="fas fa-user"></i> Individuals</a></li>
+                <li><a data-section="stats"><i class="fas fa-chart-bar"></i> Statistics</a></li>
+                <li><a data-section="backup"><i class="fas fa-database"></i> Backup</a></li>
+                <li><a data-section="settings"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </div>
 
         <!-- Content Area -->
         <div class="content">
-            <div class="content-header">
-                <h1>User Management</h1>
-                <button class="btn btn-primary" id="addUserBtn">Add New User</button>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="stats-cards">
-                <div class="stat-card">
-                    <div class="stat-icon primary">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalUsers">0</h3>
-                        <p>Total Users</p>
-                    </div>
+            <!-- Alerts Container -->
+            <div id="alertsContainer">
+                <div class="alert alert-success" id="successAlert" style="display: none;">
+                    <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon success">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="activeUsers">0</h3>
-                        <p>Active Users</p>
-                    </div>
+                <div class="alert alert-error" id="errorAlert" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon warning">
-                        <i class="fas fa-user-clock"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="pendingUsers">0</h3>
-                        <p>Pending Users</p>
-                    </div>
+                <div class="alert alert-warning" id="warningAlert" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i> <span id="warningMessage"></span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon danger">
-                        <i class="fas fa-user-times"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="inactiveUsers">0</h3>
-                        <p>Inactive Users</p>
-                    </div>
+                <div class="alert alert-info" id="infoAlert" style="display: none;">
+                    <i class="fas fa-info-circle"></i> <span id="infoMessage"></span>
                 </div>
             </div>
 
-            <!-- Alerts -->
-            <div class="alert alert-success" id="successAlert">
-                <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
-            </div>
-            <div class="alert alert-error" id="errorAlert">
-                <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Loading data from Firebase...</p>
             </div>
 
-            <!-- Users Table -->
-            <div class="table-container">
-                <div class="table-header">
-                    <h2>All Users</h2>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search users...">
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" style="display: block;">
+                <div class="content-header">
+                    <h1>Dashboard Overview</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline" id="refreshStats"><i class="fas fa-sync-alt"></i> Refresh</button>
+                        <button class="btn btn-primary" id="exportReport"><i class="fas fa-download"></i> Export CSV</button>
                     </div>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Registration Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <!-- Users will be populated here -->
-                    </tbody>
-                </table>
-                <div class="pagination" id="pagination">
-                    <!-- Pagination will be generated here -->
+
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="activeUsers">0</h3>
+                            <p>Active Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingUsers">0</h3>
+                            <p>Pending Approval</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="inactiveUsers">0</h3>
+                            <p>Inactive Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--secondary);">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="companyUsers">0</h3>
+                            <p>Companies</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--warning);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="individualUsers">0</h3>
+                            <p>Individuals</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="quick-action-card" id="quickAddUser">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="quick-action-info">
+                            <h4>Add New User</h4>
+                            <p>Create individual or company</p>
+                        </div>
+                    </div>
+                    <div class="quick-action-card" id="quickApproveAll">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="quick-action-info">
+                            <h4>Approve All Pending</h4>
+                            <p>Bulk approve users</p>
+                        </div>
+                    </div>
+                    <div class="quick-action-card" id="quickBackup">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="quick-action-info">
+                            <h4>Backup Data</h4>
+                            <p>Export all users</p>
+                        </div>
+                    </div>
+                    <div class="quick-action-card" id="quickTest">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-vial"></i>
+                        </div>
+                        <div class="quick-action-info">
+                            <h4>Test Connection</h4>
+                            <p>Check Firebase</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Users Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>Recent Users</h2>
+                        <button class="btn btn-primary btn-sm" data-section="users">View All <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Phone</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentUsersTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">Loading recent users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management Section -->
+            <div id="usersSection" style="display: none;">
+                <div class="content-header">
+                    <h1>User Management</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="addUserBtn"><i class="fas fa-plus"></i> Add New User</button>
+                        <button class="btn btn-outline" id="refreshUsers"><i class="fas fa-sync-alt"></i> Refresh</button>
+                        <button class="btn btn-outline" id="exportUsers"><i class="fas fa-download"></i> Export</button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="usersTotalUsers">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="usersActiveUsers">0</h3>
+                            <p>Active</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="usersPendingUsers">0</h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="usersInactiveUsers">0</h3>
+                            <p>Inactive</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>Type:</label>
+                        <select id="userTypeFilter" class="filter-select">
+                            <option value="all">All Types</option>
+                            <option value="individual">Individuals</option>
+                            <option value="company">Companies</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select id="userStatusFilter" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Date:</label>
+                        <select id="dateFilter" class="filter-select">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    <button class="clear-filters" id="clearFilters"><i class="fas fa-times"></i> Clear Filters</button>
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions" id="bulkActions">
+                    <span class="selected-count" id="selectedCount">0 users selected</span>
+                    <div class="bulk-buttons">
+                        <button class="btn btn-success btn-sm" id="bulkApprove"><i class="fas fa-check"></i> Approve</button>
+                        <button class="btn btn-success btn-sm" id="bulkActivate"><i class="fas fa-play"></i> Activate</button>
+                        <button class="btn btn-warning btn-sm" id="bulkDeactivate"><i class="fas fa-pause"></i> Deactivate</button>
+                        <button class="btn btn-danger btn-sm" id="bulkDelete"><i class="fas fa-trash"></i> Delete</button>
+                        <button class="btn btn-primary btn-sm" id="bulkEmail"><i class="fas fa-envelope"></i> Email</button>
+                        <button class="btn btn-outline btn-sm" id="clearSelection"><i class="fas fa-times"></i> Clear</button>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>All Users</h2>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search by name, email, phone...">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-cell">
+                                        <input type="checkbox" id="selectAll" class="checkbox">
+                                    </th>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Phone</th>
+                                    <th>Address</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination will be generated here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -730,42 +1323,239 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="modalUserName">Name</label>
-                    <input type="text" id="modalUserName" class="form-control" readonly>
+                <div class="info-grid">
+                    <div class="form-group">
+                        <label>Name / Company</label>
+                        <input type="text" id="modalUserName" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="modalUserEmail" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>User Type</label>
+                        <input type="text" id="modalUserType" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="modalUserStatus" class="form-control">
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="modalUserPhone" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Verified</label>
+                        <input type="text" id="modalEmailVerified" class="form-control" readonly>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="modalUserEmail">Email</label>
-                    <input type="email" id="modalUserEmail" class="form-control" readonly>
+                    <label>Address</label>
+                    <textarea id="modalUserAddress" class="form-control" rows="2" readonly></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="modalUserType">User Type</label>
-                    <input type="text" id="modalUserType" class="form-control" readonly>
+
+                <div id="companyDetails" style="display: none;">
+                    <h4 style="margin: 20px 0 15px; color: var(--primary);">Company Details</h4>
+                    <div class="info-grid">
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" id="modalCompanyName" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Admin Name</label>
+                            <input type="text" id="modalAdminName" class="form-control" readonly>
+                        </div>
+                    </div>
                 </div>
+
+                <div id="individualDetails" style="display: none;">
+                    <h4 style="margin: 20px 0 15px; color: var(--primary);">Individual Details</h4>
+                    <div class="info-grid">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="modalFullName" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Purpose</label>
+                            <input type="text" id="modalPurpose" class="form-control" readonly>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label for="modalUserStatus">Status</label>
-                    <select id="modalUserStatus" class="form-control">
+                    <label>Registration Date</label>
+                    <input type="text" id="modalCreatedAt" class="form-control" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>User UID</label>
+                    <input type="text" id="userUID" class="form-control" readonly>
+                </div>
+
+                <!-- Password Reset Section -->
+                <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--light-gray);">
+                    <label>Password Management</label>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-warning" id="resetPasswordBtn"><i class="fas fa-key"></i> Send Password Reset</button>
+                        <button class="btn btn-outline" id="copyUserEmail"><i class="fas fa-copy"></i> Copy Email</button>
+                        <button class="btn btn-outline" id="copyUserUID"><i class="fas fa-copy"></i> Copy UID</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveUserBtn"><i class="fas fa-save"></i> Save Changes</button>
+                <button class="btn btn-success" id="sendNotificationBtn"><i class="fas fa-bell"></i> Send Email</button>
+                <button class="btn" id="cancelModalBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="addEditUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="addEditModalTitle">Add New User</h3>
+                <button class="close-modal" id="closeAddEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>User Type</label>
+                    <select id="addEditUserType" class="form-control">
+                        <option value="individual">Individual</option>
+                        <option value="company">Company</option>
+                    </select>
+                </div>
+
+                <div id="addEditIndividualFields">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="addEditName" class="form-control" placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Purpose</label>
+                        <select id="addEditPurpose" class="form-control">
+                            <option value="personal">Personal</option>
+                            <option value="business">Business</option>
+                            <option value="education">Education</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="addEditCompanyFields" style="display: none;">
+                    <div class="form-group">
+                        <label>Company Name *</label>
+                        <input type="text" id="addEditCompanyName" class="form-control" placeholder="Enter company name">
+                    </div>
+                    <div class="form-group">
+                        <label>Admin Name *</label>
+                        <input type="text" id="addEditAdminName" class="form-control" placeholder="Enter admin name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="addEditEmail" class="form-control" placeholder="user@example.com">
+                </div>
+
+                <div class="form-group" id="passwordField">
+                    <label>Password *</label>
+                    <input type="password" id="addEditPassword" class="form-control" placeholder="Minimum 6 characters">
+                    <small style="color: var(--gray);">Minimum 6 characters required</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" id="addEditPhone" class="form-control" placeholder="Enter phone number">
+                </div>
+
+                <div class="form-group">
+                    <label>Address *</label>
+                    <textarea id="addEditAddress" class="form-control" rows="2" placeholder="Enter full address"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="addEditStatus" class="form-control">
                         <option value="pending">Pending</option>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                     </select>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveNewUserBtn"><i class="fas fa-save"></i> Create User</button>
+                <button class="btn" id="cancelAddEditModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Modal -->
+    <div class="modal" id="emailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send Email</h3>
+                <button class="close-modal" id="closeEmailModal">&times;</button>
+            </div>
+            <div class="modal-body">
                 <div class="form-group">
-                    <label for="modalUserAddress">Address</label>
-                    <textarea id="modalUserAddress" class="form-control" rows="3" readonly></textarea>
+                    <label>To</label>
+                    <input type="text" id="emailTo" class="form-control" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="modalUserPhone">Phone</label>
-                    <input type="text" id="modalUserPhone" class="form-control" readonly>
+                    <label>Subject</label>
+                    <input type="text" id="emailSubject" class="form-control" value="Account Update - TaskFlow Pro">
                 </div>
-                <div class="form-group" id="companyInfoGroup" style="display: none;">
-                    <label for="modalCompanyName">Company Name</label>
-                    <input type="text" id="modalCompanyName" class="form-control" readonly>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="emailMessage" class="form-control" rows="6" placeholder="Type your message here..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="saveUserBtn">Save Changes</button>
-                <button class="btn" id="cancelModalBtn">Cancel</button>
+                <button class="btn btn-primary" id="sendEmailBtn"><i class="fas fa-paper-plane"></i> Send Email</button>
+                <button class="btn" id="cancelEmailModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="close-modal" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">Are you sure you want to delete this user? This action cannot be undone.</p>
+                <p><strong>User:</strong> <span id="deleteUserName"></span></p>
+                <p><strong>Email:</strong> <span id="deleteUserEmail"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteBtn"><i class="fas fa-trash"></i> Delete Permanently</button>
+                <button class="btn" id="cancelDeleteModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Connection Modal -->
+    <div class="modal" id="testModal">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-header">
+                <h3>Firebase Connection Test</h3>
+                <button class="close-modal" id="closeTestModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="testResult">
+                    <p><i class="fas fa-spinner fa-spin"></i> Testing connection...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="closeTestModalBtn">Close</button>
             </div>
         </div>
     </div>
@@ -784,47 +1574,158 @@
 
         // Initialize Firebase
         let auth, db;
+        let firebaseInitialized = false;
+
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
             auth = firebase.auth();
             db = firebase.firestore();
-            console.log("Firebase initialized successfully");
+            firebaseInitialized = true;
+            console.log("✅ Firebase initialized successfully");
+            showInfo("Firebase connected successfully");
         } catch (error) {
-            console.error("Firebase initialization error:", error);
-            showAlert("Firebase failed to initialize. Please check your configuration.", "error");
+            console.error("❌ Firebase initialization error:", error);
+            firebaseInitialized = false;
+            showError("Firebase failed to initialize. Check console for details.");
         }
 
         // DOM Elements
-        const logoutBtn = document.getElementById('logoutBtn');
-        const addUserBtn = document.getElementById('addUserBtn');
-        const usersTableBody = document.getElementById('usersTableBody');
-        const searchInput = document.getElementById('searchInput');
-        const userModal = document.getElementById('userModal');
-        const closeModal = document.getElementById('closeModal');
-        const cancelModalBtn = document.getElementById('cancelModalBtn');
-        const saveUserBtn = document.getElementById('saveUserBtn');
-        const successAlert = document.getElementById('successAlert');
-        const errorAlert = document.getElementById('errorAlert');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
+        // Navigation
+        const navLinks = document.querySelectorAll('[data-section]');
+        const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+        
+        // Sections
+        const dashboardSection = document.getElementById('dashboardSection');
+        const usersSection = document.getElementById('usersSection');
+        
+        // Dashboard elements
         const totalUsers = document.getElementById('totalUsers');
         const activeUsers = document.getElementById('activeUsers');
         const pendingUsers = document.getElementById('pendingUsers');
         const inactiveUsers = document.getElementById('inactiveUsers');
+        const companyUsers = document.getElementById('companyUsers');
+        const individualUsers = document.getElementById('individualUsers');
+        const recentUsersTable = document.getElementById('recentUsersTable');
+        const refreshStats = document.getElementById('refreshStats');
+        
+        // Quick action buttons
+        const quickAddUser = document.getElementById('quickAddUser');
+        const quickApproveAll = document.getElementById('quickApproveAll');
+        const quickBackup = document.getElementById('quickBackup');
+        const quickTest = document.getElementById('quickTest');
+        
+        // User management elements
+        const usersTotalUsers = document.getElementById('usersTotalUsers');
+        const usersActiveUsers = document.getElementById('usersActiveUsers');
+        const usersPendingUsers = document.getElementById('usersPendingUsers');
+        const usersInactiveUsers = document.getElementById('usersInactiveUsers');
+        const usersTableBody = document.getElementById('usersTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const userTypeFilter = document.getElementById('userTypeFilter');
+        const userStatusFilter = document.getElementById('userStatusFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const clearFilters = document.getElementById('clearFilters');
+        const refreshUsers = document.getElementById('refreshUsers');
+        const exportUsers = document.getElementById('exportUsers');
+        const addUserBtn = document.getElementById('addUserBtn');
+        const selectAll = document.getElementById('selectAll');
+        const bulkActions = document.getElementById('bulkActions');
+        const selectedCount = document.getElementById('selectedCount');
+        const bulkApprove = document.getElementById('bulkApprove');
+        const bulkActivate = document.getElementById('bulkActivate');
+        const bulkDeactivate = document.getElementById('bulkDeactivate');
+        const bulkDelete = document.getElementById('bulkDelete');
+        const bulkEmail = document.getElementById('bulkEmail');
+        const clearSelection = document.getElementById('clearSelection');
         const pagination = document.getElementById('pagination');
-
-        // Modal form fields
+        
+        // Modals
+        const userModal = document.getElementById('userModal');
+        const addEditUserModal = document.getElementById('addEditUserModal');
+        const emailModal = document.getElementById('emailModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const testModal = document.getElementById('testModal');
+        
+        // Modal close buttons
+        const closeModal = document.getElementById('closeModal');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const closeAddEditModal = document.getElementById('closeAddEditModal');
+        const cancelAddEditModal = document.getElementById('cancelAddEditModal');
+        const closeEmailModal = document.getElementById('closeEmailModal');
+        const cancelEmailModal = document.getElementById('cancelEmailModal');
+        const closeDeleteModal = document.getElementById('closeDeleteModal');
+        const cancelDeleteModal = document.getElementById('cancelDeleteModal');
+        const closeTestModal = document.getElementById('closeTestModal');
+        const closeTestModalBtn = document.getElementById('closeTestModalBtn');
+        
+        // Modal action buttons
+        const saveUserBtn = document.getElementById('saveUserBtn');
+        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+        const sendNotificationBtn = document.getElementById('sendNotificationBtn');
+        const saveNewUserBtn = document.getElementById('saveNewUserBtn');
+        const sendEmailBtn = document.getElementById('sendEmailBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const copyUserEmail = document.getElementById('copyUserEmail');
+        const copyUserUID = document.getElementById('copyUserUID');
+        
+        // Modal fields
         const modalTitle = document.getElementById('modalTitle');
         const modalUserName = document.getElementById('modalUserName');
         const modalUserEmail = document.getElementById('modalUserEmail');
         const modalUserType = document.getElementById('modalUserType');
         const modalUserStatus = document.getElementById('modalUserStatus');
-        const modalUserAddress = document.getElementById('modalUserAddress');
         const modalUserPhone = document.getElementById('modalUserPhone');
+        const modalUserAddress = document.getElementById('modalUserAddress');
+        const modalEmailVerified = document.getElementById('modalEmailVerified');
         const modalCompanyName = document.getElementById('modalCompanyName');
-        const companyInfoGroup = document.getElementById('companyInfoGroup');
+        const modalAdminName = document.getElementById('modalAdminName');
+        const modalFullName = document.getElementById('modalFullName');
+        const modalPurpose = document.getElementById('modalPurpose');
+        const modalCreatedAt = document.getElementById('modalCreatedAt');
+        const userUID = document.getElementById('userUID');
+        const companyDetails = document.getElementById('companyDetails');
+        const individualDetails = document.getElementById('individualDetails');
+        
+        // Add/Edit modal fields
+        const addEditModalTitle = document.getElementById('addEditModalTitle');
+        const addEditUserType = document.getElementById('addEditUserType');
+        const addEditIndividualFields = document.getElementById('addEditIndividualFields');
+        const addEditCompanyFields = document.getElementById('addEditCompanyFields');
+        const addEditName = document.getElementById('addEditName');
+        const addEditPurpose = document.getElementById('addEditPurpose');
+        const addEditCompanyName = document.getElementById('addEditCompanyName');
+        const addEditAdminName = document.getElementById('addEditAdminName');
+        const addEditEmail = document.getElementById('addEditEmail');
+        const addEditPassword = document.getElementById('addEditPassword');
+        const addEditPhone = document.getElementById('addEditPhone');
+        const addEditAddress = document.getElementById('addEditAddress');
+        const addEditStatus = document.getElementById('addEditStatus');
+        const passwordField = document.getElementById('passwordField');
+        
+        // Email modal fields
+        const emailTo = document.getElementById('emailTo');
+        const emailSubject = document.getElementById('emailSubject');
+        const emailMessage = document.getElementById('emailMessage');
+        
+        // Delete modal fields
+        const deleteUserName = document.getElementById('deleteUserName');
+        const deleteUserEmail = document.getElementById('deleteUserEmail');
+        
+        // Test modal
+        const testResult = document.getElementById('testResult');
+        
+        // Alerts
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        const warningAlert = document.getElementById('warningAlert');
+        const infoAlert = document.getElementById('infoAlert');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const warningMessage = document.getElementById('warningMessage');
+        const infoMessage = document.getElementById('infoMessage');
+        const loadingSpinner = document.getElementById('loadingSpinner');
 
         // Global variables
         let users = [];
@@ -832,26 +1733,155 @@
         let currentPage = 1;
         const usersPerPage = 10;
         let currentEditingUserId = null;
+        let selectedUsers = new Set();
+        let deleteUserId = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Admin panel loaded");
+            showSection('dashboard');
+            
+            if (firebaseInitialized) {
+                loadUsers();
+            } else {
+                showError("Firebase not initialized. Please check your configuration.");
+            }
+        });
 
         // Event Listeners
-        logoutBtn.addEventListener('click', handleLogout);
-        addUserBtn.addEventListener('click', showAddUserModal);
-        closeModal.addEventListener('click', () => userModal.style.display = 'none');
-        cancelModalBtn.addEventListener('click', () => userModal.style.display = 'none');
-        saveUserBtn.addEventListener('click', saveUserChanges);
-        searchInput.addEventListener('input', filterUsers);
-
-        // Initialize the admin panel
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUsers();
+        // Navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                showSection(section);
+            });
+        });
+        
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                showSection(section);
+            });
+        });
+        
+        // Refresh buttons
+        if (refreshStats) refreshStats.addEventListener('click', loadUsers);
+        if (refreshUsers) refreshUsers.addEventListener('click', loadUsers);
+        
+        // Quick actions
+        if (quickAddUser) quickAddUser.addEventListener('click', () => showAddEditModal('add'));
+        if (quickApproveAll) quickApproveAll.addEventListener('click', approveAllPending);
+        if (quickBackup) quickBackup.addEventListener('click', exportAllUsers);
+        if (quickTest) quickTest.addEventListener('click', testConnection);
+        
+        // Export
+        if (exportUsers) exportUsers.addEventListener('click', exportAllUsers);
+        
+        // Filters
+        if (searchInput) searchInput.addEventListener('input', filterUsers);
+        if (userTypeFilter) userTypeFilter.addEventListener('change', filterUsers);
+        if (userStatusFilter) userStatusFilter.addEventListener('change', filterUsers);
+        if (dateFilter) dateFilter.addEventListener('change', filterUsers);
+        if (clearFilters) clearFilters.addEventListener('click', clearAllFilters);
+        
+        // Add user
+        if (addUserBtn) addUserBtn.addEventListener('click', () => showAddEditModal('add'));
+        
+        // Bulk actions
+        if (selectAll) selectAll.addEventListener('change', toggleSelectAll);
+        if (clearSelection) clearSelection.addEventListener('click', clearSelectedUsers);
+        if (bulkApprove) bulkApprove.addEventListener('click', () => bulkUpdateStatus('pending', 'active'));
+        if (bulkActivate) bulkActivate.addEventListener('click', () => bulkUpdateStatus('inactive', 'active'));
+        if (bulkDeactivate) bulkDeactivate.addEventListener('click', () => bulkUpdateStatus('active', 'inactive'));
+        if (bulkDelete) bulkDelete.addEventListener('click', bulkDeleteUsers);
+        if (bulkEmail) bulkEmail.addEventListener('click', bulkEmailUsers);
+        
+        // Modal close buttons
+        if (closeModal) closeModal.addEventListener('click', () => userModal.style.display = 'none');
+        if (cancelModalBtn) cancelModalBtn.addEventListener('click', () => userModal.style.display = 'none');
+        if (closeAddEditModal) closeAddEditModal.addEventListener('click', () => addEditUserModal.style.display = 'none');
+        if (cancelAddEditModal) cancelAddEditModal.addEventListener('click', () => addEditUserModal.style.display = 'none');
+        if (closeEmailModal) closeEmailModal.addEventListener('click', () => emailModal.style.display = 'none');
+        if (cancelEmailModal) cancelEmailModal.addEventListener('click', () => emailModal.style.display = 'none');
+        if (closeDeleteModal) closeDeleteModal.addEventListener('click', () => deleteModal.style.display = 'none');
+        if (cancelDeleteModal) cancelDeleteModal.addEventListener('click', () => deleteModal.style.display = 'none');
+        if (closeTestModal) closeTestModal.addEventListener('click', () => testModal.style.display = 'none');
+        if (closeTestModalBtn) closeTestModalBtn.addEventListener('click', () => testModal.style.display = 'none');
+        
+        // Modal action buttons
+        if (saveUserBtn) saveUserBtn.addEventListener('click', saveUserChanges);
+        if (resetPasswordBtn) resetPasswordBtn.addEventListener('click', resetUserPassword);
+        if (sendNotificationBtn) sendNotificationBtn.addEventListener('click', showEmailModal);
+        if (saveNewUserBtn) saveNewUserBtn.addEventListener('click', createNewUser);
+        if (sendEmailBtn) sendEmailBtn.addEventListener('click', sendEmail);
+        if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', confirmDelete);
+        
+        // Copy buttons
+        if (copyUserEmail) copyUserEmail.addEventListener('click', copyToClipboard.bind(null, 'email'));
+        if (copyUserUID) copyUserUID.addEventListener('click', copyToClipboard.bind(null, 'uid'));
+        
+        // User type toggle in add/edit modal
+        if (addEditUserType) addEditUserType.addEventListener('change', toggleUserTypeFields);
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === userModal) userModal.style.display = 'none';
+            if (e.target === addEditUserModal) addEditUserModal.style.display = 'none';
+            if (e.target === emailModal) emailModal.style.display = 'none';
+            if (e.target === deleteModal) deleteModal.style.display = 'none';
+            if (e.target === testModal) testModal.style.display = 'none';
         });
 
         // Functions
+        function showSection(section) {
+            // Hide all sections
+            dashboardSection.style.display = 'none';
+            usersSection.style.display = 'none';
+            
+            // Show selected section
+            if (section === 'dashboard' || section === 'stats') {
+                dashboardSection.style.display = 'block';
+            } else {
+                usersSection.style.display = 'block';
+                
+                // Apply filters based on section
+                if (section === 'pending') {
+                    userTypeFilter.value = 'all';
+                    userStatusFilter.value = 'pending';
+                } else if (section === 'companies') {
+                    userTypeFilter.value = 'company';
+                    userStatusFilter.value = 'all';
+                } else if (section === 'individuals') {
+                    userTypeFilter.value = 'individual';
+                    userStatusFilter.value = 'all';
+                } else {
+                    userTypeFilter.value = 'all';
+                    userStatusFilter.value = 'all';
+                }
+                
+                filterUsers();
+            }
+            
+            // Update active states
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('data-section') === section);
+            });
+            
+            sidebarLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('data-section') === section);
+            });
+        }
+
         function loadUsers() {
-            if (!db) {
-                showAlert("Database not available. Please check Firebase configuration.", "error");
+            if (!firebaseInitialized || !db) {
+                showError("Firebase not initialized");
                 return;
             }
+            
+            showLoading();
+            showInfo("Loading users from Firebase...");
 
             db.collection('users').orderBy('createdAt', 'desc').get()
                 .then((querySnapshot) => {
@@ -859,48 +1889,154 @@
                     querySnapshot.forEach((doc) => {
                         const user = doc.data();
                         user.id = doc.id;
+                        
+                        // Convert timestamps
+                        if (user.createdAt && user.createdAt.toDate) {
+                            user.createdAtDate = user.createdAt.toDate();
+                        }
+                        
                         users.push(user);
                     });
                     
-                    updateUserStats();
+                    console.log(`✅ Loaded ${users.length} users`);
+                    updateAllStats();
                     filterUsers();
+                    updateRecentUsers();
+                    hideLoading();
+                    showSuccess(`Loaded ${users.length} users successfully`);
                 })
                 .catch((error) => {
-                    console.error("Error loading users:", error);
-                    showAlert("Failed to load users. Please try again.", "error");
+                    console.error("❌ Error loading users:", error);
+                    showError("Failed to load users: " + error.message);
+                    hideLoading();
                 });
         }
 
-        function updateUserStats() {
+        function updateAllStats() {
             const total = users.length;
             const active = users.filter(user => user.status === 'active').length;
             const pending = users.filter(user => user.status === 'pending').length;
             const inactive = users.filter(user => user.status === 'inactive').length;
+            const companies = users.filter(user => user.userType === 'company').length;
+            const individuals = users.filter(user => user.userType === 'individual').length;
             
-            totalUsers.textContent = total;
-            activeUsers.textContent = active;
-            pendingUsers.textContent = pending;
-            inactiveUsers.textContent = inactive;
+            // Dashboard stats
+            if (totalUsers) totalUsers.textContent = total;
+            if (activeUsers) activeUsers.textContent = active;
+            if (pendingUsers) pendingUsers.textContent = pending;
+            if (inactiveUsers) inactiveUsers.textContent = inactive;
+            if (companyUsers) companyUsers.textContent = companies;
+            if (individualUsers) individualUsers.textContent = individuals;
+            
+            // User management stats
+            if (usersTotalUsers) usersTotalUsers.textContent = total;
+            if (usersActiveUsers) usersActiveUsers.textContent = active;
+            if (usersPendingUsers) usersPendingUsers.textContent = pending;
+            if (usersInactiveUsers) usersInactiveUsers.textContent = inactive;
+        }
+
+        function updateRecentUsers() {
+            if (!recentUsersTable) return;
+            
+            recentUsersTable.innerHTML = '';
+            const recent = users.slice(0, 5);
+            
+            if (recent.length === 0) {
+                recentUsersTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No users found</td></tr>';
+                return;
+            }
+            
+            recent.forEach(user => {
+                const row = document.createElement('tr');
+                const initials = getInitials(user);
+                const regDate = user.createdAtDate ? user.createdAtDate.toLocaleDateString() : 'N/A';
+                const statusClass = getStatusClass(user.status);
+                const statusText = getStatusText(user.status);
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-small">${initials}</div>
+                            <div>${user.name || user.adminName || user.companyName || 'N/A'}</div>
+                        </div>
+                    </td>
+                    <td>${user.email || 'N/A'}</td>
+                    <td>${user.userType === 'company' ? '<i class="fas fa-building"></i> Company' : '<i class="fas fa-user"></i> Individual'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${user.phone || user.adminPhone || 'N/A'}</td>
+                    <td>${regDate}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}"><i class="fas fa-eye"></i> View</button>
+                        </div>
+                    </td>
+                `;
+                
+                recentUsersTable.appendChild(row);
+            });
+            
+            // Add event listeners
+            document.querySelectorAll('#recentUsersTable .view-user').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const userId = e.currentTarget.getAttribute('data-id');
+                    viewUser(userId);
+                });
+            });
         }
 
         function filterUsers() {
-            const searchTerm = searchInput.value.toLowerCase();
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const typeFilter = userTypeFilter ? userTypeFilter.value : 'all';
+            const statusFilter = userStatusFilter ? userStatusFilter.value : 'all';
+            const dateFilterValue = dateFilter ? dateFilter.value : 'all';
             
-            if (searchTerm) {
-                filteredUsers = users.filter(user => 
-                    user.name?.toLowerCase().includes(searchTerm) || 
-                    user.email?.toLowerCase().includes(searchTerm) ||
-                    user.companyName?.toLowerCase().includes(searchTerm)
-                );
-            } else {
-                filteredUsers = [...users];
-            }
+            filteredUsers = users.filter(user => {
+                // Search filter
+                const searchMatch = !searchTerm || 
+                    (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                    (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                    (user.companyName && user.companyName.toLowerCase().includes(searchTerm)) ||
+                    (user.adminName && user.adminName.toLowerCase().includes(searchTerm)) ||
+                    (user.phone && user.phone.includes(searchTerm)) ||
+                    (user.adminPhone && user.adminPhone.includes(searchTerm)) ||
+                    (user.address && user.address.toLowerCase().includes(searchTerm)) ||
+                    (user.companyAddress && user.companyAddress.toLowerCase().includes(searchTerm));
+                
+                if (!searchMatch) return false;
+                
+                // Type filter
+                if (typeFilter !== 'all' && user.userType !== typeFilter) return false;
+                
+                // Status filter
+                if (statusFilter !== 'all' && user.status !== statusFilter) return false;
+                
+                // Date filter
+                if (dateFilterValue !== 'all' && user.createdAtDate) {
+                    const now = new Date();
+                    const userDate = user.createdAtDate;
+                    
+                    if (dateFilterValue === 'today') {
+                        if (userDate.toDateString() !== now.toDateString()) return false;
+                    } else if (dateFilterValue === 'week') {
+                        const weekAgo = new Date(now.setDate(now.getDate() - 7));
+                        if (userDate < weekAgo) return false;
+                    } else if (dateFilterValue === 'month') {
+                        const monthAgo = new Date(now.setMonth(now.getMonth() - 1));
+                        if (userDate < monthAgo) return false;
+                    }
+                }
+                
+                return true;
+            });
             
+            currentPage = 1;
             renderUsersTable();
             renderPagination();
         }
 
         function renderUsersTable() {
+            if (!usersTableBody) return;
+            
             usersTableBody.innerHTML = '';
             
             const startIndex = (currentPage - 1) * usersPerPage;
@@ -910,8 +2046,9 @@
             if (usersToShow.length === 0) {
                 usersTableBody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px;">
-                            No users found
+                        <td colspan="9" style="text-align: center; padding: 30px;">
+                            <i class="fas fa-users" style="font-size: 2rem; color: var(--gray); margin-bottom: 10px;"></i>
+                            <p>No users found</p>
                         </td>
                     </tr>
                 `;
@@ -920,58 +2057,35 @@
             
             usersToShow.forEach(user => {
                 const row = document.createElement('tr');
-                
-                // Get initials for avatar
-                const initials = user.name ? 
-                    user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 
-                    'U';
-                
-                // Format date
-                const regDate = user.createdAt ? 
-                    new Date(user.createdAt.toDate()).toLocaleDateString() : 
-                    'N/A';
-                
-                // Status badge
-                let statusClass = '';
-                let statusText = '';
-                
-                switch(user.status) {
-                    case 'active':
-                        statusClass = 'status-active';
-                        statusText = 'Active';
-                        break;
-                    case 'pending':
-                        statusClass = 'status-pending';
-                        statusText = 'Pending';
-                        break;
-                    case 'inactive':
-                        statusClass = 'status-inactive';
-                        statusText = 'Inactive';
-                        break;
-                    default:
-                        statusClass = 'status-pending';
-                        statusText = 'Pending';
-                }
+                const initials = getInitials(user);
+                const regDate = user.createdAtDate ? user.createdAtDate.toLocaleDateString() : 'N/A';
+                const statusClass = getStatusClass(user.status);
+                const statusText = getStatusText(user.status);
+                const address = user.address || user.companyAddress || 'N/A';
+                const phone = user.phone || user.adminPhone || 'N/A';
                 
                 row.innerHTML = `
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="checkbox user-checkbox" data-id="${user.id}" ${selectedUsers.has(user.id) ? 'checked' : ''}>
+                    </td>
                     <td>
                         <div class="user-cell">
                             <div class="user-avatar-small">${initials}</div>
-                            <div>${user.name || user.adminName || 'N/A'}</div>
+                            <div>${user.name || user.adminName || user.companyName || 'N/A'}</div>
                         </div>
                     </td>
-                    <td>${user.email}</td>
-                    <td>${user.userType === 'company' ? 'Company' : 'Individual'}</td>
+                    <td>${user.email || 'N/A'}</td>
+                    <td>${user.userType === 'company' ? '<i class="fas fa-building"></i> Company' : '<i class="fas fa-user"></i> Individual'}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${phone}</td>
+                    <td>${address.substring(0, 30)}${address.length > 30 ? '...' : ''}</td>
                     <td>${regDate}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}">View</button>
-                            ${user.status === 'active' ? 
-                                `<button class="btn btn-warning btn-sm deactivate-user" data-id="${user.id}">Deactivate</button>` : 
-                                `<button class="btn btn-success btn-sm activate-user" data-id="${user.id}">Activate</button>`
-                            }
-                            <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}">Delete</button>
+                            <button class="btn btn-primary btn-sm view-user" data-id="${user.id}" title="View Details"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-warning btn-sm edit-user" data-id="${user.id}" title="Edit User"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-success btn-sm reset-password-user" data-id="${user.id}" title="Reset Password"><i class="fas fa-key"></i></button>
+                            <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}" title="Delete User"><i class="fas fa-trash"></i></button>
                         </div>
                     </td>
                 `;
@@ -979,37 +2093,45 @@
                 usersTableBody.appendChild(row);
             });
             
-            // Add event listeners to action buttons
+            // Add event listeners
+            document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleCheckboxChange);
+            });
+            
             document.querySelectorAll('.view-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
+                    const userId = e.currentTarget.getAttribute('data-id');
                     viewUser(userId);
                 });
             });
             
-            document.querySelectorAll('.activate-user').forEach(btn => {
+            document.querySelectorAll('.edit-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    activateUser(userId);
+                    const userId = e.currentTarget.getAttribute('data-id');
+                    editUser(userId);
                 });
             });
             
-            document.querySelectorAll('.deactivate-user').forEach(btn => {
+            document.querySelectorAll('.reset-password-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    deactivateUser(userId);
+                    const userId = e.currentTarget.getAttribute('data-id');
+                    resetUserPasswordById(userId);
                 });
             });
             
             document.querySelectorAll('.delete-user').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    deleteUser(userId);
+                    const userId = e.currentTarget.getAttribute('data-id');
+                    showDeleteModal(userId);
                 });
             });
+            
+            updateBulkActions();
         }
 
         function renderPagination() {
+            if (!pagination) return;
+            
             pagination.innerHTML = '';
             const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
             
@@ -1062,153 +2184,627 @@
             currentEditingUserId = userId;
             modalTitle.textContent = 'User Details';
             
-            // Fill form with user data
-            modalUserName.value = user.name || user.adminName || 'N/A';
+            // Basic info
+            modalUserName.value = user.name || user.adminName || user.companyName || 'N/A';
             modalUserEmail.value = user.email || 'N/A';
             modalUserType.value = user.userType === 'company' ? 'Company' : 'Individual';
             modalUserStatus.value = user.status || 'pending';
-            modalUserAddress.value = user.address || user.companyAddress || 'N/A';
             modalUserPhone.value = user.phone || user.adminPhone || 'N/A';
+            modalUserAddress.value = user.address || user.companyAddress || 'N/A';
+            modalEmailVerified.value = user.emailVerified ? 'Yes' : 'No';
             
-            // Show company info if it's a company user
-            if (user.userType === 'company') {
-                companyInfoGroup.style.display = 'block';
-                modalCompanyName.value = user.companyName || 'N/A';
+            // Registration date
+            if (user.createdAtDate) {
+                modalCreatedAt.value = user.createdAtDate.toLocaleString();
             } else {
-                companyInfoGroup.style.display = 'none';
+                modalCreatedAt.value = 'N/A';
+            }
+            
+            // User UID
+            userUID.value = user.id;
+            
+            // Company or individual details
+            if (user.userType === 'company') {
+                companyDetails.style.display = 'block';
+                individualDetails.style.display = 'none';
+                modalCompanyName.value = user.companyName || 'N/A';
+                modalAdminName.value = user.adminName || 'N/A';
+                modalFullName.value = 'N/A';
+                modalPurpose.value = 'N/A';
+            } else {
+                companyDetails.style.display = 'none';
+                individualDetails.style.display = 'block';
+                modalFullName.value = user.name || 'N/A';
+                modalPurpose.value = user.purpose || 'N/A';
+                modalCompanyName.value = 'N/A';
+                modalAdminName.value = 'N/A';
             }
             
             userModal.style.display = 'flex';
         }
 
-        function showAddUserModal() {
-            currentEditingUserId = null;
-            modalTitle.textContent = 'Add New User';
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
             
-            // Clear form
-            modalUserName.value = '';
-            modalUserEmail.value = '';
-            modalUserType.value = 'individual';
-            modalUserStatus.value = 'pending';
-            modalUserAddress.value = '';
-            modalUserPhone.value = '';
-            modalCompanyName.value = '';
-            companyInfoGroup.style.display = 'none';
+            currentEditingUserId = userId;
+            addEditModalTitle.textContent = 'Edit User';
             
-            userModal.style.display = 'flex';
+            // Set user type
+            addEditUserType.value = user.userType || 'individual';
+            toggleUserTypeFields();
+            
+            // Fill fields
+            addEditName.value = user.name || '';
+            addEditPurpose.value = user.purpose || 'personal';
+            addEditCompanyName.value = user.companyName || '';
+            addEditAdminName.value = user.adminName || '';
+            addEditEmail.value = user.email || '';
+            addEditPassword.value = ''; // Don't fill password
+            addEditPassword.placeholder = 'Leave blank to keep current';
+            addEditPhone.value = user.phone || user.adminPhone || '';
+            addEditAddress.value = user.address || user.companyAddress || '';
+            addEditStatus.value = user.status || 'pending';
+            
+            addEditUserModal.style.display = 'flex';
         }
 
-        function saveUserChanges() {
-            if (!currentEditingUserId) {
-                // This is a new user
-                showAlert("Adding new users directly from admin panel is not implemented in this version.", "error");
+        function showAddEditModal(mode) {
+            if (mode === 'add') {
+                currentEditingUserId = null;
+                addEditModalTitle.textContent = 'Add New User';
+                
+                // Reset form
+                addEditUserType.value = 'individual';
+                toggleUserTypeFields();
+                addEditName.value = '';
+                addEditPurpose.value = 'personal';
+                addEditCompanyName.value = '';
+                addEditAdminName.value = '';
+                addEditEmail.value = '';
+                addEditPassword.value = '';
+                addEditPassword.placeholder = 'Enter password';
+                addEditPhone.value = '';
+                addEditAddress.value = '';
+                addEditStatus.value = 'pending';
+            }
+            
+            addEditUserModal.style.display = 'flex';
+        }
+
+        function toggleUserTypeFields() {
+            const type = addEditUserType.value;
+            
+            if (type === 'individual') {
+                addEditIndividualFields.style.display = 'block';
+                addEditCompanyFields.style.display = 'none';
+            } else {
+                addEditIndividualFields.style.display = 'none';
+                addEditCompanyFields.style.display = 'block';
+            }
+        }
+
+        function createNewUser() {
+            // Validate form
+            const type = addEditUserType.value;
+            const email = addEditEmail.value;
+            const password = addEditPassword.value;
+            const phone = addEditPhone.value;
+            const address = addEditAddress.value;
+            const status = addEditStatus.value;
+            
+            if (!email || !password || !phone || !address) {
+                showError("Please fill all required fields");
                 return;
             }
             
-            const user = users.find(u => u.id === currentEditingUserId);
-            if (!user) return;
+            if (password.length < 6) {
+                showError("Password must be at least 6 characters");
+                return;
+            }
+            
+            if (type === 'individual') {
+                const name = addEditName.value;
+                const purpose = addEditPurpose.value;
+                
+                if (!name) {
+                    showError("Please enter name");
+                    return;
+                }
+                
+                createUserInAuth(email, password, {
+                    name: name,
+                    address: address,
+                    phone: phone,
+                    purpose: purpose,
+                    userType: 'individual',
+                    status: status,
+                    emailVerified: false
+                });
+            } else {
+                const companyName = addEditCompanyName.value;
+                const adminName = addEditAdminName.value;
+                
+                if (!companyName || !adminName) {
+                    showError("Please fill all company details");
+                    return;
+                }
+                
+                createUserInAuth(email, password, {
+                    companyName: companyName,
+                    companyAddress: address,
+                    adminName: adminName,
+                    adminPhone: phone,
+                    userType: 'company',
+                    status: status,
+                    emailVerified: false
+                });
+            }
+        }
+
+        function createUserInAuth(email, password, userData) {
+            showLoading();
+            showInfo("Creating user in Firebase...");
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Save to Firestore
+                    return db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        ...userData,
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    showSuccess("User created successfully!");
+                    addEditUserModal.style.display = 'none';
+                    loadUsers();
+                })
+                .catch((error) => {
+                    console.error("Error creating user:", error);
+                    showError("Failed to create user: " + error.message);
+                    hideLoading();
+                });
+        }
+
+        function saveUserChanges() {
+            if (!currentEditingUserId) return;
             
             const newStatus = modalUserStatus.value;
+            
+            showLoading();
             
             db.collection('users').doc(currentEditingUserId).update({
                 status: newStatus
             })
             .then(() => {
-                showAlert(`User status updated to ${newStatus} successfully.`, "success");
+                showSuccess(`User status updated to ${newStatus}`);
                 userModal.style.display = 'none';
-                loadUsers(); // Reload users to reflect changes
+                loadUsers();
             })
             .catch((error) => {
                 console.error("Error updating user:", error);
-                showAlert("Failed to update user. Please try again.", "error");
+                showError("Failed to update user: " + error.message);
+                hideLoading();
             });
         }
 
-        function activateUser(userId) {
-            if (!confirm("Are you sure you want to activate this user?")) return;
+        function resetUserPassword() {
+            const email = modalUserEmail.value;
             
-            db.collection('users').doc(userId).update({
-                status: 'active'
-            })
-            .then(() => {
-                showAlert("User activated successfully.", "success");
-                loadUsers(); // Reload users to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error activating user:", error);
-                showAlert("Failed to activate user. Please try again.", "error");
-            });
-        }
-
-        function deactivateUser(userId) {
-            if (!confirm("Are you sure you want to deactivate this user?")) return;
+            if (!email || email === 'N/A') {
+                showError("No email address available");
+                return;
+            }
             
-            db.collection('users').doc(userId).update({
-                status: 'inactive'
-            })
-            .then(() => {
-                showAlert("User deactivated successfully.", "success");
-                loadUsers(); // Reload users to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error deactivating user:", error);
-                showAlert("Failed to deactivate user. Please try again.", "error");
-            });
-        }
-
-        function deleteUser(userId) {
-            if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
+            if (!confirm(`Send password reset email to ${email}?`)) return;
             
-            db.collection('users').doc(userId).delete()
-            .then(() => {
-                showAlert("User deleted successfully.", "success");
-                loadUsers(); // Reload users to reflect changes
-            })
-            .catch((error) => {
-                console.error("Error deleting user:", error);
-                showAlert("Failed to delete user. Please try again.", "error");
-            });
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showSuccess(`Password reset email sent to ${email}`);
+                })
+                .catch((error) => {
+                    console.error("Error sending password reset:", error);
+                    showError("Failed to send password reset: " + error.message);
+                });
         }
 
-        function handleLogout() {
-            if (auth) {
-                auth.signOut()
-                    .then(() => {
-                        window.location.href = 'index.html'; // Redirect to login page
-                    })
-                    .catch((error) => {
-                        console.error("Logout error:", error);
-                        showAlert("Failed to logout. Please try again.", "error");
-                    });
+        function resetUserPasswordById(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user || !user.email) {
+                showError("No email address found");
+                return;
+            }
+            
+            if (!confirm(`Send password reset email to ${user.email}?`)) return;
+            
+            auth.sendPasswordResetEmail(user.email)
+                .then(() => {
+                    showSuccess(`Password reset email sent to ${user.email}`);
+                })
+                .catch((error) => {
+                    console.error("Error sending password reset:", error);
+                    showError("Failed to send password reset: " + error.message);
+                });
+        }
+
+        function showEmailModal() {
+            if (!currentEditingUserId) return;
+            
+            const user = users.find(u => u.id === currentEditingUserId);
+            if (!user) return;
+            
+            emailTo.value = user.email || '';
+            emailSubject.value = 'Account Update - TaskFlow Pro';
+            emailMessage.value = `Dear ${user.name || user.adminName || 'User'},\n\n`;
+            
+            emailModal.style.display = 'flex';
+        }
+
+        function sendEmail() {
+            const to = emailTo.value;
+            const subject = emailSubject.value;
+            const message = emailMessage.value;
+            
+            if (!to || !subject || !message) {
+                showError("Please fill all fields");
+                return;
+            }
+            
+            // Open mailto
+            const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+            window.open(mailtoLink);
+            
+            showSuccess("Email client opened");
+            emailModal.style.display = 'none';
+        }
+
+        function showDeleteModal(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            deleteUserId = userId;
+            deleteUserName.textContent = user.name || user.adminName || user.companyName || 'Unknown';
+            deleteUserEmail.textContent = user.email || 'No email';
+            
+            deleteModal.style.display = 'flex';
+        }
+
+        function confirmDelete() {
+            if (!deleteUserId) return;
+            
+            showLoading();
+            
+            // Delete from Firestore
+            db.collection('users').doc(deleteUserId).delete()
+                .then(() => {
+                    showSuccess("User deleted successfully");
+                    deleteModal.style.display = 'none';
+                    loadUsers();
+                })
+                .catch((error) => {
+                    console.error("Error deleting user:", error);
+                    showError("Failed to delete user: " + error.message);
+                    hideLoading();
+                });
+        }
+
+        function handleCheckboxChange(e) {
+            const userId = e.target.getAttribute('data-id');
+            
+            if (e.target.checked) {
+                selectedUsers.add(userId);
             } else {
-                window.location.href = 'index.html';
+                selectedUsers.delete(userId);
             }
+            
+            updateBulkActions();
         }
 
-        function showAlert(message, type) {
-            hideAlerts();
-            if (type === 'success') {
-                successMessage.textContent = message;
-                successAlert.style.display = 'block';
+        function toggleSelectAll(e) {
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+                const userId = checkbox.getAttribute('data-id');
+                
+                if (e.target.checked) {
+                    selectedUsers.add(userId);
+                } else {
+                    selectedUsers.delete(userId);
+                }
+            });
+            
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const count = selectedUsers.size;
+            
+            if (count > 0) {
+                selectedCount.textContent = `${count} user${count > 1 ? 's' : ''} selected`;
+                bulkActions.classList.add('active');
             } else {
-                errorMessage.textContent = message;
-                errorAlert.style.display = 'block';
+                bulkActions.classList.remove('active');
+                if (selectAll) selectAll.checked = false;
             }
-            setTimeout(hideAlerts, 5000);
         }
 
-        function hideAlerts() {
-            successAlert.style.display = 'none';
-            errorAlert.style.display = 'none';
+        function clearSelectedUsers() {
+            selectedUsers.clear();
+            
+            document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            updateBulkActions();
         }
 
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === userModal) {
-                userModal.style.display = 'none';
+        function bulkUpdateStatus(currentStatus, newStatus) {
+            if (selectedUsers.size === 0) return;
+            
+            const confirmMessage = `Update ${selectedUsers.size} user(s) from ${currentStatus} to ${newStatus}?`;
+            if (!confirm(confirmMessage)) return;
+            
+            showLoading();
+            
+            const batch = db.batch();
+            
+            selectedUsers.forEach(userId => {
+                const userRef = db.collection('users').doc(userId);
+                batch.update(userRef, { status: newStatus });
+            });
+            
+            batch.commit()
+                .then(() => {
+                    showSuccess(`${selectedUsers.size} user(s) updated to ${newStatus}`);
+                    clearSelectedUsers();
+                    loadUsers();
+                })
+                .catch((error) => {
+                    console.error("Error in bulk update:", error);
+                    showError("Failed to update users: " + error.message);
+                    hideLoading();
+                });
+        }
+
+        function bulkDeleteUsers() {
+            if (selectedUsers.size === 0) return;
+            
+            if (!confirm(`Are you sure you want to delete ${selectedUsers.size} user(s)? This cannot be undone.`)) return;
+            
+            showLoading();
+            
+            const batch = db.batch();
+            
+            selectedUsers.forEach(userId => {
+                const userRef = db.collection('users').doc(userId);
+                batch.delete(userRef);
+            });
+            
+            batch.commit()
+                .then(() => {
+                    showSuccess(`${selectedUsers.size} user(s) deleted`);
+                    clearSelectedUsers();
+                    loadUsers();
+                })
+                .catch((error) => {
+                    console.error("Error in bulk delete:", error);
+                    showError("Failed to delete users: " + error.message);
+                    hideLoading();
+                });
+        }
+
+        function bulkEmailUsers() {
+            if (selectedUsers.size === 0) return;
+            
+            const emails = Array.from(selectedUsers).map(userId => {
+                const user = users.find(u => u.id === userId);
+                return user ? user.email : null;
+            }).filter(email => email);
+            
+            if (emails.length === 0) {
+                showError("No valid email addresses found");
+                return;
             }
-        });
+            
+            const mailtoLink = `mailto:${emails.join(';')}?subject=TaskFlow Pro Update`;
+            window.open(mailtoLink);
+        }
+
+        function approveAllPending() {
+            const pendingUsers = users.filter(u => u.status === 'pending');
+            
+            if (pendingUsers.length === 0) {
+                showInfo("No pending users to approve");
+                return;
+            }
+            
+            if (!confirm(`Approve ${pendingUsers.length} pending users?`)) return;
+            
+            showLoading();
+            
+            const batch = db.batch();
+            
+            pendingUsers.forEach(user => {
+                const userRef = db.collection('users').doc(user.id);
+                batch.update(userRef, { status: 'active' });
+            });
+            
+            batch.commit()
+                .then(() => {
+                    showSuccess(`${pendingUsers.length} users approved`);
+                    loadUsers();
+                })
+                .catch((error) => {
+                    console.error("Error approving users:", error);
+                    showError("Failed to approve users: " + error.message);
+                    hideLoading();
+                });
+        }
+
+        function exportAllUsers() {
+            if (users.length === 0) {
+                showInfo("No users to export");
+                return;
+            }
+            
+            // Create CSV
+            const headers = ['Name', 'Email', 'Type', 'Status', 'Phone', 'Address', 'Registered'];
+            const csvRows = [];
+            
+            csvRows.push(headers.join(','));
+            
+            users.forEach(user => {
+                const name = user.name || user.adminName || user.companyName || 'N/A';
+                const email = user.email || 'N/A';
+                const type = user.userType || 'N/A';
+                const status = user.status || 'N/A';
+                const phone = user.phone || user.adminPhone || 'N/A';
+                const address = (user.address || user.companyAddress || 'N/A').replace(/,/g, ';');
+                const registered = user.createdAtDate ? user.createdAtDate.toLocaleDateString() : 'N/A';
+                
+                csvRows.push(`${name},${email},${type},${status},${phone},${address},${registered}`);
+            });
+            
+            const csvData = csvRows.join('\n');
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `taskflow_users_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            
+            showSuccess(`Exported ${users.length} users to CSV`);
+        }
+
+        function testConnection() {
+            testModal.style.display = 'flex';
+            testResult.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Testing Firebase connection...</p>';
+            
+            if (!firebaseInitialized) {
+                testResult.innerHTML = `
+                    <p style="color: var(--danger);"><i class="fas fa-times-circle"></i> Firebase not initialized</p>
+                    <p>Check your Firebase configuration.</p>
+                `;
+                return;
+            }
+            
+            // Test Firestore
+            db.collection('users').limit(1).get()
+                .then((snapshot) => {
+                    testResult.innerHTML = `
+                        <p style="color: var(--success);"><i class="fas fa-check-circle"></i> Firebase connection successful!</p>
+                        <p><strong>Project:</strong> task-for-169b3</p>
+                        <p><strong>Users in database:</strong> ${users.length}</p>
+                        <p><strong>Firestore:</strong> Connected</p>
+                        <p><strong>Authentication:</strong> ${auth ? 'Available' : 'Not available'}</p>
+                    `;
+                })
+                .catch((error) => {
+                    testResult.innerHTML = `
+                        <p style="color: var(--danger);"><i class="fas fa-times-circle"></i> Connection failed</p>
+                        <p>Error: ${error.message}</p>
+                        <p>Check your Firebase configuration and permissions.</p>
+                    `;
+                });
+        }
+
+        function copyToClipboard(type) {
+            let text = '';
+            
+            if (type === 'email') {
+                text = modalUserEmail.value;
+            } else if (type === 'uid') {
+                text = userUID.value;
+            }
+            
+            if (!text || text === 'N/A') {
+                showError("No text to copy");
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showSuccess(`${type === 'email' ? 'Email' : 'UID'} copied to clipboard`);
+            }).catch(() => {
+                showError("Failed to copy");
+            });
+        }
+
+        function clearAllFilters() {
+            if (searchInput) searchInput.value = '';
+            if (userTypeFilter) userTypeFilter.value = 'all';
+            if (userStatusFilter) userStatusFilter.value = 'all';
+            if (dateFilter) dateFilter.value = 'all';
+            filterUsers();
+        }
+
+        // Helper functions
+        function getInitials(user) {
+            if (user.name) {
+                return user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            } else if (user.adminName) {
+                return user.adminName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            } else if (user.companyName) {
+                return user.companyName.substring(0, 2).toUpperCase();
+            }
+            return 'U';
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'active': return 'status-active';
+                case 'pending': return 'status-pending';
+                case 'inactive': return 'status-inactive';
+                default: return 'status-pending';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'active': return 'Active';
+                case 'pending': return 'Pending';
+                case 'inactive': return 'Inactive';
+                default: return 'Pending';
+            }
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successAlert.style.display = 'flex';
+            setTimeout(() => { successAlert.style.display = 'none'; }, 3000);
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorAlert.style.display = 'flex';
+            setTimeout(() => { errorAlert.style.display = 'none'; }, 3000);
+        }
+
+        function showWarning(message) {
+            warningMessage.textContent = message;
+            warningAlert.style.display = 'flex';
+            setTimeout(() => { warningAlert.style.display = 'none'; }, 3000);
+        }
+
+        function showInfo(message) {
+            infoMessage.textContent = message;
+            infoAlert.style.display = 'flex';
+            setTimeout(() => { infoAlert.style.display = 'none'; }, 3000);
+        }
+
+        function showLoading() {
+            loadingSpinner.style.display = 'block';
+            if (usersTableBody) usersTableBody.style.opacity = '0.5';
+        }
+
+        function hideLoading() {
+            loadingSpinner.style.display = 'none';
+            if (usersTableBody) usersTableBody.style.opacity = '1';
+        }
     </script>
 </body>
 </html>
-
