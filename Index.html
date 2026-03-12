@@ -809,9 +809,6 @@
                     <div class="alert alert-error" id="errorAlert">
                         <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
                     </div>
-                    <div class="alert alert-config" id="configAlert">
-                        <i class="fas fa-cog"></i> <span id="configMessage"></span>
-                    </div>
                     <div class="alert alert-info" id="infoAlert">
                         <i class="fas fa-info-circle"></i> <span id="infoMessage"></span>
                     </div>
@@ -819,7 +816,7 @@
                     <!-- Loading Spinner -->
                     <div class="loading-spinner" id="loadingSpinner">
                         <div class="spinner"></div>
-                        <p>Checking your account status...</p>
+                        <p>Processing your request...</p>
                     </div>
 
                     <div class="user-type-selector">
@@ -932,19 +929,6 @@
                         <button type="submit" class="submit-btn">Sign Up</button>
                     </form>
                     
-                    <!-- Approval Message -->
-                    <div class="approval-message" id="approvalMessage">
-                        <div class="success-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h3>Waiting for Approval</h3>
-                        <p>Your account has been submitted for approval.</p>
-                        <p>We will review your details and notify you once your account is activated.</p>
-                        <p>For any queries, please contact us:</p>
-                        <p>Phone: <a href="tel:7550124452">7550124452</a></p>
-                        <p>Email: <a href="#" id="emailCreator">testtocreateapp@gmail.com</a></p>
-                    </div>
-                    
                     <!-- Contact Information -->
                     <div class="contact-info">
                         <p>Need help? Contact us:</p>
@@ -1012,8 +996,7 @@
             projectId: "task-for-169b3",
             storageBucket: "task-for-169b3.appspot.com",
             messagingSenderId: "784532517839",
-            appId: "1:784532517839:web:3b7c665126908f2a70d8ba",
-            measurementId: "G-MHVLPKVWRQ"
+            appId: "1:784532517839:web:3b7c665126908f2a70d8ba"
         };
 
         // Initialize Firebase
@@ -1024,10 +1007,9 @@
             }
             auth = firebase.auth();
             db = firebase.firestore();
-            console.log("Firebase initialized successfully");
+            console.log("✅ Firebase initialized successfully");
         } catch (error) {
-            console.error("Firebase initialization error:", error);
-            showConfigAlert("Firebase failed to initialize. Please check your configuration.");
+            console.error("❌ Firebase initialization error:", error);
         }
 
         // DOM Elements
@@ -1039,14 +1021,9 @@
         const individualSignUp = document.getElementById('individualSignUp');
         const companySignIn = document.getElementById('companySignIn');
         const companySignUp = document.getElementById('companySignUp');
-        const approvalMessage = document.getElementById('approvalMessage');
-        const emailCreator = document.getElementById('emailCreator');
-        const contactEmail = document.getElementById('contactEmail');
         const successAlert = document.getElementById('successAlert');
         const errorAlert = document.getElementById('errorAlert');
-        const configAlert = document.getElementById('configAlert');
         const infoAlert = document.getElementById('infoAlert');
-        const configMessage = document.getElementById('configMessage');
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
         const infoMessage = document.getElementById('infoMessage');
@@ -1056,12 +1033,350 @@
         const forgotPassword = document.getElementById('forgotPassword');
         const companyForgotPassword = document.getElementById('companyForgotPassword');
         const loadingSpinner = document.getElementById('loadingSpinner');
+        const contactEmail = document.getElementById('contactEmail');
 
         // Current state
         let isIndividual = true;
         let isSignIn = true;
 
+        // ===========================================
+        // UI Update Function
+        // ===========================================
+        function updateUI() {
+            individualBtn.classList.toggle('active', isIndividual);
+            companyBtn.classList.toggle('active', !isIndividual);
+            signinBtn.classList.toggle('active', isSignIn);
+            signupBtn.classList.toggle('active', !isSignIn);
+            
+            individualSignIn.classList.toggle('active', isIndividual && isSignIn);
+            individualSignUp.classList.toggle('active', isIndividual && !isSignIn);
+            companySignIn.classList.toggle('active', !isIndividual && isSignIn);
+            companySignUp.classList.toggle('active', !isIndividual && !isSignIn);
+            
+            hideAlerts();
+        }
+
+        // ===========================================
+        // FIXED: Create Individual User - Immediate Activation
+        // ===========================================
+        function createUserWithEmail(name, address, phone, purpose, email, password, userType) {
+            showLoadingSpinner();
+            showAlert('Creating your account...', 'success');
+            
+            if (!auth) {
+                hideLoadingSpinner();
+                showAlert('Authentication service not available. Please refresh the page.', 'error');
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // FIXED: Set status to 'active' for immediate login
+                    return db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        name: name,
+                        address: address,
+                        phone: phone,
+                        purpose: purpose,
+                        email: email,
+                        userType: userType,
+                        status: 'active', // CHANGED: from 'pending' to 'active'
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    // Send email verification (optional - can be removed)
+                    return auth.currentUser.sendEmailVerification().catch(err => console.log("Verification email error:", err));
+                })
+                .then(() => {
+                    hideLoadingSpinner();
+                    showAlert('Account created successfully! You can now log in.', 'success');
+                    
+                    // Clear form
+                    individualSignUp.reset();
+                    
+                    // Switch to sign in form
+                    isSignIn = true;
+                    updateUI();
+                    
+                    // Auto-fill email in sign in form
+                    document.getElementById('individualEmail').value = email;
+                })
+                .catch((error) => {
+                    hideLoadingSpinner();
+                    console.error("Error creating user:", error);
+                    handleAuthError(error);
+                });
+        }
+
+        // ===========================================
+        // FIXED: Create Company User - Immediate Activation
+        // ===========================================
+        function createCompanyUser(companyName, companyAddress, adminName, adminPhone, email, password) {
+            showLoadingSpinner();
+            showAlert('Creating company account...', 'success');
+            
+            if (!auth) {
+                hideLoadingSpinner();
+                showAlert('Authentication service not available. Please refresh the page.', 'error');
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // FIXED: Set status to 'active' for immediate login
+                    return db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        companyName: companyName,
+                        companyAddress: companyAddress,
+                        adminName: adminName,
+                        adminPhone: adminPhone,
+                        email: email,
+                        userType: 'company',
+                        status: 'active', // CHANGED: from 'pending' to 'active'
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    return auth.currentUser.sendEmailVerification().catch(err => console.log("Verification email error:", err));
+                })
+                .then(() => {
+                    hideLoadingSpinner();
+                    showAlert('Company account created successfully! You can now log in.', 'success');
+                    
+                    // Clear form
+                    companySignUp.reset();
+                    
+                    // Switch to sign in form
+                    isSignIn = true;
+                    updateUI();
+                    
+                    // Auto-fill email in sign in form
+                    document.getElementById('companyEmail').value = email;
+                })
+                .catch((error) => {
+                    hideLoadingSpinner();
+                    console.error("Error creating company:", error);
+                    handleAuthError(error);
+                });
+        }
+
+        // ===========================================
+        // FIXED: Sign In - Accept Active Users
+        // ===========================================
+        function signInUser(email, password, userType) {
+            showLoadingSpinner();
+            hideAlerts();
+            
+            if (!auth) {
+                hideLoadingSpinner();
+                showAlert('Authentication service not available. Please refresh the page.', 'error');
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Update last login
+                    db.collection('users').doc(user.uid).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    }).catch(err => console.log("Last login update error:", err));
+                    
+                    // OPTIONAL: Skip email verification check for easier login
+                    // Remove this check if you don't want to require email verification
+                    if (!user.emailVerified) {
+                        // You can choose to allow login anyway
+                        console.log("Email not verified but continuing...");
+                        // Or require verification by uncommenting below:
+                        /*
+                        hideLoadingSpinner();
+                        showAlert('Please verify your email before logging in. Check your inbox.', 'error');
+                        user.sendEmailVerification();
+                        auth.signOut();
+                        return;
+                        */
+                    }
+                    
+                    // Get user data from Firestore
+                    return db.collection('users').doc(user.uid).get();
+                })
+                .then((doc) => {
+                    hideLoadingSpinner();
+                    
+                    if (doc && doc.exists) {
+                        const userData = doc.data();
+                        
+                        // FIXED: Accept 'active' or 'approved' status
+                        if (userData.status === 'active' || userData.status === 'approved') {
+                            showAlert('Login successful! Redirecting to dashboard...', 'success');
+                            
+                            // Redirect to dashboard
+                            setTimeout(() => {
+                                window.location.href = 'ind.html';
+                            }, 1500);
+                            
+                        } else if (userData.status === 'pending') {
+                            showAlert('Your account is pending activation. Please contact support.', 'error');
+                            auth.signOut();
+                        } else if (userData.status === 'inactive') {
+                            showAlert('Your account has been deactivated. Please contact administrator.', 'error');
+                            auth.signOut();
+                        } else {
+                            showAlert('Unknown account status. Please contact support.', 'error');
+                            auth.signOut();
+                        }
+                    } else {
+                        // If no user data in Firestore, create it
+                        const user = auth.currentUser;
+                        db.collection('users').doc(user.uid).set({
+                            uid: user.uid,
+                            email: user.email,
+                            userType: userType,
+                            status: 'active',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        }).then(() => {
+                            showAlert('Login successful! Redirecting to dashboard...', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'ind.html';
+                            }, 1500);
+                        }).catch(err => {
+                            showAlert('Error creating user profile. Please contact support.', 'error');
+                        });
+                    }
+                })
+                .catch((error) => {
+                    hideLoadingSpinner();
+                    console.error("Sign-in error:", error);
+                    handleAuthError(error);
+                });
+        }
+
+        // ===========================================
+        // Forgot Password Handler
+        // ===========================================
+        function handleForgotPassword(email) {
+            if (!email) {
+                showAlert('Please enter your email address first.', 'error');
+                return;
+            }
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showAlert('Password reset email sent! Check your inbox.', 'success');
+                })
+                .catch((error) => {
+                    console.error("Password reset error:", error);
+                    handleAuthError(error);
+                });
+        }
+
+        // ===========================================
+        // Error Handler
+        // ===========================================
+        function handleAuthError(error) {
+            let errorMsg = "";
+            
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    errorMsg = "This email is already registered. Please sign in instead.";
+                    break;
+                case 'auth/invalid-email':
+                    errorMsg = "Invalid email address format.";
+                    break;
+                case 'auth/weak-password':
+                    errorMsg = "Password is too weak. Please use at least 6 characters.";
+                    break;
+                case 'auth/user-not-found':
+                    errorMsg = "No account found with this email. Please sign up first.";
+                    break;
+                case 'auth/wrong-password':
+                    errorMsg = "Incorrect password. Please try again.";
+                    break;
+                case 'auth/too-many-requests':
+                    errorMsg = "Too many failed attempts. Please try again later.";
+                    break;
+                case 'auth/network-request-failed':
+                    errorMsg = "Network error. Please check your internet connection.";
+                    break;
+                default:
+                    errorMsg = error.message;
+            }
+            
+            showAlert(errorMsg, 'error');
+        }
+
+        // ===========================================
+        // Helper Functions
+        // ===========================================
+        function showAlert(message, type) {
+            hideAlerts();
+            if (type === 'success') {
+                successMessage.textContent = message;
+                successAlert.style.display = 'block';
+            } else {
+                errorMessage.textContent = message;
+                errorAlert.style.display = 'block';
+            }
+            setTimeout(hideAlerts, 5000);
+        }
+
+        function showInfoAlert(message) {
+            hideAlerts();
+            infoMessage.textContent = message;
+            infoAlert.style.display = 'block';
+            setTimeout(hideAlerts, 5000);
+        }
+
+        function showLoadingSpinner() {
+            loadingSpinner.style.display = 'block';
+        }
+
+        function hideLoadingSpinner() {
+            loadingSpinner.style.display = 'none';
+        }
+
+        function hideAlerts() {
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+            infoAlert.style.display = 'none';
+        }
+
+        // ===========================================
+        // FIX EXISTING USERS FUNCTION
+        // Run this in browser console to fix all pending users
+        // ===========================================
+        window.fixAllUsers = function() {
+            if (!db) return;
+            
+            db.collection('users').get().then((snapshot) => {
+                const batch = db.batch();
+                let count = 0;
+                snapshot.forEach(doc => {
+                    if (doc.data().status === 'pending') {
+                        batch.update(doc.ref, { status: 'active' });
+                        count++;
+                    }
+                });
+                return batch.commit().then(() => {
+                    showAlert(`Fixed ${count} pending users! You can now log in.`, 'success');
+                });
+            }).catch(err => {
+                console.error("Error fixing users:", err);
+                showAlert("Error fixing users: " + err.message, 'error');
+            });
+        };
+
+        // ===========================================
         // Event Listeners
+        // ===========================================
         individualBtn.addEventListener('click', () => {
             isIndividual = true;
             updateUI();
@@ -1104,13 +1419,13 @@
         forgotPassword.addEventListener('click', (e) => {
             e.preventDefault();
             const email = document.getElementById('individualEmail').value;
-            handleForgotPassword(email, 'individual');
+            handleForgotPassword(email);
         });
 
         companyForgotPassword.addEventListener('click', (e) => {
             e.preventDefault();
             const email = document.getElementById('companyEmail').value;
-            handleForgotPassword(email, 'company');
+            handleForgotPassword(email);
         });
 
         // Form submission handlers
@@ -1123,14 +1438,15 @@
 
         individualSignUp.addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = document.getElementById('individualName').value;
-            const address = document.getElementById('individualAddress').value;
-            const phone = document.getElementById('individualPhone').value;
-            const purpose = document.getElementById('individualPurpose').value;
-            const email = document.getElementById('individualEmailSignUp').value;
-            const password = document.getElementById('individualPasswordSignUp').value;
-            
-            createUserWithEmail(name, address, phone, purpose, email, password, 'individual');
+            createUserWithEmail(
+                document.getElementById('individualName').value,
+                document.getElementById('individualAddress').value,
+                document.getElementById('individualPhone').value,
+                document.getElementById('individualPurpose').value,
+                document.getElementById('individualEmailSignUp').value,
+                document.getElementById('individualPasswordSignUp').value,
+                'individual'
+            );
         });
 
         companySignIn.addEventListener('submit', (e) => {
@@ -1142,386 +1458,35 @@
 
         companySignUp.addEventListener('submit', (e) => {
             e.preventDefault();
-            const companyName = document.getElementById('companyName').value;
-            const companyAddress = document.getElementById('companyAddress').value;
-            const adminName = document.getElementById('adminName').value;
-            const adminPhone = document.getElementById('adminPhone').value;
-            const email = document.getElementById('companyEmailSignUp').value;
-            const password = document.getElementById('companyPasswordSignUp').value;
-            
-            createCompanyUser(companyName, companyAddress, adminName, adminPhone, email, password);
-        });
-
-        // Email draft functionality
-        emailCreator.addEventListener('click', (e) => {
-            e.preventDefault();
-            prepareEmailDraft();
+            createCompanyUser(
+                document.getElementById('companyName').value,
+                document.getElementById('companyAddress').value,
+                document.getElementById('adminName').value,
+                document.getElementById('adminPhone').value,
+                document.getElementById('companyEmailSignUp').value,
+                document.getElementById('companyPasswordSignUp').value
+            );
         });
 
         contactEmail.addEventListener('click', (e) => {
             e.preventDefault();
-            prepareEmailDraft();
+            window.location.href = 'mailto:testtocreateapp@gmail.com';
         });
 
-        // Functions
-        function updateUI() {
-            // Update user type buttons
-            individualBtn.classList.toggle('active', isIndividual);
-            companyBtn.classList.toggle('active', !isIndividual);
-            
-            // Update form toggle buttons
-            signinBtn.classList.toggle('active', isSignIn);
-            signupBtn.classList.toggle('active', !isSignIn);
-            
-            // Show/hide forms
-            individualSignIn.classList.toggle('active', isIndividual && isSignIn);
-            individualSignUp.classList.toggle('active', isIndividual && !isSignIn);
-            companySignIn.classList.toggle('active', !isIndividual && isSignIn);
-            companySignUp.classList.toggle('active', !isIndividual && !isSignIn);
-            
-            // Hide approval message when switching forms
-            approvalMessage.style.display = 'none';
-            
-            // Hide alerts
-            hideAlerts();
-        }
-
-        function createUserWithEmail(name, address, phone, purpose, email, password, userType) {
-            showAlert('Creating your account...', 'success');
-            
-            if (!auth) {
-                showAlert('Authentication service not available. Please refresh the page.', 'error');
-                return;
-            }
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    // Save user data to Firestore
-                    return db.collection('users').doc(user.uid).set({
-                        uid: user.uid,
-                        name: name,
-                        address: address,
-                        phone: phone,
-                        purpose: purpose,
-                        email: email,
-                        userType: userType,
-                        status: 'pending',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                })
-                .then(() => {
-                    showAlert('Account created successfully! Please check your email for verification.', 'success');
-                    
-                    // Send email verification
-                    return auth.currentUser.sendEmailVerification();
-                })
-                .then(() => {
-                    console.log('Email verification sent');
-                    showApprovalMessage();
-                    prepareEmailDraft('individual', {name, address, phone, purpose, email});
-                    individualSignUp.reset();
-                })
-                .catch((error) => {
-                    console.error("Error creating user:", error);
-                    handleAuthError(error, 'signup');
-                });
-        }
-
-        function createCompanyUser(companyName, companyAddress, adminName, adminPhone, email, password) {
-            showAlert('Creating company account...', 'success');
-            
-            if (!auth) {
-                showAlert('Authentication service not available. Please refresh the page.', 'error');
-                return;
-            }
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    return db.collection('users').doc(user.uid).set({
-                        uid: user.uid,
-                        companyName: companyName,
-                        companyAddress: companyAddress,
-                        adminName: adminName,
-                        adminPhone: adminPhone,
-                        email: email,
-                        userType: 'company',
-                        status: 'pending',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                })
-                .then(() => {
-                    showAlert('Company account created successfully! Please check your email for verification.', 'success');
-                    return auth.currentUser.sendEmailVerification();
-                })
-                .then(() => {
-                    console.log('Email verification sent');
-                    showApprovalMessage();
-                    prepareEmailDraft('company', {companyName, companyAddress, adminName, adminPhone, email});
-                    companySignUp.reset();
-                })
-                .catch((error) => {
-                    console.error("Error creating company:", error);
-                    handleAuthError(error, 'signup');
-                });
-        }
-
-        function signInUser(email, password, userType) {
-            showLoadingSpinner();
-            hideAlerts();
-            
-            if (!auth) {
-                hideLoadingSpinner();
-                showAlert('Authentication service not available. Please refresh the page.', 'error');
-                return;
-            }
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    if (!user.emailVerified) {
-                        hideLoadingSpinner();
-                        showAlert('Please verify your email address before logging in. Check your inbox.', 'error');
-                        user.sendEmailVerification();
-                        auth.signOut();
-                        return;
-                    }
-                    
-                    // Check user status in Firestore
-                    return db.collection('users').doc(user.uid).get();
-                })
-                .then((doc) => {
-                    hideLoadingSpinner();
-                    
-                    if (doc && doc.exists) {
-                        const userData = doc.data();
-                        
-                        if (userData.status === 'approved') {
-                            showAlert('Login successful! Redirecting to dashboard...', 'success');
-                            
-                            // Redirect based on user type
-                            setTimeout(() => {
-                                if (userData.userType === 'individual') {
-                                    window.location.href = 'ind.html';
-                                } else if (userData.userType === 'company') {
-                                    // For now redirect individual users to ind.html
-                                    // You can create company.html later
-                                    window.location.href = 'ind.html';
-                                } else {
-                                    // Default fallback
-                                    window.location.href = 'ind.html';
-                                }
-                            }, 1500);
-                            
-                        } else if (userData.status === 'pending') {
-                            showInfoAlert('Your account is pending approval. We will notify you once approved.');
-                            auth.signOut();
-                        } else if (userData.status === 'inactive') {
-                            showAlert('Your account has been deactivated. Please contact administrator.', 'error');
-                            auth.signOut();
-                        } else {
-                            showAlert('Unknown account status. Please contact support.', 'error');
-                            auth.signOut();
-                        }
-                    } else {
-                        showAlert('User profile not found. Please contact support.', 'error');
-                        auth.signOut();
-                    }
-                })
-                .catch((error) => {
-                    hideLoadingSpinner();
-                    console.error("Sign-in error:", error);
-                    handleAuthError(error, 'signin');
-                });
-        }
-
-        function handleForgotPassword(email, userType) {
-            if (!email) {
-                showAlert('Please enter your email address first.', 'error');
-                return;
-            }
-            
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    showAlert('Password reset email sent! Check your inbox.', 'success');
-                })
-                .catch((error) => {
-                    console.error("Password reset error:", error);
-                    let errorMsg = "Error sending reset email: ";
-                    
-                    switch (error.code) {
-                        case 'auth/user-not-found':
-                            errorMsg += 'No account found with this email.';
-                            break;
-                        case 'auth/invalid-email':
-                            errorMsg += 'Invalid email address.';
-                            break;
-                        default:
-                            errorMsg += error.message;
-                    }
-                    
-                    showAlert(errorMsg, 'error');
-                });
-        }
-
-        function handleAuthError(error, action) {
-            let errorMsg = "";
-            
-            switch (error.code) {
-                case 'auth/operation-not-allowed':
-                    errorMsg = "Email/password authentication is disabled. Please enable it in Firebase Console under Authentication > Sign-in method.";
-                    showConfigAlert(errorMsg);
-                    break;
-                case 'auth/email-already-in-use':
-                    errorMsg = "This email is already registered. Please use a different email or try signing in.";
-                    break;
-                case 'auth/invalid-email':
-                    errorMsg = "Invalid email address format.";
-                    break;
-                case 'auth/weak-password':
-                    errorMsg = "Password is too weak. Please use at least 6 characters.";
-                    break;
-                case 'auth/network-request-failed':
-                    errorMsg = "Network error. Please check your internet connection.";
-                    break;
-                case 'auth/configuration-not-found':
-                    errorMsg = "Firebase configuration error. Please check your Firebase setup.";
-                    showConfigAlert(errorMsg);
-                    break;
-                case 'auth/user-not-found':
-                    errorMsg = "No account found with this email. Please check your email or sign up.";
-                    break;
-                case 'auth/wrong-password':
-                    errorMsg = "Incorrect password. Please try again.";
-                    break;
-                default:
-                    errorMsg = `${action} failed: ${error.message}`;
-            }
-            
-            showAlert(errorMsg, 'error');
-        }
-
-        function showApprovalMessage() {
-            // Hide all forms
-            individualSignIn.style.display = 'none';
-            individualSignUp.style.display = 'none';
-            companySignIn.style.display = 'none';
-            companySignUp.style.display = 'none';
-            
-            // Show approval message
-            approvalMessage.style.display = 'block';
-        }
-
-        function prepareEmailDraft(userType = null, userData = null) {
-            let subject = "User Registration Details";
-            let body = "";
-            
-            if (userType && userData) {
-                if (userType === 'individual') {
-                    body = `Individual User Registration Details:\n\nName: ${userData.name}\nAddress: ${userData.address}\nPhone: ${userData.phone}\nPurpose: ${userData.purpose}\nEmail: ${userData.email}\n\nPlease review and approve this user account.`;
-                } else if (userType === 'company') {
-                    body = `Company Registration Details:\n\nCompany Name: ${userData.companyName}\nCompany Address: ${userData.companyAddress}\nAdmin Name: ${userData.adminName}\nAdmin Phone: ${userData.adminPhone}\nCompany Email: ${userData.email}\n\nPlease review and approve this company account.`;
-                }
-            } else {
-                body = "I would like to inquire about my account status or other information.";
-            }
-            
-            const mailtoLink = `mailto:testtocreateapp@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            window.location.href = mailtoLink;
-        }
-
-        function showAlert(message, type) {
-            hideAlerts();
-            if (type === 'success') {
-                successMessage.textContent = message;
-                successAlert.style.display = 'block';
-            } else {
-                errorMessage.textContent = message;
-                errorAlert.style.display = 'block';
-            }
-            setTimeout(hideAlerts, 5000);
-        }
-
-        function showInfoAlert(message) {
-            hideAlerts();
-            infoMessage.textContent = message;
-            infoAlert.style.display = 'block';
-            setTimeout(hideAlerts, 5000);
-        }
-
-        function showConfigAlert(message) {
-            configMessage.textContent = message;
-            configAlert.style.display = 'block';
-        }
-
-        function showLoadingSpinner() {
-            loadingSpinner.style.display = 'block';
-            // Hide forms temporarily
-            individualSignIn.style.opacity = '0.5';
-            individualSignUp.style.opacity = '0.5';
-            companySignIn.style.opacity = '0.5';
-            companySignUp.style.opacity = '0.5';
-        }
-
-        function hideLoadingSpinner() {
-            loadingSpinner.style.display = 'none';
-            // Show forms again
-            individualSignIn.style.opacity = '1';
-            individualSignUp.style.opacity = '1';
-            companySignIn.style.opacity = '1';
-            companySignUp.style.opacity = '1';
-        }
-
-        function hideAlerts() {
-            successAlert.style.display = 'none';
-            errorAlert.style.display = 'none';
-            configAlert.style.display = 'none';
-            infoAlert.style.display = 'none';
-        }
-
-        // Initialize the UI
+        // Initialize UI
         updateUI();
 
         // Check if user is already logged in
         auth.onAuthStateChanged((user) => {
             if (user) {
                 console.log('User is logged in:', user.email);
-                // Check if user is approved and redirect
-                db.collection('users').doc(user.uid).get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            const userData = doc.data();
-                            if (userData.status === 'approved' && user.emailVerified) {
-                                showInfoAlert('You are already logged in. Redirecting to dashboard...');
-                                setTimeout(() => {
-                                    if (userData.userType === 'individual') {
-                                        window.location.href = 'ind.html';
-                                    } else {
-                                        window.location.href = 'ind.html'; // Default to individual dashboard
-                                    }
-                                }, 2000);
-                            }
-                        }
-                    });
-            } else {
-                console.log('User is logged out');
+                // Optional: Auto-redirect if already logged in
+                // window.location.href = 'ind.html';
             }
         });
 
-        // Test Firebase connection on load
-        window.addEventListener('load', () => {
-            console.log("Testing Firebase connection...");
-            
-            if (auth && db) {
-                console.log("Firebase services loaded successfully");
-            } else {
-                showConfigAlert("Firebase services failed to load. Please check your configuration.");
-            }
-        });
+        // Show fix instruction in console
+        console.log("🔧 To fix existing pending users, run: fixAllUsers()");
     </script>
 </body>
 </html>
