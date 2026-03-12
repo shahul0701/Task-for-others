@@ -1219,7 +1219,7 @@
                             
                             // Redirect to dashboard
                             setTimeout(() => {
-                                window.location.href = 'ind.html';
+                                window.location.href = 'Dashboard ind.html';
                             }, 1500);
                             
                         } else if (userData.status === 'pending') {
@@ -1245,7 +1245,7 @@
                         }).then(() => {
                             showAlert('Login successful! Redirecting to dashboard...', 'success');
                             setTimeout(() => {
-                                window.location.href = 'ind.html';
+                                window.location.href = 'Dashboard ind.html';
                             }, 1500);
                         }).catch(err => {
                             showAlert('Error creating user profile. Please contact support.', 'error');
@@ -1481,7 +1481,7 @@
             if (user) {
                 console.log('User is logged in:', user.email);
                 // Optional: Auto-redirect if already logged in
-                // window.location.href = 'ind.html';
+                // window.location.href = 'Dashboard ind.html';
             }
         });
 
