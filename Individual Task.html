@@ -1558,1085 +1558,1046 @@
     </div>
 
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDYIqCBf1qwo1dUaHVs572MiXO82vmy6lE",
-            authDomain: "task-for-169b3.firebaseapp.com",
-            projectId: "task-for-169b3",
-            storageBucket: "task-for-169b3.appspot.com",
-            messagingSenderId: "784532517839",
-            appId: "1:784532517839:web:3b7c665126908f2a70d8ba"
-        };
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDYIqCBf1qwo1dUaHVs572MiXO82vmy6lE",
+        authDomain: "task-for-169b3.firebaseapp.com",
+        projectId: "task-for-169b3",
+        storageBucket: "task-for-169b3.appspot.com",
+        messagingSenderId: "784532517839",
+        appId: "1:784532517839:web:3b7c665126908f2a70d8ba"
+    };
 
-        // Initialize Firebase
-        let auth, db;
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            auth = firebase.auth();
-            db = firebase.firestore();
-            console.log("✅ Firebase initialized");
-        } catch (error) {
-            console.error("❌ Firebase error:", error);
+    // Initialize Firebase
+    let auth, db;
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
+        auth = firebase.auth();
+        db = firebase.firestore();
+        console.log("✅ Firebase initialized");
+    } catch (error) {
+        console.error("❌ Firebase error:", error);
+    }
 
-        // DOM Elements
-        const userAvatar = document.getElementById('userAvatar');
-        const userDisplayName = document.getElementById('userDisplayName');
-        const welcomeName = document.getElementById('welcomeName');
-        const companyName = document.getElementById('companyName');
-        const departmentName = document.getElementById('departmentName');
-        const userRole = document.getElementById('userRole');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const addTaskBtn = document.getElementById('addTaskBtn');
-        const generateReportBtn = document.getElementById('generateReportBtn');
-        const refreshTasks = document.getElementById('refreshTasks');
-        const searchInput = document.getElementById('searchInput');
-        const priorityFilter = document.getElementById('priorityFilter');
-        const departmentFilter = document.getElementById('departmentFilter');
-        const sortFilter = document.getElementById('sortFilter');
-        const clearFilters = document.getElementById('clearFilters');
-        const gridViewBtn = document.getElementById('gridViewBtn');
-        const listViewBtn = document.getElementById('listViewBtn');
-        const tasksWrapper = document.getElementById('tasksWrapper');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const currentViewTitle = document.getElementById('currentViewTitle');
-        const displayedTasksCount = document.getElementById('displayedTasksCount');
-        const pagination = document.getElementById('pagination');
-        const navTabs = document.querySelectorAll('.nav-tab');
+    // DOM Elements
+    const userAvatar = document.getElementById('userAvatar');
+    const userDisplayName = document.getElementById('userDisplayName');
+    const welcomeName = document.getElementById('welcomeName');
+    const companyName = document.getElementById('companyName');
+    const departmentName = document.getElementById('departmentName');
+    const userRole = document.getElementById('userRole');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const generateReportBtn = document.getElementById('generateReportBtn');
+    const refreshTasks = document.getElementById('refreshTasks');
+    const searchInput = document.getElementById('searchInput');
+    const priorityFilter = document.getElementById('priorityFilter');
+    const departmentFilter = document.getElementById('departmentFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    const clearFilters = document.getElementById('clearFilters');
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    const tasksWrapper = document.getElementById('tasksWrapper');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const currentViewTitle = document.getElementById('currentViewTitle');
+    const displayedTasksCount = document.getElementById('displayedTasksCount');
+    const pagination = document.getElementById('pagination');
+    const navTabs = document.querySelectorAll('.nav-tab');
 
-        // Stats elements
-        const totalTasksEl = document.getElementById('totalTasks');
-        const notStartedTasksEl = document.getElementById('notStartedTasks');
-        const inProgressTasksEl = document.getElementById('inProgressTasks');
-        const completedTasksEl = document.getElementById('completedTasks');
-        const onHoldTasksEl = document.getElementById('onHoldTasks');
-        const overdueTasksEl = document.getElementById('overdueTasks');
+    // Stats elements
+    const totalTasksEl = document.getElementById('totalTasks');
+    const notStartedTasksEl = document.getElementById('notStartedTasks');
+    const inProgressTasksEl = document.getElementById('inProgressTasks');
+    const completedTasksEl = document.getElementById('completedTasks');
+    const onHoldTasksEl = document.getElementById('onHoldTasks');
+    const overdueTasksEl = document.getElementById('overdueTasks');
 
-        // Modal elements
-        const taskModal = document.getElementById('taskModal');
-        const viewTaskModal = document.getElementById('viewTaskModal');
-        const reportModal = document.getElementById('reportModal');
-        const progressModal = document.getElementById('progressModal');
-        const deleteModal = document.getElementById('deleteModal');
+    // Modal elements
+    const taskModal = document.getElementById('taskModal');
+    const viewTaskModal = document.getElementById('viewTaskModal');
+    const reportModal = document.getElementById('reportModal');
+    const progressModal = document.getElementById('progressModal');
+    const deleteModal = document.getElementById('deleteModal');
 
-        // Modal close buttons
-        const closeTaskModalBtn = document.getElementById('closeTaskModalBtn');
-        const cancelTaskModalBtn = document.getElementById('cancelTaskModalBtn');
-        const closeViewModalBtn = document.getElementById('closeViewModalBtn');
-        const closeViewModalBtn2 = document.getElementById('closeViewModalBtn2');
-        const closeReportModalBtn = document.getElementById('closeReportModalBtn');
-        const closeReportModalBtn2 = document.getElementById('closeReportModalBtn2');
-        const closeProgressModalBtn = document.getElementById('closeProgressModalBtn');
-        const cancelProgressModalBtn = document.getElementById('cancelProgressModalBtn');
-        const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
-        const cancelDeleteModalBtn = document.getElementById('cancelDeleteModalBtn');
+    // Modal close buttons
+    const closeTaskModalBtn = document.getElementById('closeTaskModalBtn');
+    const cancelTaskModalBtn = document.getElementById('cancelTaskModalBtn');
+    const closeViewModalBtn = document.getElementById('closeViewModalBtn');
+    const closeViewModalBtn2 = document.getElementById('closeViewModalBtn2');
+    const closeReportModalBtn = document.getElementById('closeReportModalBtn');
+    const closeReportModalBtn2 = document.getElementById('closeReportModalBtn2');
+    const closeProgressModalBtn = document.getElementById('closeProgressModalBtn');
+    const cancelProgressModalBtn = document.getElementById('cancelProgressModalBtn');
+    const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
+    const cancelDeleteModalBtn = document.getElementById('cancelDeleteModalBtn');
 
-        // Modal action buttons
-        const saveTaskBtn = document.getElementById('saveTaskBtn');
-        const editFromViewBtn = document.getElementById('editFromViewBtn');
-        const progressFromViewBtn = document.getElementById('progressFromViewBtn');
-        const deleteFromViewBtn = document.getElementById('deleteFromViewBtn');
-        const saveProgressBtn = document.getElementById('saveProgressBtn');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    // Modal action buttons
+    const saveTaskBtn = document.getElementById('saveTaskBtn');
+    const editFromViewBtn = document.getElementById('editFromViewBtn');
+    const progressFromViewBtn = document.getElementById('progressFromViewBtn');
+    const deleteFromViewBtn = document.getElementById('deleteFromViewBtn');
+    const saveProgressBtn = document.getElementById('saveProgressBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-        // Form elements
-        const modalTitle = document.getElementById('modalTitle');
-        const taskTitle = document.getElementById('taskTitle');
-        const taskDepartment = document.getElementById('taskDepartment');
-        const taskSubDepartment = document.getElementById('taskSubDepartment');
-        const taskDescription = document.getElementById('taskDescription');
-        const taskNotes = document.getElementById('taskNotes');
-        const taskStatus = document.getElementById('taskStatus');
-        const taskPriority = document.getElementById('taskPriority');
-        const taskProgress = document.getElementById('taskProgress');
-        const progressValue = document.getElementById('progressValue');
-        const taskCategory = document.getElementById('taskCategory');
-        const taskStartDate = document.getElementById('taskStartDate');
-        const taskDueDate = document.getElementById('taskDueDate');
-        const taskDueTime = document.getElementById('taskDueTime');
-        const taskDuration = document.getElementById('taskDuration');
-        const taskAssignedTo = document.getElementById('taskAssignedTo');
-        const taskTags = document.getElementById('taskTags');
+    // Form elements
+    const modalTitle = document.getElementById('modalTitle');
+    const taskTitle = document.getElementById('taskTitle');
+    const taskDepartment = document.getElementById('taskDepartment');
+    const taskSubDepartment = document.getElementById('taskSubDepartment');
+    const taskDescription = document.getElementById('taskDescription');
+    const taskNotes = document.getElementById('taskNotes');
+    const taskStatus = document.getElementById('taskStatus');
+    const taskPriority = document.getElementById('taskPriority');
+    const taskProgress = document.getElementById('taskProgress');
+    const progressValue = document.getElementById('progressValue');
+    const taskCategory = document.getElementById('taskCategory');
+    const taskStartDate = document.getElementById('taskStartDate');
+    const taskDueDate = document.getElementById('taskDueDate');
+    const taskDueTime = document.getElementById('taskDueTime');
+    const taskDuration = document.getElementById('taskDuration');
+    const taskAssignedTo = document.getElementById('taskAssignedTo');
+    const taskTags = document.getElementById('taskTags');
 
-        // Department fields
-        const accountsFields = document.getElementById('accountsFields');
-        const financeFields = document.getElementById('financeFields');
-        const hrFields = document.getElementById('hrFields');
-        const itFields = document.getElementById('itFields');
+    // Department fields
+    const accountsFields = document.getElementById('accountsFields');
+    const financeFields = document.getElementById('financeFields');
+    const hrFields = document.getElementById('hrFields');
+    const itFields = document.getElementById('itFields');
 
-        // Progress modal elements
-        const updateProgress = document.getElementById('updateProgress');
-        const updateProgressValue = document.getElementById('updateProgressValue');
-        const updateStatus = document.getElementById('updateStatus');
-        const updateNotes = document.getElementById('updateNotes');
+    // Progress modal elements
+    const updateProgress = document.getElementById('updateProgress');
+    const updateProgressValue = document.getElementById('updateProgressValue');
+    const updateStatus = document.getElementById('updateStatus');
+    const updateNotes = document.getElementById('updateNotes');
 
-        // Delete modal
-        const deleteTaskTitle = document.getElementById('deleteTaskTitle');
+    // Delete modal
+    const deleteTaskTitle = document.getElementById('deleteTaskTitle');
 
-        // Global variables
-        let currentUser = null;
-        let userData = null;
-        let allTasks = [];
-        let filteredTasks = [];
-        let currentPage = 1;
-        let tasksPerPage = 12;
-        let currentView = 'not-started';
-        let currentViewMode = 'grid';
-        let currentEditingTask = null;
-        let taskToDelete = null;
-        let taskToUpdate = null;
+    // Global variables
+    let currentUser = null;
+    let userData = null;
+    let allTasks = [];
+    let filteredTasks = [];
+    let currentPage = 1;
+    let tasksPerPage = 12;
+    let currentView = 'not-started';
+    let currentViewMode = 'grid';
+    let currentEditingTask = null;
+    let taskToDelete = null;
+    let taskToUpdate = null;
 
-        // Department sub-options mapping
-        const departmentSubOptions = {
-            accounts: ['Bookkeeping', 'Tax Accounting', 'Audit', 'Payroll', 'Financial Reporting', 'Budgeting'],
-            finance: ['Financial Analysis', 'Investment Banking', 'Risk Management', 'Corporate Finance', 'Treasury'],
-            hr: ['Recruitment', 'Training & Development', 'Employee Relations', 'Compensation', 'HR Operations'],
-            it: ['Software Development', 'Network Administration', 'Cybersecurity', 'Database Administration', 'IT Support'],
-            marketing: ['Digital Marketing', 'Content Creation', 'SEO', 'Social Media', 'Market Research'],
-            sales: ['Inside Sales', 'Field Sales', 'Account Management', 'Sales Operations', 'Business Development'],
-            operations: ['Supply Chain', 'Logistics', 'Quality Assurance', 'Process Improvement', 'Facilities'],
-            general: ['General']
-        };
+    // Department sub-options mapping
+    const departmentSubOptions = {
+        accounts: ['Bookkeeping', 'Tax Accounting', 'Audit', 'Payroll', 'Financial Reporting', 'Budgeting'],
+        finance: ['Financial Analysis', 'Investment Banking', 'Risk Management', 'Corporate Finance', 'Treasury'],
+        hr: ['Recruitment', 'Training & Development', 'Employee Relations', 'Compensation', 'HR Operations'],
+        it: ['Software Development', 'Network Administration', 'Cybersecurity', 'Database Administration', 'IT Support'],
+        marketing: ['Digital Marketing', 'Content Creation', 'SEO', 'Social Media', 'Market Research'],
+        sales: ['Inside Sales', 'Field Sales', 'Account Management', 'Sales Operations', 'Business Development'],
+        operations: ['Supply Chain', 'Logistics', 'Quality Assurance', 'Process Improvement', 'Facilities'],
+        general: ['General']
+    };
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-            setCurrentDate();
-            setupEventListeners();
-            updateSubDepartmentOptions();
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAuth();
+        setCurrentDate();
+        setupEventListeners();
+        updateSubDepartmentOptions();
+    });
+
+    function checkAuth() {
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                console.log("✅ User logged in:", user.uid);
+                loadUserData();
+            } else {
+                console.log("❌ No user, redirecting to login");
+                window.location.href = 'index.html';
+            }
         });
+    }
 
-        function checkAuth() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    loadUserData();
-                } else {
-                    window.location.href = 'index.html';
-                }
-            });
-        }
-
-        function loadUserData() {
-            db.collection('users').doc(currentUser.uid).get()
-                .then(doc => {
-                    if (doc.exists) {
-                        userData = doc.data();
-                        const name = userData.name || userData.adminName || userData.email?.split('@')[0] || 'User';
-                        userDisplayName.textContent = name;
-                        welcomeName.textContent = name.split(' ')[0];
-                        
-                        // Set company info
-                        companyName.textContent = userData.companyName || 'Individual User';
-                        departmentName.textContent = userData.department || 'General';
-                        userRole.textContent = userData.role || 'Member';
-                        
-                        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                        userAvatar.textContent = initials || 'U';
-                        
-                        loadTasks();
-                    } else {
-                        // Create basic user profile
-                        const basicUser = {
-                            name: currentUser.email.split('@')[0],
-                            email: currentUser.email,
-                            companyName: 'Individual User',
-                            department: 'General',
-                            role: 'Member',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        };
-                        
-                        db.collection('users').doc(currentUser.uid).set(basicUser)
-                            .then(() => {
-                                userData = basicUser;
-                                loadTasks();
-                            });
-                    }
-                })
-                .catch(err => console.error("Error loading user:", err));
-        }
-
-        function loadTasks() {
-            showLoading();
-            
-            db.collection('tasks')
-                .where('userId', '==', currentUser.uid)
-                .orderBy('createdAt', 'desc')
-                .get()
-                .then(snapshot => {
-                    allTasks = [];
-                    snapshot.forEach(doc => {
-                        const task = doc.data();
-                        task.id = doc.id;
-                        
-                        if (task.createdAt?.toDate) {
-                            task.createdAtDate = task.createdAt.toDate();
-                        }
-                        
-                        allTasks.push(task);
-                    });
+    function loadUserData() {
+        db.collection('users').doc(currentUser.uid).get()
+            .then(doc => {
+                if (doc.exists) {
+                    userData = doc.data();
+                    console.log("✅ User data loaded:", userData);
                     
-                    updateStats();
-                    filterAndSortTasks();
-                    hideLoading();
-                })
-                .catch(err => {
-                    console.error("Error loading tasks:", err);
-                    showError("Failed to load tasks");
-                    hideLoading();
-                });
-        }
-
-        function updateStats() {
-            const total = allTasks.length;
-            const notStarted = allTasks.filter(t => t.status === 'not-started').length;
-            const inProgress = allTasks.filter(t => t.status === 'in-progress').length;
-            const completed = allTasks.filter(t => t.status === 'completed').length;
-            const onHold = allTasks.filter(t => t.status === 'on-hold').length;
-            const overdue = allTasks.filter(t => {
-                if (t.status !== 'completed' && t.dueDate) {
-                    return new Date(t.dueDate) < new Date();
+                    const name = userData.name || userData.adminName || userData.email?.split('@')[0] || 'User';
+                    userDisplayName.textContent = name;
+                    welcomeName.textContent = name.split(' ')[0];
+                    
+                    // Set company info
+                    companyName.textContent = userData.companyName || 'Individual User';
+                    departmentName.textContent = userData.department || 'General';
+                    userRole.textContent = userData.role || 'Member';
+                    
+                    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    userAvatar.textContent = initials || 'U';
+                    
+                    loadTasks();
+                } else {
+                    console.log("Creating new user profile");
+                    // Create basic user profile
+                    const basicUser = {
+                        name: currentUser.email.split('@')[0],
+                        email: currentUser.email,
+                        companyName: 'Individual User',
+                        department: 'General',
+                        role: 'Member',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    db.collection('users').doc(currentUser.uid).set(basicUser)
+                        .then(() => {
+                            userData = basicUser;
+                            loadTasks();
+                        });
                 }
-                return false;
-            }).length;
-            
-            totalTasksEl.textContent = total;
-            notStartedTasksEl.textContent = notStarted;
-            inProgressTasksEl.textContent = inProgress;
-            completedTasksEl.textContent = completed;
-            onHoldTasksEl.textContent = onHold;
-            overdueTasksEl.textContent = overdue;
-        }
+            })
+            .catch(err => console.error("Error loading user:", err));
+    }
 
-        function filterAndSortTasks() {
-            // Apply view filter
-            switch(currentView) {
-                case 'not-started':
-                    filteredTasks = allTasks.filter(t => t.status === 'not-started');
-                    currentViewTitle.textContent = 'Not Started Tasks';
-                    break;
-                case 'in-progress':
-                    filteredTasks = allTasks.filter(t => t.status === 'in-progress');
-                    currentViewTitle.textContent = 'In Progress Tasks';
-                    break;
-                case 'completed':
-                    filteredTasks = allTasks.filter(t => t.status === 'completed');
-                    currentViewTitle.textContent = 'Completed Tasks';
-                    break;
-                case 'on-hold':
-                    filteredTasks = allTasks.filter(t => t.status === 'on-hold');
-                    currentViewTitle.textContent = 'On Hold Tasks';
-                    break;
-                case 'high':
-                    filteredTasks = allTasks.filter(t => t.priority === 'high');
-                    currentViewTitle.textContent = 'High Priority Tasks';
-                    break;
-                case 'overdue':
-                    filteredTasks = allTasks.filter(t => {
-                        if (t.status !== 'completed' && t.dueDate) {
-                            return new Date(t.dueDate) < new Date();
-                        }
-                        return false;
-                    });
-                    currentViewTitle.textContent = 'Overdue Tasks';
-                    break;
-                default:
-                    filteredTasks = [...allTasks];
-                    currentViewTitle.textContent = 'All Tasks';
-            }
-            
-            // Apply search
-            const searchTerm = searchInput.value.toLowerCase();
-            if (searchTerm) {
-                filteredTasks = filteredTasks.filter(t => 
-                    (t.title?.toLowerCase().includes(searchTerm)) ||
-                    (t.description?.toLowerCase().includes(searchTerm)) ||
-                    (t.notes?.toLowerCase().includes(searchTerm))
-                );
-            }
-            
-            // Apply priority filter
-            const priority = priorityFilter.value;
-            if (priority !== 'all') {
-                filteredTasks = filteredTasks.filter(t => t.priority === priority);
-            }
-            
-            // Apply department filter
-            const dept = departmentFilter.value;
-            if (dept !== 'all') {
-                filteredTasks = filteredTasks.filter(t => t.department === dept);
-            }
-            
-            // Apply sorting
-            switch(sortFilter.value) {
-                case 'oldest':
-                    filteredTasks.sort((a, b) => a.createdAtDate - b.createdAtDate);
-                    break;
-                case 'due-asc':
-                    filteredTasks.sort((a, b) => {
-                        if (!a.dueDate) return 1;
-                        if (!b.dueDate) return -1;
-                        return new Date(a.dueDate) - new Date(b.dueDate);
-                    });
-                    break;
-                case 'due-desc':
-                    filteredTasks.sort((a, b) => {
-                        if (!a.dueDate) return 1;
-                        if (!b.dueDate) return -1;
-                        return new Date(b.dueDate) - new Date(a.dueDate);
-                    });
-                    break;
-                default: // newest
-                    filteredTasks.sort((a, b) => b.createdAtDate - a.createdAtDate);
-            }
-            
-            currentPage = 1;
-            renderTasks();
-            updatePagination();
-        }
-
-        function renderTasks() {
-            const start = (currentPage - 1) * tasksPerPage;
-            const end = start + tasksPerPage;
-            const pageTasks = filteredTasks.slice(start, end);
-            
-            displayedTasksCount.textContent = `${filteredTasks.length} task${filteredTasks.length !== 1 ? 's' : ''}`;
-            
-            if (pageTasks.length === 0) {
+    function loadTasks() {
+        showLoading();
+        console.log("Loading tasks for user:", currentUser.uid);
+        
+        db.collection('tasks')
+            .where('userId', '==', currentUser.uid)
+            .orderBy('createdAt', 'desc')
+            .get()
+            .then(snapshot => {
+                allTasks = [];
+                console.log("📊 Tasks snapshot size:", snapshot.size);
+                
+                snapshot.forEach(doc => {
+                    const task = doc.data();
+                    task.id = doc.id;
+                    
+                    if (task.createdAt?.toDate) {
+                        task.createdAtDate = task.createdAt.toDate();
+                    }
+                    
+                    console.log("Task loaded:", task.id, task.title);
+                    allTasks.push(task);
+                });
+                
+                console.log(`✅ Loaded ${allTasks.length} tasks`);
+                updateStats();
+                filterAndSortTasks();
+                hideLoading();
+            })
+            .catch(err => {
+                console.error("❌ Error loading tasks:", err);
+                showError("Failed to load tasks: " + err.message);
+                hideLoading();
+                
+                // Show empty state
                 tasksWrapper.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-clipboard-list"></i>
-                        <h3>No tasks found</h3>
-                        <p>${filteredTasks.length === 0 ? 'Create your first task to get started!' : 'Try adjusting your filters'}</p>
-                        <button class="btn btn-primary" onclick="document.getElementById('addTaskBtn').click()">
-                            <i class="fas fa-plus-circle"></i> Create Task
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Error Loading Tasks</h3>
+                        <p>${err.message}</p>
+                        <button class="btn btn-primary" onclick="loadTasks()">
+                            <i class="fas fa-sync-alt"></i> Try Again
                         </button>
                     </div>
                 `;
-                return;
-            }
-            
-            tasksWrapper.className = currentViewMode === 'grid' ? 'tasks-grid' : 'tasks-list';
-            tasksWrapper.innerHTML = pageTasks.map(task => createTaskHTML(task)).join('');
-            
-            // Add event listeners
-            pageTasks.forEach(task => {
-                const element = document.querySelector(`[data-task-id="${task.id}"]`);
-                if (element) {
-                    element.querySelector('.view-task')?.addEventListener('click', () => viewTask(task.id));
-                    element.querySelector('.edit-task')?.addEventListener('click', () => editTask(task.id));
-                    element.querySelector('.delete-task')?.addEventListener('click', () => showDeleteModal(task.id, task.title));
-                }
             });
-        }
+    }
 
-        function createTaskHTML(task) {
-            const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date';
-            const dueTime = task.dueTime || '';
-            const isOverdue = task.status !== 'completed' && task.dueDate && new Date(task.dueDate) < new Date();
-            const statusClass = isOverdue ? 'status-overdue' : `status-${task.status || 'not-started'}`;
-            const priorityClass = `priority-${task.priority || 'medium'}`;
-            
-            return `
-                <div class="task-item ${priorityClass} status-${task.status || 'not-started'}" data-task-id="${task.id}">
-                    <div class="task-content">
-                        <div class="task-header">
-                            <div class="task-title">
-                                <i class="fas fa-tasks" style="color: var(--primary);"></i>
-                                ${task.title}
-                            </div>
-                            <div class="task-badges">
-                                <span class="task-badge badge-dept">${task.department || 'General'}</span>
-                                ${task.subDepartment ? `<span class="task-badge badge-subdept">${task.subDepartment}</span>` : ''}
-                                <span class="task-badge ${statusClass}">${task.status?.replace('-', ' ') || 'Not Started'}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="task-description">
-                            ${task.description || 'No description'}
-                        </div>
-                        
-                        <div class="task-meta">
-                            <div class="meta-item"><i class="far fa-calendar"></i> Due: ${dueDate} ${dueTime}</div>
-                            <div class="meta-item"><i class="fas fa-flag"></i> Priority: ${task.priority || 'Medium'}</div>
-                            <div class="meta-item"><i class="fas fa-tag"></i> ${task.category || 'General'}</div>
-                            ${task.assignedTo ? `<div class="meta-item"><i class="fas fa-user"></i> Assigned to: ${task.assignedTo}</div>` : ''}
-                        </div>
-                        
-                        ${task.progress !== undefined ? `
-                            <div class="task-progress">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${task.progress}%;"></div>
-                                </div>
-                                <div class="progress-text">${task.progress}% complete</div>
-                            </div>
-                        ` : ''}
-                        
-                        ${task.notes ? `
-                            <div class="task-notes">
-                                <i class="fas fa-sticky-note"></i> ${task.notes.substring(0, 100)}${task.notes.length > 100 ? '...' : ''}
-                            </div>
-                        ` : ''}
-                        
-                        ${task.tags ? `
-                            <div class="task-tags">
-                                ${task.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('')}
-                            </div>
-                        ` : ''}
-                        
-                        <!-- Department-specific details -->
-                        ${task.department === 'accounts' && task.accountType ? `
-                            <div class="financial-details">
-                                <div class="financial-item"><strong>Account Type:</strong> ${task.accountType}</div>
-                                <div class="financial-item"><strong>Bookkeeping:</strong> ${task.bookkeepingType}</div>
-                                ${task.accountNumber ? `<div class="financial-item"><strong>Account #:</strong> ${task.accountNumber}</div>` : ''}
-                                ${task.accountAmount ? `<div class="financial-item"><strong>Amount:</strong> $${task.accountAmount}</div>` : ''}
-                            </div>
-                        ` : ''}
-                        
-                        ${task.department === 'finance' && task.financeType ? `
-                            <div class="financial-details">
-                                <div class="financial-item"><strong>Finance Type:</strong> ${task.financeType}</div>
-                                ${task.budgetAmount ? `<div class="financial-item"><strong>Budget:</strong> $${task.budgetAmount} ${task.currency || 'USD'}</div>` : ''}
-                                ${task.fiscalYear ? `<div class="financial-item"><strong>Fiscal Year:</strong> ${task.fiscalYear}</div>` : ''}
-                            </div>
-                        ` : ''}
-                        
-                        <div class="task-footer">
-                            <div class="task-actions">
-                                <button class="btn btn-primary btn-sm view-task"><i class="fas fa-eye"></i> View</button>
-                                <button class="btn btn-warning btn-sm edit-task"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-danger btn-sm delete-task"><i class="fas fa-trash"></i> Delete</button>
-                            </div>
-                        </div>
-                    </div>
+    function updateStats() {
+        const total = allTasks.length;
+        const notStarted = allTasks.filter(t => t.status === 'not-started').length;
+        const inProgress = allTasks.filter(t => t.status === 'in-progress').length;
+        const completed = allTasks.filter(t => t.status === 'completed').length;
+        const onHold = allTasks.filter(t => t.status === 'on-hold').length;
+        const overdue = allTasks.filter(t => {
+            if (t.status !== 'completed' && t.dueDate) {
+                return new Date(t.dueDate) < new Date();
+            }
+            return false;
+        }).length;
+        
+        totalTasksEl.textContent = total;
+        notStartedTasksEl.textContent = notStarted;
+        inProgressTasksEl.textContent = inProgress;
+        completedTasksEl.textContent = completed;
+        onHoldTasksEl.textContent = onHold;
+        overdueTasksEl.textContent = overdue;
+    }
+
+    function filterAndSortTasks() {
+        // Apply view filter
+        switch(currentView) {
+            case 'not-started':
+                filteredTasks = allTasks.filter(t => t.status === 'not-started');
+                currentViewTitle.textContent = 'Not Started Tasks';
+                break;
+            case 'in-progress':
+                filteredTasks = allTasks.filter(t => t.status === 'in-progress');
+                currentViewTitle.textContent = 'In Progress Tasks';
+                break;
+            case 'completed':
+                filteredTasks = allTasks.filter(t => t.status === 'completed');
+                currentViewTitle.textContent = 'Completed Tasks';
+                break;
+            case 'on-hold':
+                filteredTasks = allTasks.filter(t => t.status === 'on-hold');
+                currentViewTitle.textContent = 'On Hold Tasks';
+                break;
+            case 'high':
+                filteredTasks = allTasks.filter(t => t.priority === 'high');
+                currentViewTitle.textContent = 'High Priority Tasks';
+                break;
+            case 'overdue':
+                filteredTasks = allTasks.filter(t => {
+                    if (t.status !== 'completed' && t.dueDate) {
+                        return new Date(t.dueDate) < new Date();
+                    }
+                    return false;
+                });
+                currentViewTitle.textContent = 'Overdue Tasks';
+                break;
+            default:
+                filteredTasks = [...allTasks];
+                currentViewTitle.textContent = 'All Tasks';
+        }
+        
+        // Apply search
+        const searchTerm = searchInput.value.toLowerCase();
+        if (searchTerm) {
+            filteredTasks = filteredTasks.filter(t => 
+                (t.title?.toLowerCase().includes(searchTerm)) ||
+                (t.description?.toLowerCase().includes(searchTerm)) ||
+                (t.notes?.toLowerCase().includes(searchTerm))
+            );
+        }
+        
+        // Apply priority filter
+        const priority = priorityFilter.value;
+        if (priority !== 'all') {
+            filteredTasks = filteredTasks.filter(t => t.priority === priority);
+        }
+        
+        // Apply department filter
+        const dept = departmentFilter.value;
+        if (dept !== 'all') {
+            filteredTasks = filteredTasks.filter(t => t.department === dept);
+        }
+        
+        // Apply sorting
+        switch(sortFilter.value) {
+            case 'oldest':
+                filteredTasks.sort((a, b) => a.createdAtDate - b.createdAtDate);
+                break;
+            case 'due-asc':
+                filteredTasks.sort((a, b) => {
+                    if (!a.dueDate) return 1;
+                    if (!b.dueDate) return -1;
+                    return new Date(a.dueDate) - new Date(b.dueDate);
+                });
+                break;
+            case 'due-desc':
+                filteredTasks.sort((a, b) => {
+                    if (!a.dueDate) return 1;
+                    if (!b.dueDate) return -1;
+                    return new Date(b.dueDate) - new Date(a.dueDate);
+                });
+                break;
+            default: // newest
+                filteredTasks.sort((a, b) => b.createdAtDate - a.createdAtDate);
+        }
+        
+        console.log(`Filtered tasks: ${filteredTasks.length}`);
+        currentPage = 1;
+        renderTasks();
+        updatePagination();
+    }
+
+    function renderTasks() {
+        const start = (currentPage - 1) * tasksPerPage;
+        const end = start + tasksPerPage;
+        const pageTasks = filteredTasks.slice(start, end);
+        
+        displayedTasksCount.textContent = `${filteredTasks.length} task${filteredTasks.length !== 1 ? 's' : ''}`;
+        
+        if (pageTasks.length === 0) {
+            tasksWrapper.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No tasks found</h3>
+                    <p>${filteredTasks.length === 0 ? 'Create your first task to get started!' : 'Try adjusting your filters'}</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('addTaskBtn').click()">
+                        <i class="fas fa-plus-circle"></i> Create Task
+                    </button>
                 </div>
             `;
+            return;
         }
-
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
-            if (totalPages <= 1) {
-                pagination.innerHTML = '';
-                return;
+        
+        tasksWrapper.className = currentViewMode === 'grid' ? 'tasks-grid' : 'tasks-list';
+        tasksWrapper.innerHTML = pageTasks.map(task => createTaskHTML(task)).join('');
+        
+        // Add event listeners
+        pageTasks.forEach(task => {
+            const element = document.querySelector(`[data-task-id="${task.id}"]`);
+            if (element) {
+                element.querySelector('.view-task')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    viewTask(task.id);
+                });
+                element.querySelector('.edit-task')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    editTask(task.id);
+                });
+                element.querySelector('.delete-task')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showDeleteModal(task.id, task.title);
+                });
             }
-            
-            let html = '';
-            html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">&laquo;</button>`;
-            
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-                    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-                } else if (i === currentPage - 3 || i === currentPage + 3) {
-                    html += `<button disabled>...</button>`;
-                }
-            }
-            
-            html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">&raquo;</button>`;
-            pagination.innerHTML = html;
-        }
+        });
+    }
 
-        function changePage(page) {
-            currentPage = page;
-            renderTasks();
-            updatePagination();
-        }
-
-        function filterByStatus(status) {
-            navTabs.forEach(t => t.classList.remove('active'));
-            const tab = Array.from(navTabs).find(t => t.dataset.view === status);
-            if (tab) tab.classList.add('active');
-            currentView = status;
-            filterAndSortTasks();
-        }
-
-        function handleDepartmentChange() {
-            const dept = taskDepartment.value;
-            updateSubDepartmentOptions(dept);
-            
-            // Hide all department fields
-            accountsFields.style.display = 'none';
-            financeFields.style.display = 'none';
-            hrFields.style.display = 'none';
-            itFields.style.display = 'none';
-            
-            // Show relevant fields
-            if (dept === 'accounts') accountsFields.style.display = 'block';
-            else if (dept === 'finance') financeFields.style.display = 'block';
-            else if (dept === 'hr') hrFields.style.display = 'block';
-            else if (dept === 'it') itFields.style.display = 'block';
-        }
-
-        function updateSubDepartmentOptions(dept = 'general') {
-            const options = departmentSubOptions[dept] || ['General'];
-            taskSubDepartment.innerHTML = options.map(opt => 
-                `<option value="${opt.toLowerCase()}">${opt}</option>`
-            ).join('');
-        }
-
-        function viewTask(taskId) {
-            const task = allTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No due date';
-            const startDate = task.startDate ? new Date(task.startDate).toLocaleDateString() : 'Not set';
-            
-            let html = `
-                <div style="padding: 10px;">
-                    <h2 style="color: var(--primary); margin-bottom: 20px;">${task.title}</h2>
-                    
-                    <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                        <span class="task-badge badge-dept">${task.department || 'General'}</span>
-                        ${task.subDepartment ? `<span class="task-badge badge-subdept">${task.subDepartment}</span>` : ''}
-                        <span class="task-badge status-${task.status || 'not-started'}">${task.status?.replace('-', ' ') || 'Not Started'}</span>
-                        <span class="task-badge priority-${task.priority || 'medium'}">${task.priority || 'Medium'} Priority</span>
+    function createTaskHTML(task) {
+        const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date';
+        const dueTime = task.dueTime || '';
+        const isOverdue = task.status !== 'completed' && task.dueDate && new Date(task.dueDate) < new Date();
+        const statusClass = isOverdue ? 'status-overdue' : `status-${task.status || 'not-started'}`;
+        const priorityClass = `priority-${task.priority || 'medium'}`;
+        
+        return `
+            <div class="task-item ${priorityClass} status-${task.status || 'not-started'}" data-task-id="${task.id}">
+                <div class="task-content">
+                    <div class="task-header">
+                        <div class="task-title">
+                            <i class="fas fa-tasks" style="color: var(--primary);"></i>
+                            ${task.title}
+                        </div>
+                        <div class="task-badges">
+                            <span class="task-badge badge-dept">${task.department || 'General'}</span>
+                            ${task.subDepartment ? `<span class="task-badge badge-subdept">${task.subDepartment}</span>` : ''}
+                            <span class="task-badge ${statusClass}">${task.status?.replace('-', ' ') || 'Not Started'}</span>
+                        </div>
                     </div>
                     
-                    <div class="company-meta">
-                        <div><i class="fas fa-building"></i> <strong>Company:</strong> ${userData?.companyName || 'Individual'}</div>
-                        <div><i class="fas fa-user"></i> <strong>Created by:</strong> ${task.assignedBy || userData?.name || 'Self'}</div>
-                        ${task.assignedTo ? `<div><i class="fas fa-user-check"></i> <strong>Assigned to:</strong> ${task.assignedTo}</div>` : ''}
+                    <div class="task-description">
+                        ${task.description || 'No description'}
                     </div>
                     
                     <div class="task-meta">
-                        <div><i class="far fa-calendar-alt"></i> <strong>Start Date:</strong> ${startDate}</div>
-                        <div><i class="far fa-clock"></i> <strong>Due Date:</strong> ${dueDate}</div>
-                        <div><i class="fas fa-hourglass-half"></i> <strong>Duration:</strong> ${task.duration ? task.duration + ' hours' : 'Not specified'}</div>
-                        <div><i class="fas fa-tag"></i> <strong>Category:</strong> ${task.category || 'General'}</div>
+                        <div class="meta-item"><i class="far fa-calendar"></i> Due: ${dueDate} ${dueTime}</div>
+                        <div class="meta-item"><i class="fas fa-flag"></i> Priority: ${task.priority || 'Medium'}</div>
+                        <div class="meta-item"><i class="fas fa-tag"></i> ${task.category || 'General'}</div>
+                        ${task.assignedTo ? `<div class="meta-item"><i class="fas fa-user"></i> Assigned to: ${task.assignedTo}</div>` : ''}
                     </div>
                     
-                    <div style="margin-bottom: 20px;">
-                        <h4><i class="fas fa-align-left"></i> Description</h4>
-                        <p style="background: var(--light); padding: 15px; border-radius: var(--radius);">${task.description || 'No description'}</p>
-                    </div>
-                    
-                    ${task.notes ? `
-                        <div style="margin-bottom: 20px;">
-                            <h4><i class="fas fa-sticky-note"></i> Notes</h4>
-                            <div style="background: #fff3cd; padding: 15px; border-radius: var(--radius);">${task.notes}</div>
-                        </div>
-                    ` : ''}
-                    
-                    <div style="margin-bottom: 20px;">
-                        <h4>Progress</h4>
+                    ${task.progress !== undefined ? `
                         <div class="task-progress">
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${task.progress || 0}%;"></div>
+                                <div class="progress-fill" style="width: ${task.progress}%;"></div>
                             </div>
-                            <div class="progress-text">${task.progress || 0}% complete</div>
+                            <div class="progress-text">${task.progress}% complete</div>
                         </div>
-                    </div>
+                    ` : ''}
+                    
+                    ${task.notes ? `
+                        <div class="task-notes">
+                            <i class="fas fa-sticky-note"></i> ${task.notes.substring(0, 100)}${task.notes.length > 100 ? '...' : ''}
+                        </div>
+                    ` : ''}
                     
                     ${task.tags ? `
-                        <div style="margin-bottom: 20px;">
-                            <h4>Tags</h4>
-                            <div class="task-tags">
-                                ${task.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('')}
-                            </div>
+                        <div class="task-tags">
+                            ${task.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('')}
                         </div>
                     ` : ''}
                     
-                    <!-- Department-specific details -->
-                    ${task.department === 'accounts' ? `
-                        <div class="financial-details">
-                            <h4><i class="fas fa-calculator"></i> Accounts Details</h4>
-                            <div class="financial-item"><strong>Account Type:</strong> ${task.accountType || 'N/A'}</div>
-                            <div class="financial-item"><strong>Bookkeeping Type:</strong> ${task.bookkeepingType || 'N/A'}</div>
-                            ${task.accountNumber ? `<div class="financial-item"><strong>Account Number:</strong> ${task.accountNumber}</div>` : ''}
-                            ${task.accountAmount ? `<div class="financial-item"><strong>Amount:</strong> $${task.accountAmount}</div>` : ''}
+                    <div class="task-footer">
+                        <div class="task-actions">
+                            <button class="btn btn-primary btn-sm view-task"><i class="fas fa-eye"></i> View</button>
+                            <button class="btn btn-warning btn-sm edit-task"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-danger btn-sm delete-task"><i class="fas fa-trash"></i> Delete</button>
                         </div>
-                    ` : ''}
-                    
-                    ${task.department === 'finance' ? `
-                        <div class="financial-details">
-                            <h4><i class="fas fa-chart-line"></i> Finance Details</h4>
-                            <div class="financial-item"><strong>Finance Type:</strong> ${task.financeType || 'N/A'}</div>
-                            ${task.budgetAmount ? `<div class="financial-item"><strong>Budget Amount:</strong> $${task.budgetAmount} ${task.currency || 'USD'}</div>` : ''}
-                            ${task.fiscalYear ? `<div class="financial-item"><strong>Fiscal Year:</strong> ${task.fiscalYear}</div>` : ''}
-                        </div>
-                    ` : ''}
-                    
-                    ${task.department === 'hr' ? `
-                        <div class="financial-details">
-                            <h4><i class="fas fa-users"></i> HR Details</h4>
-                            <div class="financial-item"><strong>HR Type:</strong> ${task.hrType || 'N/A'}</div>
-                            ${task.hrTarget ? `<div class="financial-item"><strong>Target:</strong> ${task.hrTarget}</div>` : ''}
-                        </div>
-                    ` : ''}
-                    
-                    ${task.department === 'it' ? `
-                        <div class="financial-details">
-                            <h4><i class="fas fa-laptop"></i> IT Details</h4>
-                            <div class="financial-item"><strong>IT Type:</strong> ${task.itType || 'N/A'}</div>
-                            ${task.itProject ? `<div class="financial-item"><strong>Project:</strong> ${task.itProject}</div>` : ''}
-                            ${task.itRequirements ? `<div class="financial-item"><strong>Requirements:</strong> ${task.itRequirements}</div>` : ''}
-                        </div>
-                    ` : ''}
+                    </div>
                 </div>
-            `;
-            
-            document.getElementById('viewTaskContent').innerHTML = html;
-            currentEditingTask = task;
-            viewTaskModal.style.display = 'flex';
-        }
+            </div>
+        `;
+    }
 
-        function editTask(taskId) {
-            const task = allTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            currentEditingTask = task;
-            modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Task';
-            
-            // Basic info
-            taskTitle.value = task.title || '';
-            taskDepartment.value = task.department || 'general';
-            handleDepartmentChange();
-            taskSubDepartment.value = task.subDepartment || 'general';
-            taskDescription.value = task.description || '';
-            taskNotes.value = task.notes || '';
-            taskStatus.value = task.status || 'not-started';
-            taskPriority.value = task.priority || 'medium';
-            taskProgress.value = task.progress || 0;
-            progressValue.textContent = (task.progress || 0) + '%';
-            taskCategory.value = task.category || 'work';
-            
-            // Dates
-            taskStartDate.value = task.startDate || '';
-            taskDueDate.value = task.dueDate || '';
-            taskDueTime.value = task.dueTime || '';
-            taskDuration.value = task.duration || '';
-            taskAssignedTo.value = task.assignedTo || '';
-            taskTags.value = task.tags || '';
-            
-            // Department-specific fields
-            if (task.department === 'accounts') {
-                document.getElementById('accountType').value = task.accountType || 'payable';
-                document.getElementById('bookkeepingType').value = task.bookkeepingType || 'double';
-                document.getElementById('accountNumber').value = task.accountNumber || '';
-                document.getElementById('accountAmount').value = task.accountAmount || '';
-            } else if (task.department === 'finance') {
-                document.getElementById('financeType').value = task.financeType || 'budget';
-                document.getElementById('budgetAmount').value = task.budgetAmount || '';
-                document.getElementById('currency').value = task.currency || 'USD';
-                document.getElementById('fiscalYear').value = task.fiscalYear || '';
-            } else if (task.department === 'hr') {
-                document.getElementById('hrType').value = task.hrType || 'recruitment';
-                document.getElementById('hrTarget').value = task.hrTarget || '';
-            } else if (task.department === 'it') {
-                document.getElementById('itType').value = task.itType || 'development';
-                document.getElementById('itProject').value = task.itProject || '';
-                document.getElementById('itRequirements').value = task.itRequirements || '';
-            }
-            
-            viewTaskModal.style.display = 'none';
-            taskModal.style.display = 'flex';
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+        if (totalPages <= 1) {
+            pagination.innerHTML = '';
+            return;
         }
+        
+        let html = '';
+        html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">&laquo;</button>`;
+        
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            } else if (i === currentPage - 3 || i === currentPage + 3) {
+                html += `<button disabled>...</button>`;
+            }
+        }
+        
+        html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">&raquo;</button>`;
+        pagination.innerHTML = html;
+    }
 
-        function saveTask() {
-            const title = taskTitle.value.trim();
-            const dueDate = taskDueDate.value;
-            
-            if (!title) {
-                showError("Please enter a task title");
-                return;
-            }
-            
-            if (!dueDate) {
-                showError("Please select a due date");
-                return;
-            }
-            
-            const taskData = {
-                title: title,
-                department: taskDepartment.value,
-                subDepartment: taskSubDepartment.value,
-                description: taskDescription.value.trim(),
-                notes: taskNotes.value.trim(),
-                status: taskStatus.value,
-                priority: taskPriority.value,
-                progress: parseInt(taskProgress.value) || 0,
-                category: taskCategory.value,
-                startDate: taskStartDate.value,
-                dueDate: dueDate,
-                dueTime: taskDueTime.value,
-                duration: taskDuration.value ? parseFloat(taskDuration.value) : null,
-                assignedTo: taskAssignedTo.value,
-                assignedBy: userData?.name || currentUser?.email || 'Self',
-                tags: taskTags.value,
-                userId: currentUser.uid,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            // Add department-specific fields
-            if (taskDepartment.value === 'accounts') {
-                taskData.accountType = document.getElementById('accountType')?.value;
-                taskData.bookkeepingType = document.getElementById('bookkeepingType')?.value;
-                taskData.accountNumber = document.getElementById('accountNumber')?.value;
-                taskData.accountAmount = document.getElementById('accountAmount')?.value ? parseFloat(document.getElementById('accountAmount').value) : null;
-            } else if (taskDepartment.value === 'finance') {
-                taskData.financeType = document.getElementById('financeType')?.value;
-                taskData.budgetAmount = document.getElementById('budgetAmount')?.value ? parseFloat(document.getElementById('budgetAmount').value) : null;
-                taskData.currency = document.getElementById('currency')?.value;
-                taskData.fiscalYear = document.getElementById('fiscalYear')?.value;
-            } else if (taskDepartment.value === 'hr') {
-                taskData.hrType = document.getElementById('hrType')?.value;
-                taskData.hrTarget = document.getElementById('hrTarget')?.value;
-            } else if (taskDepartment.value === 'it') {
-                taskData.itType = document.getElementById('itType')?.value;
-                taskData.itProject = document.getElementById('itProject')?.value;
-                taskData.itRequirements = document.getElementById('itRequirements')?.value;
-            }
-            
-            if (currentEditingTask) {
-                // Update
-                db.collection('tasks').doc(currentEditingTask.id).update(taskData)
-                    .then(() => {
-                        showSuccess("Task updated successfully!");
-                        taskModal.style.display = 'none';
-                        loadTasks();
-                    })
-                    .catch(err => {
-                        console.error("Error updating task:", err);
-                        showError("Failed to update task");
-                    });
-            } else {
-                // Create new
-                taskData.status = 'not-started';
-                taskData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+    function changePage(page) {
+        currentPage = page;
+        renderTasks();
+        updatePagination();
+    }
+
+    function filterByStatus(status) {
+        navTabs.forEach(t => t.classList.remove('active'));
+        const tab = Array.from(navTabs).find(t => t.dataset.view === status);
+        if (tab) tab.classList.add('active');
+        currentView = status;
+        filterAndSortTasks();
+    }
+
+    function handleDepartmentChange() {
+        const dept = taskDepartment.value;
+        updateSubDepartmentOptions(dept);
+        
+        // Hide all department fields
+        accountsFields.style.display = 'none';
+        financeFields.style.display = 'none';
+        hrFields.style.display = 'none';
+        itFields.style.display = 'none';
+        
+        // Show relevant fields
+        if (dept === 'accounts') accountsFields.style.display = 'block';
+        else if (dept === 'finance') financeFields.style.display = 'block';
+        else if (dept === 'hr') hrFields.style.display = 'block';
+        else if (dept === 'it') itFields.style.display = 'block';
+    }
+
+    function updateSubDepartmentOptions(dept = 'general') {
+        const options = departmentSubOptions[dept] || ['General'];
+        taskSubDepartment.innerHTML = options.map(opt => 
+            `<option value="${opt.toLowerCase()}">${opt}</option>`
+        ).join('');
+    }
+
+    function viewTask(taskId) {
+        const task = allTasks.find(t => t.id === taskId);
+        if (!task) return;
+        
+        const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No due date';
+        const startDate = task.startDate ? new Date(task.startDate).toLocaleDateString() : 'Not set';
+        
+        let html = `
+            <div style="padding: 10px;">
+                <h2 style="color: var(--primary); margin-bottom: 20px;">${task.title}</h2>
                 
-                db.collection('tasks').add(taskData)
-                    .then(() => {
-                        showSuccess("Task created successfully!");
-                        taskModal.style.display = 'none';
-                        loadTasks();
-                    })
-                    .catch(err => {
-                        console.error("Error creating task:", err);
-                        showError("Failed to create task");
-                    });
-            }
-        }
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <span class="task-badge badge-dept">${task.department || 'General'}</span>
+                    ${task.subDepartment ? `<span class="task-badge badge-subdept">${task.subDepartment}</span>` : ''}
+                    <span class="task-badge status-${task.status || 'not-started'}">${task.status?.replace('-', ' ') || 'Not Started'}</span>
+                    <span class="task-badge priority-${task.priority || 'medium'}">${task.priority || 'Medium'} Priority</span>
+                </div>
+                
+                <div class="company-meta">
+                    <div><i class="fas fa-building"></i> <strong>Company:</strong> ${userData?.companyName || 'Individual'}</div>
+                    <div><i class="fas fa-user"></i> <strong>Created by:</strong> ${task.assignedBy || userData?.name || 'Self'}</div>
+                    ${task.assignedTo ? `<div><i class="fas fa-user-check"></i> <strong>Assigned to:</strong> ${task.assignedTo}</div>` : ''}
+                </div>
+                
+                <div class="task-meta">
+                    <div><i class="far fa-calendar-alt"></i> <strong>Start Date:</strong> ${startDate}</div>
+                    <div><i class="far fa-clock"></i> <strong>Due Date:</strong> ${dueDate}</div>
+                    <div><i class="fas fa-hourglass-half"></i> <strong>Duration:</strong> ${task.duration ? task.duration + ' hours' : 'Not specified'}</div>
+                    <div><i class="fas fa-tag"></i> <strong>Category:</strong> ${task.category || 'General'}</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4><i class="fas fa-align-left"></i> Description</h4>
+                    <p style="background: var(--light); padding: 15px; border-radius: var(--radius);">${task.description || 'No description'}</p>
+                </div>
+                
+                ${task.notes ? `
+                    <div style="margin-bottom: 20px;">
+                        <h4><i class="fas fa-sticky-note"></i> Notes</h4>
+                        <div style="background: #fff3cd; padding: 15px; border-radius: var(--radius);">${task.notes}</div>
+                    </div>
+                ` : ''}
+                
+                <div style="margin-bottom: 20px;">
+                    <h4>Progress</h4>
+                    <div class="task-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${task.progress || 0}%;"></div>
+                        </div>
+                        <div class="progress-text">${task.progress || 0}% complete</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('viewTaskContent').innerHTML = html;
+        currentEditingTask = task;
+        viewTaskModal.style.display = 'flex';
+    }
 
-        function showProgressModal(taskId) {
-            const task = allTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            taskToUpdate = taskId;
-            updateProgress.value = task.progress || 0;
-            updateProgressValue.textContent = (task.progress || 0) + '%';
-            updateStatus.value = task.status || 'not-started';
-            updateNotes.value = '';
-            
-            viewTaskModal.style.display = 'none';
-            progressModal.style.display = 'flex';
-        }
+    function editTask(taskId) {
+        const task = allTasks.find(t => t.id === taskId);
+        if (!task) return;
+        
+        currentEditingTask = task;
+        modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Task';
+        
+        // Basic info
+        taskTitle.value = task.title || '';
+        taskDepartment.value = task.department || 'general';
+        handleDepartmentChange();
+        taskSubDepartment.value = task.subDepartment || 'general';
+        taskDescription.value = task.description || '';
+        taskNotes.value = task.notes || '';
+        taskStatus.value = task.status || 'not-started';
+        taskPriority.value = task.priority || 'medium';
+        taskProgress.value = task.progress || 0;
+        progressValue.textContent = (task.progress || 0) + '%';
+        taskCategory.value = task.category || 'work';
+        
+        // Dates
+        taskStartDate.value = task.startDate || '';
+        taskDueDate.value = task.dueDate || '';
+        taskDueTime.value = task.dueTime || '';
+        taskDuration.value = task.duration || '';
+        taskAssignedTo.value = task.assignedTo || '';
+        taskTags.value = task.tags || '';
+        
+        viewTaskModal.style.display = 'none';
+        taskModal.style.display = 'flex';
+    }
 
-        function saveProgress() {
-            if (!taskToUpdate) return;
-            
-            const progress = parseInt(updateProgress.value);
-            const status = updateStatus.value;
-            const notes = updateNotes.value.trim();
-            
-            const updateData = {
-                progress: progress,
-                status: status,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            if (status === 'completed') {
-                updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
-                updateData.progress = 100;
-            }
-            
-            if (notes) {
-                const task = allTasks.find(t => t.id === taskToUpdate);
-                const existingNotes = task?.notes || '';
-                updateData.notes = existingNotes + (existingNotes ? '\n\n' : '') + `[${new Date().toLocaleString()}] ${notes}`;
-            }
-            
-            db.collection('tasks').doc(taskToUpdate).update(updateData)
+    // ===========================================
+    // FIXED: saveTask function with userId
+    // ===========================================
+    function saveTask() {
+        const title = taskTitle.value.trim();
+        const dueDate = taskDueDate.value;
+        
+        if (!title) {
+            showError("Please enter a task title");
+            return;
+        }
+        
+        if (!dueDate) {
+            showError("Please select a due date");
+            return;
+        }
+        
+        // FIXED: Added userId to taskData
+        const taskData = {
+            title: title,
+            department: taskDepartment.value,
+            subDepartment: taskSubDepartment.value,
+            description: taskDescription.value.trim(),
+            notes: taskNotes.value.trim(),
+            status: taskStatus.value,
+            priority: taskPriority.value,
+            progress: parseInt(taskProgress.value) || 0,
+            category: taskCategory.value,
+            startDate: taskStartDate.value,
+            dueDate: dueDate,
+            dueTime: taskDueTime.value,
+            duration: taskDuration.value ? parseFloat(taskDuration.value) : null,
+            assignedTo: taskAssignedTo.value,
+            assignedBy: userData?.name || currentUser?.email || 'Self',
+            tags: taskTags.value,
+            userId: currentUser.uid,  // ✅ CRITICAL: This links task to user
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        console.log("Saving task with userId:", currentUser.uid);
+        
+        // Add department-specific fields
+        if (taskDepartment.value === 'accounts') {
+            taskData.accountType = document.getElementById('accountType')?.value;
+            taskData.bookkeepingType = document.getElementById('bookkeepingType')?.value;
+            taskData.accountNumber = document.getElementById('accountNumber')?.value;
+            taskData.accountAmount = document.getElementById('accountAmount')?.value ? parseFloat(document.getElementById('accountAmount').value) : null;
+        } else if (taskDepartment.value === 'finance') {
+            taskData.financeType = document.getElementById('financeType')?.value;
+            taskData.budgetAmount = document.getElementById('budgetAmount')?.value ? parseFloat(document.getElementById('budgetAmount').value) : null;
+            taskData.currency = document.getElementById('currency')?.value;
+            taskData.fiscalYear = document.getElementById('fiscalYear')?.value;
+        } else if (taskDepartment.value === 'hr') {
+            taskData.hrType = document.getElementById('hrType')?.value;
+            taskData.hrTarget = document.getElementById('hrTarget')?.value;
+        } else if (taskDepartment.value === 'it') {
+            taskData.itType = document.getElementById('itType')?.value;
+            taskData.itProject = document.getElementById('itProject')?.value;
+            taskData.itRequirements = document.getElementById('itRequirements')?.value;
+        }
+        
+        if (currentEditingTask) {
+            // Update existing task
+            console.log("Updating task:", currentEditingTask.id);
+            db.collection('tasks').doc(currentEditingTask.id).update(taskData)
                 .then(() => {
-                    showSuccess("Progress updated!");
-                    progressModal.style.display = 'none';
+                    showSuccess("Task updated successfully!");
+                    taskModal.style.display = 'none';
                     loadTasks();
                 })
                 .catch(err => {
-                    console.error("Error updating progress:", err);
-                    showError("Failed to update progress");
+                    console.error("Error updating task:", err);
+                    showError("Failed to update task: " + err.message);
                 });
-        }
-
-        function showDeleteModal(taskId, taskTitle) {
-            taskToDelete = taskId;
-            deleteTaskTitle.textContent = taskTitle;
-            viewTaskModal.style.display = 'none';
-            deleteModal.style.display = 'flex';
-        }
-
-        function deleteTask() {
-            if (!taskToDelete) return;
+        } else {
+            // Create new task
+            taskData.status = 'not-started';
+            taskData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             
-            db.collection('tasks').doc(taskToDelete).delete()
-                .then(() => {
-                    showSuccess("Task deleted successfully");
-                    deleteModal.style.display = 'none';
-                    loadTasks();
+            console.log("Creating new task for user:", currentUser.uid);
+            db.collection('tasks').add(taskData)
+                .then((docRef) => {
+                    console.log("✅ Task created with ID:", docRef.id);
+                    showSuccess("Task created successfully!");
+                    taskModal.style.display = 'none';
+                    loadTasks(); // This will reload and show the new task
                 })
                 .catch(err => {
-                    console.error("Error deleting task:", err);
-                    showError("Failed to delete task");
+                    console.error("Error creating task:", err);
+                    showError("Failed to create task: " + err.message);
                 });
         }
+    }
 
-        function generateReport() {
-            const total = allTasks.length;
-            const completed = allTasks.filter(t => t.status === 'completed').length;
-            const notStarted = allTasks.filter(t => t.status === 'not-started').length;
-            const inProgress = allTasks.filter(t => t.status === 'in-progress').length;
-            const onHold = allTasks.filter(t => t.status === 'on-hold').length;
-            const overdue = allTasks.filter(t => {
-                if (t.status !== 'completed' && t.dueDate) {
-                    return new Date(t.dueDate) < new Date();
-                }
-                return false;
-            }).length;
-            
-            const highPriority = allTasks.filter(t => t.priority === 'high').length;
-            const mediumPriority = allTasks.filter(t => t.priority === 'medium').length;
-            const lowPriority = allTasks.filter(t => t.priority === 'low').length;
-            
-            // Department distribution
-            const deptStats = {};
-            allTasks.forEach(task => {
-                const dept = task.department || 'general';
-                deptStats[dept] = (deptStats[dept] || 0) + 1;
+    function showProgressModal(taskId) {
+        const task = allTasks.find(t => t.id === taskId);
+        if (!task) return;
+        
+        taskToUpdate = taskId;
+        updateProgress.value = task.progress || 0;
+        updateProgressValue.textContent = (task.progress || 0) + '%';
+        updateStatus.value = task.status || 'not-started';
+        updateNotes.value = '';
+        
+        viewTaskModal.style.display = 'none';
+        progressModal.style.display = 'flex';
+    }
+
+    function saveProgress() {
+        if (!taskToUpdate) return;
+        
+        const progress = parseInt(updateProgress.value);
+        const status = updateStatus.value;
+        const notes = updateNotes.value.trim();
+        
+        const updateData = {
+            progress: progress,
+            status: status,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (status === 'completed') {
+            updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+            updateData.progress = 100;
+        }
+        
+        if (notes) {
+            const task = allTasks.find(t => t.id === taskToUpdate);
+            const existingNotes = task?.notes || '';
+            updateData.notes = existingNotes + (existingNotes ? '\n\n' : '') + `[${new Date().toLocaleString()}] ${notes}`;
+        }
+        
+        db.collection('tasks').doc(taskToUpdate).update(updateData)
+            .then(() => {
+                showSuccess("Progress updated!");
+                progressModal.style.display = 'none';
+                loadTasks();
+            })
+            .catch(err => {
+                console.error("Error updating progress:", err);
+                showError("Failed to update progress: " + err.message);
             });
+    }
+
+    function showDeleteModal(taskId, taskTitle) {
+        taskToDelete = taskId;
+        deleteTaskTitle.textContent = taskTitle;
+        viewTaskModal.style.display = 'none';
+        deleteModal.style.display = 'flex';
+    }
+
+    function deleteTask() {
+        if (!taskToDelete) return;
+        
+        db.collection('tasks').doc(taskToDelete).delete()
+            .then(() => {
+                showSuccess("Task deleted successfully");
+                deleteModal.style.display = 'none';
+                loadTasks();
+            })
+            .catch(err => {
+                console.error("Error deleting task:", err);
+                showError("Failed to delete task: " + err.message);
+            });
+    }
+
+    function generateReport() {
+        const total = allTasks.length;
+        const completed = allTasks.filter(t => t.status === 'completed').length;
+        const notStarted = allTasks.filter(t => t.status === 'not-started').length;
+        const inProgress = allTasks.filter(t => t.status === 'in-progress').length;
+        const onHold = allTasks.filter(t => t.status === 'on-hold').length;
+        const overdue = allTasks.filter(t => {
+            if (t.status !== 'completed' && t.dueDate) {
+                return new Date(t.dueDate) < new Date();
+            }
+            return false;
+        }).length;
+        
+        const highPriority = allTasks.filter(t => t.priority === 'high').length;
+        const mediumPriority = allTasks.filter(t => t.priority === 'medium').length;
+        const lowPriority = allTasks.filter(t => t.priority === 'low').length;
+        
+        // Department distribution
+        const deptStats = {};
+        allTasks.forEach(task => {
+            const dept = task.department || 'general';
+            deptStats[dept] = (deptStats[dept] || 0) + 1;
+        });
+        
+        const recentTasks = allTasks.slice(0, 10);
+        
+        let html = `
+            <div class="report-section">
+                <h4>Summary Statistics</h4>
+                <div class="report-stats">
+                    <div class="report-stat"><div class="value">${total}</div><div class="label">Total Tasks</div></div>
+                    <div class="report-stat"><div class="value">${completed}</div><div class="label">Completed</div></div>
+                    <div class="report-stat"><div class="value">${notStarted}</div><div class="label">Not Started</div></div>
+                    <div class="report-stat"><div class="value">${inProgress}</div><div class="label">In Progress</div></div>
+                    <div class="report-stat"><div class="value">${overdue}</div><div class="label">Overdue</div></div>
+                </div>
+            </div>
             
-            const recentTasks = allTasks.slice(0, 10);
+            <div class="report-section">
+                <h4>Priority Breakdown</h4>
+                <div class="report-stats">
+                    <div class="report-stat"><div class="value">${highPriority}</div><div class="label">High Priority</div></div>
+                    <div class="report-stat"><div class="value">${mediumPriority}</div><div class="label">Medium Priority</div></div>
+                    <div class="report-stat"><div class="value">${lowPriority}</div><div class="label">Low Priority</div></div>
+                </div>
+            </div>
             
-            let html = `
-                <div class="report-section">
-                    <h4>Summary Statistics</h4>
-                    <div class="report-stats">
-                        <div class="report-stat"><div class="value">${total}</div><div class="label">Total Tasks</div></div>
-                        <div class="report-stat"><div class="value">${completed}</div><div class="label">Completed</div></div>
-                        <div class="report-stat"><div class="value">${notStarted}</div><div class="label">Not Started</div></div>
-                        <div class="report-stat"><div class="value">${inProgress}</div><div class="label">In Progress</div></div>
-                        <div class="report-stat"><div class="value">${overdue}</div><div class="label">Overdue</div></div>
-                    </div>
+            <div class="report-section">
+                <h4>Department Distribution</h4>
+                <div class="report-stats">
+                    ${Object.entries(deptStats).map(([dept, count]) => `
+                        <div class="report-stat"><div class="value">${count}</div><div class="label">${dept}</div></div>
+                    `).join('')}
                 </div>
-                
-                <div class="report-section">
-                    <h4>Priority Breakdown</h4>
-                    <div class="report-stats">
-                        <div class="report-stat"><div class="value">${highPriority}</div><div class="label">High Priority</div></div>
-                        <div class="report-stat"><div class="value">${mediumPriority}</div><div class="label">Medium Priority</div></div>
-                        <div class="report-stat"><div class="value">${lowPriority}</div><div class="label">Low Priority</div></div>
-                    </div>
-                </div>
-                
-                <div class="report-section">
-                    <h4>Department Distribution</h4>
-                    <div class="report-stats">
-                        ${Object.entries(deptStats).map(([dept, count]) => `
-                            <div class="report-stat"><div class="value">${count}</div><div class="label">${dept}</div></div>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div class="report-section">
-                    <h4>Recent Tasks</h4>
-                    <table class="report-table">
-                        <thead>
+            </div>
+            
+            <div class="report-section">
+                <h4>Recent Tasks</h4>
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${recentTasks.map(task => `
                             <tr>
-                                <th>Title</th>
-                                <th>Department</th>
-                                <th>Status</th>
-                                <th>Priority</th>
-                                <th>Due Date</th>
+                                <td>${task.title}</td>
+                                <td>${task.department || 'General'}</td>
+                                <td>${task.status || 'Not Started'}</td>
+                                <td>${task.priority || 'Medium'}</td>
+                                <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A'}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${recentTasks.map(task => `
-                                <tr>
-                                    <td>${task.title}</td>
-                                    <td>${task.department || 'General'}</td>
-                                    <td>${task.status || 'Not Started'}</td>
-                                    <td>${task.priority || 'Medium'}</td>
-                                    <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            document.getElementById('reportContent').innerHTML = html;
-            reportModal.style.display = 'flex';
-        }
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        document.getElementById('reportContent').innerHTML = html;
+        reportModal.style.display = 'flex';
+    }
 
-        function setupEventListeners() {
-            // Logout
-            logoutBtn.addEventListener('click', () => {
-                auth.signOut().then(() => window.location.href = 'index.html');
-            });
+    function setupEventListeners() {
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut().then(() => window.location.href = 'index.html');
+        });
+        
+        // Add task
+        addTaskBtn.addEventListener('click', () => {
+            currentEditingTask = null;
+            modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Create New Task';
+            taskForm.reset();
             
-            // Add task
-            addTaskBtn.addEventListener('click', () => {
-                currentEditingTask = null;
-                modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Create New Task';
-                taskForm.reset();
-                
-                const today = new Date().toISOString().split('T')[0];
-                taskDueDate.value = today;
-                taskDueDate.min = today;
-                taskStartDate.value = today;
-                taskProgress.value = 0;
-                progressValue.textContent = '0%';
-                taskStatus.value = 'not-started';
-                
-                handleDepartmentChange();
-                taskModal.style.display = 'flex';
-            });
+            const today = new Date().toISOString().split('T')[0];
+            taskDueDate.value = today;
+            taskDueDate.min = today;
+            taskStartDate.value = today;
+            taskProgress.value = 0;
+            progressValue.textContent = '0%';
+            taskStatus.value = 'not-started';
             
-            // Generate report
-            generateReportBtn.addEventListener('click', generateReport);
-            
-            // Refresh
-            refreshTasks.addEventListener('click', loadTasks);
-            
-            // Filters
-            searchInput.addEventListener('input', filterAndSortTasks);
-            priorityFilter.addEventListener('change', filterAndSortTasks);
-            departmentFilter.addEventListener('change', filterAndSortTasks);
-            sortFilter.addEventListener('change', filterAndSortTasks);
-            
-            // Clear filters
-            clearFilters.addEventListener('click', () => {
-                searchInput.value = '';
-                priorityFilter.value = 'all';
-                departmentFilter.value = 'all';
-                sortFilter.value = 'newest';
+            handleDepartmentChange();
+            taskModal.style.display = 'flex';
+        });
+        
+        // Generate report
+        generateReportBtn.addEventListener('click', generateReport);
+        
+        // Refresh
+        refreshTasks.addEventListener('click', loadTasks);
+        
+        // Filters
+        searchInput.addEventListener('input', filterAndSortTasks);
+        priorityFilter.addEventListener('change', filterAndSortTasks);
+        departmentFilter.addEventListener('change', filterAndSortTasks);
+        sortFilter.addEventListener('change', filterAndSortTasks);
+        
+        // Clear filters
+        clearFilters.addEventListener('click', () => {
+            searchInput.value = '';
+            priorityFilter.value = 'all';
+            departmentFilter.value = 'all';
+            sortFilter.value = 'newest';
+            filterAndSortTasks();
+        });
+        
+        // View toggle
+        gridViewBtn.addEventListener('click', () => {
+            currentViewMode = 'grid';
+            gridViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+            renderTasks();
+        });
+        
+        listViewBtn.addEventListener('click', () => {
+            currentViewMode = 'list';
+            listViewBtn.classList.add('active');
+            gridViewBtn.classList.remove('active');
+            renderTasks();
+        });
+        
+        // Navigation tabs
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                navTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentView = tab.dataset.view;
                 filterAndSortTasks();
             });
-            
-            // View toggle
-            gridViewBtn.addEventListener('click', () => {
-                currentViewMode = 'grid';
-                gridViewBtn.classList.add('active');
-                listViewBtn.classList.remove('active');
-                renderTasks();
-            });
-            
-            listViewBtn.addEventListener('click', () => {
-                currentViewMode = 'list';
-                listViewBtn.classList.add('active');
-                gridViewBtn.classList.remove('active');
-                renderTasks();
-            });
-            
-            // Navigation tabs
-            navTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    navTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    currentView = tab.dataset.view;
-                    filterAndSortTasks();
-                });
-            });
-            
-            // Progress slider
-            taskProgress.addEventListener('input', function() {
-                progressValue.textContent = this.value + '%';
-            });
-            
-            updateProgress.addEventListener('input', function() {
-                updateProgressValue.textContent = this.value + '%';
-            });
-            
-            // Save task
-            saveTaskBtn.addEventListener('click', saveTask);
-            
-            // View task actions
-            editFromViewBtn.addEventListener('click', () => {
-                if (currentEditingTask) {
-                    editTask(currentEditingTask.id);
-                }
-            });
-            
-            progressFromViewBtn.addEventListener('click', () => {
-                if (currentEditingTask) {
-                    showProgressModal(currentEditingTask.id);
-                }
-            });
-            
-            deleteFromViewBtn.addEventListener('click', () => {
-                if (currentEditingTask) {
-                    showDeleteModal(currentEditingTask.id, currentEditingTask.title);
-                }
-            });
-            
-            // Save progress
-            saveProgressBtn.addEventListener('click', saveProgress);
-            
-            // Confirm delete
-            confirmDeleteBtn.addEventListener('click', deleteTask);
-            
-            // Modal close buttons
-            closeTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
-            cancelTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
-            
-            closeViewModalBtn.addEventListener('click', () => viewTaskModal.style.display = 'none');
-            closeViewModalBtn2.addEventListener('click', () => viewTaskModal.style.display = 'none');
-            
-            closeReportModalBtn.addEventListener('click', () => reportModal.style.display = 'none');
-            closeReportModalBtn2.addEventListener('click', () => reportModal.style.display = 'none');
-            
-            closeProgressModalBtn.addEventListener('click', () => progressModal.style.display = 'none');
-            cancelProgressModalBtn.addEventListener('click', () => progressModal.style.display = 'none');
-            
-            closeDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
-            cancelDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
-        }
+        });
+        
+        // Department change
+        taskDepartment.addEventListener('change', handleDepartmentChange);
+        
+        // Progress slider
+        taskProgress.addEventListener('input', function() {
+            progressValue.textContent = this.value + '%';
+        });
+        
+        updateProgress.addEventListener('input', function() {
+            updateProgressValue.textContent = this.value + '%';
+        });
+        
+        // Save task
+        saveTaskBtn.addEventListener('click', saveTask);
+        
+        // View task actions
+        editFromViewBtn.addEventListener('click', () => {
+            if (currentEditingTask) {
+                editTask(currentEditingTask.id);
+            }
+        });
+        
+        progressFromViewBtn.addEventListener('click', () => {
+            if (currentEditingTask) {
+                showProgressModal(currentEditingTask.id);
+            }
+        });
+        
+        deleteFromViewBtn.addEventListener('click', () => {
+            if (currentEditingTask) {
+                showDeleteModal(currentEditingTask.id, currentEditingTask.title);
+            }
+        });
+        
+        // Save progress
+        saveProgressBtn.addEventListener('click', saveProgress);
+        
+        // Confirm delete
+        confirmDeleteBtn.addEventListener('click', deleteTask);
+        
+        // Modal close buttons
+        closeTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
+        cancelTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
+        
+        closeViewModalBtn.addEventListener('click', () => viewTaskModal.style.display = 'none');
+        closeViewModalBtn2.addEventListener('click', () => viewTaskModal.style.display = 'none');
+        
+        closeReportModalBtn.addEventListener('click', () => reportModal.style.display = 'none');
+        closeReportModalBtn2.addEventListener('click', () => reportModal.style.display = 'none');
+        
+        closeProgressModalBtn.addEventListener('click', () => progressModal.style.display = 'none');
+        cancelProgressModalBtn.addEventListener('click', () => progressModal.style.display = 'none');
+        
+        closeDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
+        cancelDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
+    }
 
-        function setCurrentDate() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
-        }
+    function setCurrentDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
+    }
 
-        function showLoading() {
-            loadingSpinner.style.display = 'block';
-        }
+    function showLoading() {
+        loadingSpinner.style.display = 'block';
+    }
 
-        function hideLoading() {
-            loadingSpinner.style.display = 'none';
-        }
+    function hideLoading() {
+        loadingSpinner.style.display = 'none';
+    }
 
-        function showSuccess(message) {
-            document.getElementById('successMessage').textContent = message;
-            document.getElementById('successAlert').style.display = 'flex';
-            setTimeout(() => document.getElementById('successAlert').style.display = 'none', 3000);
-        }
+    function showSuccess(message) {
+        document.getElementById('successMessage').textContent = message;
+        document.getElementById('successAlert').style.display = 'flex';
+        setTimeout(() => document.getElementById('successAlert').style.display = 'none', 3000);
+    }
 
-        function showError(message) {
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorAlert').style.display = 'flex';
-            setTimeout(() => document.getElementById('errorAlert').style.display = 'none', 3000);
-        }
+    function showError(message) {
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('errorAlert').style.display = 'flex';
+        setTimeout(() => document.getElementById('errorAlert').style.display = 'none', 3000);
+    }
 
-        function showInfo(message) {
-            document.getElementById('infoMessage').textContent = message;
-            document.getElementById('infoAlert').style.display = 'flex';
-            setTimeout(() => document.getElementById('infoAlert').style.display = 'none', 3000);
-        }
+    function showInfo(message) {
+        document.getElementById('infoMessage').textContent = message;
+        document.getElementById('infoAlert').style.display = 'flex';
+        setTimeout(() => document.getElementById('infoAlert').style.display = 'none', 3000);
+    }
 
-        // Make functions global
-        window.filterByStatus = filterByStatus;
-        window.changePage = changePage;
-        window.handleDepartmentChange = handleDepartmentChange;
-    </script>
+    // Make functions global
+    window.filterByStatus = filterByStatus;
+    window.changePage = changePage;
+    window.handleDepartmentChange = handleDepartmentChange;
+</script>
+
 </body>
 </html>
