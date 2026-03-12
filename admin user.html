@@ -1875,42 +1875,75 @@
         }
 
         function loadUsers() {
-            if (!firebaseInitialized || !db) {
-                showError("Firebase not initialized");
-                return;
+    if (!firebaseInitialized || !db) {
+        showError("Firebase not initialized");
+        return;
+    }
+    
+    showLoading();
+    showInfo("Loading users from Firebase...");
+
+    // First, try to list all collections to debug
+    console.log("Attempting to access Firestore...");
+    
+    db.collection('users').orderBy('createdAt', 'desc').get()
+        .then((querySnapshot) => {
+            console.log("Query successful!");
+            console.log("Number of documents:", querySnapshot.size);
+            
+            if (querySnapshot.empty) {
+                console.log("No users found in collection");
+                showWarning("No users found in database");
             }
             
-            showLoading();
-            showInfo("Loading users from Firebase...");
-
-            db.collection('users').orderBy('createdAt', 'desc').get()
-                .then((querySnapshot) => {
-                    users = [];
-                    querySnapshot.forEach((doc) => {
-                        const user = doc.data();
-                        user.id = doc.id;
-                        
-                        // Convert timestamps
-                        if (user.createdAt && user.createdAt.toDate) {
-                            user.createdAtDate = user.createdAt.toDate();
-                        }
-                        
-                        users.push(user);
-                    });
-                    
-                    console.log(`✅ Loaded ${users.length} users`);
-                    updateAllStats();
-                    filterUsers();
-                    updateRecentUsers();
-                    hideLoading();
-                    showSuccess(`Loaded ${users.length} users successfully`);
-                })
-                .catch((error) => {
-                    console.error("❌ Error loading users:", error);
-                    showError("Failed to load users: " + error.message);
-                    hideLoading();
-                });
-        }
+            querySnapshot.forEach(doc => {
+                console.log("Document data:", doc.id, "=>", doc.data());
+            });
+            
+            users = [];
+            querySnapshot.forEach((doc) => {
+                const user = doc.data();
+                user.id = doc.id;
+                
+                // Convert timestamps
+                if (user.createdAt && user.createdAt.toDate) {
+                    user.createdAtDate = user.createdAt.toDate();
+                }
+                
+                users.push(user);
+            });
+            
+            console.log(`✅ Loaded ${users.length} users`);
+            updateAllStats();
+            filterUsers();
+            updateRecentUsers();
+            hideLoading();
+            
+            if (users.length > 0) {
+                showSuccess(`Loaded ${users.length} users successfully`);
+            } else {
+                showWarning("No users found. Add some test users in Firebase Console.");
+            }
+        })
+        .catch((error) => {
+            console.error("❌ Error loading users:", error);
+            console.error("Error code:", error.code);
+            console.error("Error message:", error.message);
+            
+            // Show specific error messages
+            if (error.code === 'permission-denied') {
+                showError("Permission denied! Check Firestore rules.");
+            } else if (error.code === 'unavailable') {
+                showError("Firebase service unavailable. Check your connection.");
+            } else if (error.code === 'not-found') {
+                showError("Collection 'users' not found. Create it in Firebase Console.");
+            } else {
+                showError("Failed to load users: " + error.message);
+            }
+            
+            hideLoading();
+        });
+}
 
         function updateAllStats() {
             const total = users.length;
