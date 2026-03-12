@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow Pro | My Tasks</title>
+    <title>TaskFlow Pro | Advanced Task Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -42,7 +42,7 @@
 
         /* Main Container */
         .app-container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
             border-radius: var(--radius);
@@ -206,11 +206,13 @@
             gap: 20px;
             transition: var(--transition);
             border: 1px solid var(--light-gray);
+            cursor: pointer;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: var(--primary);
         }
 
         .stat-icon {
@@ -434,7 +436,7 @@
         /* Grid View */
         .tasks-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
             padding: 20px;
         }
@@ -506,6 +508,7 @@
         .status-pending { background: var(--warning); }
         .status-completed { background: var(--success); }
         .status-overdue { background: var(--danger); }
+        .status-in-progress { background: var(--info); }
 
         .task-priority {
             padding: 4px 12px;
@@ -555,6 +558,25 @@
             color: var(--primary);
         }
 
+        .assigned-info {
+            background: var(--light);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .assigned-by {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+        }
+
+        .assigned-by i {
+            color: var(--primary);
+        }
+
         .task-progress {
             margin-bottom: 15px;
         }
@@ -580,6 +602,34 @@
             text-align: right;
         }
 
+        .task-notes {
+            background: var(--light);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .task-notes i {
+            color: var(--primary);
+            margin-right: 5px;
+        }
+
+        .task-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            background: var(--light);
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
         .task-footer {
             display: flex;
             justify-content: space-between;
@@ -589,20 +639,6 @@
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid var(--light-gray);
-        }
-
-        .task-tags {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            background: var(--light);
-            padding: 3px 10px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            color: var(--gray);
         }
 
         .task-actions {
@@ -651,7 +687,7 @@
         .modal-content {
             background: white;
             border-radius: var(--radius);
-            width: 600px;
+            width: 700px;
             max-width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -672,6 +708,9 @@
             align-items: center;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .modal-header h3 {
@@ -681,20 +720,27 @@
         }
 
         .close-modal {
-            background: none;
+            background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            font-size: 1.5rem;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .close-modal:hover {
+            background: rgba(255,255,255,0.3);
             transform: scale(1.1);
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 25px;
         }
 
         .modal-footer {
@@ -703,6 +749,9 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
+            position: sticky;
+            bottom: 0;
+            background: white;
         }
 
         /* Form Styles */
@@ -741,6 +790,75 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Report Modal */
+        .report-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: var(--radius);
+        }
+
+        .report-section h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .report-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .report-stat {
+            background: white;
+            padding: 15px;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .report-stat .value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .report-stat .label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .report-chart {
+            height: 300px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .report-table th {
+            background: var(--light);
+            font-weight: 600;
         }
 
         /* Alert Styles */
@@ -834,7 +952,8 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .form-row {
+            .form-row,
+            .form-row-3 {
                 grid-template-columns: 1fr;
             }
             
@@ -898,9 +1017,11 @@
         <div class="nav-tabs">
             <button class="nav-tab" data-view="all">All Tasks</button>
             <button class="nav-tab active" data-view="pending">Pending</button>
+            <button class="nav-tab" data-view="in-progress">In Progress</button>
             <button class="nav-tab" data-view="completed">Completed</button>
             <button class="nav-tab" data-view="overdue">Overdue</button>
             <button class="nav-tab" data-view="high">High Priority</button>
+            <button class="nav-tab" data-view="assigned">Assigned to Me</button>
         </div>
 
         <!-- Main Content -->
@@ -917,9 +1038,9 @@
                 </div>
             </div>
 
-            <!-- Stats Cards -->
+            <!-- Stats Cards (Clickable) -->
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card" onclick="filterByStatus('all')">
                     <div class="stat-icon primary">
                         <i class="fas fa-tasks"></i>
                     </div>
@@ -928,16 +1049,7 @@
                         <p>Total Tasks</p>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon success">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="completedTasks">0</h3>
-                        <p>Completed</p>
-                    </div>
-                </div>
-                <div class="stat-card">
+                <div class="stat-card" onclick="filterByStatus('pending')">
                     <div class="stat-icon warning">
                         <i class="fas fa-clock"></i>
                     </div>
@@ -946,7 +1058,25 @@
                         <p>Pending</p>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" onclick="filterByStatus('in-progress')">
+                    <div class="stat-icon info">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inProgressTasks">0</h3>
+                        <p>In Progress</p>
+                    </div>
+                </div>
+                <div class="stat-card" onclick="filterByStatus('completed')">
+                    <div class="stat-icon success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="completedTasks">0</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+                <div class="stat-card" onclick="filterByStatus('overdue')">
                     <div class="stat-icon danger">
                         <i class="fas fa-exclamation-circle"></i>
                     </div>
@@ -955,13 +1085,13 @@
                         <p>Overdue</p>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon info">
-                        <i class="fas fa-chart-line"></i>
+                <div class="stat-card" onclick="filterByStatus('assigned')">
+                    <div class="stat-icon" style="background: var(--secondary);">
+                        <i class="fas fa-user-plus"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 id="completionRate">0%</h3>
-                        <p>Completion Rate</p>
+                        <h3 id="assignedTasks">0</h3>
+                        <p>Assigned to Me</p>
                     </div>
                 </div>
             </div>
@@ -989,6 +1119,9 @@
                     <button class="btn btn-primary" id="addTaskBtn">
                         <i class="fas fa-plus-circle"></i> Create New Task
                     </button>
+                    <button class="btn btn-success" id="generateReportBtn">
+                        <i class="fas fa-chart-bar"></i> Generate Report
+                    </button>
                     <button class="btn btn-outline" id="refreshTasks">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
@@ -1007,7 +1140,7 @@
             <div class="filter-bar">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search tasks by title or description...">
+                    <input type="text" id="searchInput" placeholder="Search tasks by title, description, notes...">
                 </div>
                 <div class="filter-group">
                     <select id="priorityFilter" class="filter-select">
@@ -1015,6 +1148,13 @@
                         <option value="high">High Priority</option>
                         <option value="medium">Medium Priority</option>
                         <option value="low">Low Priority</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="assigneeFilter" class="filter-select">
+                        <option value="all">All Assignees</option>
+                        <option value="me">Assigned to Me</option>
+                        <option value="others">Assigned to Others</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -1048,12 +1188,12 @@
         </div>
     </div>
 
-    <!-- Add/Edit Task Modal -->
+    <!-- Create/Edit Task Modal -->
     <div class="modal" id="taskModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> Create New Task</h3>
-                <button class="close-modal" onclick="closeModal('taskModal')">&times;</button>
+                <button class="close-modal" id="closeTaskModalBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="taskForm">
@@ -1065,6 +1205,11 @@
                     <div class="form-group">
                         <label for="taskDescription">Description</label>
                         <textarea id="taskDescription" class="form-control" placeholder="Enter task description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskNotes">Notes</label>
+                        <textarea id="taskNotes" class="form-control" placeholder="Add private notes, reminders, or additional information..."></textarea>
                     </div>
                     
                     <div class="form-row">
@@ -1084,12 +1229,30 @@
                                 <option value="personal">Personal</option>
                                 <option value="education">Education</option>
                                 <option value="health">Health</option>
+                                <option value="finance">Finance</option>
                                 <option value="other">Other</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskStatus">Status</label>
+                            <select id="taskStatus" class="form-control">
+                                <option value="pending">Pending</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="taskProgress">Progress (%)</label>
+                            <input type="range" id="taskProgress" class="form-control" min="0" max="100" value="0">
+                            <span id="progressValue">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row-3">
                         <div class="form-group">
                             <label for="taskDueDate">Due Date <span style="color: var(--danger);">*</span></label>
                             <input type="date" id="taskDueDate" class="form-control" required>
@@ -1099,35 +1262,66 @@
                             <label for="taskDueTime">Due Time</label>
                             <input type="time" id="taskDueTime" class="form-control">
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="taskDuration">Duration (hours)</label>
+                            <input type="number" id="taskDuration" class="form-control" min="0.5" step="0.5" placeholder="e.g., 2.5">
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="taskProgress">Progress (%)</label>
-                        <input type="range" id="taskProgress" class="form-control" min="0" max="100" value="0">
-                        <span id="progressValue">0%</span>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskAssignedTo">Assign To</label>
+                            <input type="text" id="taskAssignedTo" class="form-control" placeholder="Enter email or name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="taskAssignedBy">Assigned By</label>
+                            <input type="text" id="taskAssignedBy" class="form-control" readonly placeholder="Auto-filled">
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="taskTags">Tags (comma separated)</label>
-                        <input type="text" id="taskTags" class="form-control" placeholder="e.g., urgent, meeting, report">
+                        <input type="text" id="taskTags" class="form-control" placeholder="e.g., urgent, meeting, report, client">
                     </div>
                     
                     <div class="form-group">
                         <label>Reminders</label>
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                             <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" id="reminderEmail"> Email
+                                <input type="checkbox" id="reminderEmail"> Email reminder
                             </label>
                             <label style="display: flex; align-items: center; gap: 5px;">
-                                <input type="checkbox" id="reminderNotification"> Push Notification
+                                <input type="checkbox" id="reminderNotification"> Push notification
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" id="reminderSMS"> SMS reminder
                             </label>
                         </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Repeat</label>
+                        <select id="taskRepeat" class="form-control">
+                            <option value="none">Does not repeat</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskAttachments">Attachments</label>
+                        <input type="file" id="taskAttachments" class="form-control" multiple>
+                        <small style="color: var(--gray);">You can attach multiple files</small>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" id="saveTaskBtn"><i class="fas fa-save"></i> Save Task</button>
-                <button class="btn" onclick="closeModal('taskModal')">Cancel</button>
+                <button class="btn" id="cancelTaskModalBtn">Cancel</button>
             </div>
         </div>
     </div>
@@ -1137,29 +1331,51 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3><i class="fas fa-eye"></i> Task Details</h3>
-                <button class="close-modal" onclick="closeModal('viewTaskModal')">&times;</button>
+                <button class="close-modal" id="closeViewModalBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <div style="padding: 10px;">
-                    <h2 id="viewTaskTitle" style="margin-bottom: 15px;"></h2>
+                    <h2 id="viewTaskTitle" style="margin-bottom: 15px; color: var(--primary);"></h2>
                     
-                    <div style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
                         <span class="task-priority" id="viewTaskPriority"></span>
-                        <span class="task-priority" id="viewTaskCategory" style="margin-left: 10px;"></span>
+                        <span class="task-priority" id="viewTaskCategory" style="background: var(--light);"></span>
+                        <span class="task-priority" id="viewTaskStatus" style="background: var(--light);"></span>
                     </div>
                     
-                    <div class="task-meta" style="margin-bottom: 20px;">
-                        <span class="meta-item"><i class="far fa-calendar"></i> Created: <span id="viewTaskCreated"></span></span>
-                        <span class="meta-item"><i class="far fa-clock"></i> Due: <span id="viewTaskDue"></span></span>
+                    <div class="task-meta" style="margin-bottom: 20px; background: var(--light); padding: 15px; border-radius: var(--radius);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div><i class="far fa-calendar-alt" style="color: var(--primary);"></i> <strong>Created:</strong> <span id="viewTaskCreated"></span></div>
+                            <div><i class="far fa-clock" style="color: var(--primary);"></i> <strong>Due:</strong> <span id="viewTaskDue"></span></div>
+                            <div><i class="fas fa-hourglass-half" style="color: var(--primary);"></i> <strong>Duration:</strong> <span id="viewTaskDuration"></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="assigned-info" style="margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="assigned-by">
+                                <i class="fas fa-user-plus"></i>
+                                <strong>Assigned By:</strong> <span id="viewTaskAssignedBy"></span>
+                            </div>
+                            <div class="assigned-by">
+                                <i class="fas fa-user-check"></i>
+                                <strong>Assigned To:</strong> <span id="viewTaskAssignedTo"></span>
+                            </div>
+                        </div>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <h4>Description</h4>
-                        <p id="viewTaskDescription" style="color: var(--gray);"></p>
+                        <h4 style="margin-bottom: 10px;"><i class="fas fa-align-left" style="color: var(--primary);"></i> Description</h4>
+                        <p id="viewTaskDescription" style="color: var(--gray); background: var(--light); padding: 15px; border-radius: var(--radius);"></p>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <h4>Progress</h4>
+                        <h4 style="margin-bottom: 10px;"><i class="fas fa-sticky-note" style="color: var(--primary);"></i> Notes</h4>
+                        <div id="viewTaskNotes" class="task-notes" style="background: var(--light); padding: 15px; border-radius: var(--radius);"></div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Progress</h4>
                         <div class="task-progress">
                             <div class="progress-bar">
                                 <div class="progress-fill" id="viewTaskProgress" style="width: 0%;"></div>
@@ -1169,21 +1385,122 @@
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <h4>Tags</h4>
+                        <h4 style="margin-bottom: 10px;">Tags</h4>
                         <div class="task-tags" id="viewTaskTags"></div>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <h4>Status</h4>
-                        <span class="status-badge" id="viewTaskStatus"></span>
+                        <h4 style="margin-bottom: 10px;">Reminders</h4>
+                        <div id="viewTaskReminders" style="color: var(--gray);"></div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Repeat</h4>
+                        <div id="viewTaskRepeat" style="color: var(--gray);"></div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">Attachments</h4>
+                        <div id="viewTaskAttachments" style="color: var(--gray);"></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" id="editFromViewBtn"><i class="fas fa-edit"></i> Edit</button>
                 <button class="btn btn-success" id="completeFromViewBtn"><i class="fas fa-check"></i> Complete</button>
+                <button class="btn btn-warning" id="progressFromViewBtn"><i class="fas fa-chart-line"></i> Update Progress</button>
                 <button class="btn btn-danger" id="deleteFromViewBtn"><i class="fas fa-trash"></i> Delete</button>
-                <button class="btn" onclick="closeModal('viewTaskModal')">Close</button>
+                <button class="btn" id="closeViewModalBtn2">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content" style="width: 900px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-bar"></i> Task Report</h3>
+                <button class="close-modal" id="closeReportModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="report-section">
+                    <h4>Summary Statistics</h4>
+                    <div class="report-stats">
+                        <div class="report-stat">
+                            <div class="value" id="reportTotalTasks">0</div>
+                            <div class="label">Total Tasks</div>
+                        </div>
+                        <div class="report-stat">
+                            <div class="value" id="reportCompletedTasks">0</div>
+                            <div class="label">Completed</div>
+                        </div>
+                        <div class="report-stat">
+                            <div class="value" id="reportPendingTasks">0</div>
+                            <div class="label">Pending</div>
+                        </div>
+                        <div class="report-stat">
+                            <div class="value" id="reportOverdueTasks">0</div>
+                            <div class="label">Overdue</div>
+                        </div>
+                        <div class="report-stat">
+                            <div class="value" id="reportCompletionRate">0%</div>
+                            <div class="label">Completion Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h4>Priority Breakdown</h4>
+                    <div class="report-stats">
+                        <div class="report-stat">
+                            <div class="value" id="reportHighPriority">0</div>
+                            <div class="label">High Priority</div>
+                        </div>
+                        <div class="report-stat">
+                            <div class="value" id="reportMediumPriority">0</div>
+                            <div class="label">Medium Priority</div>
+                        </div>
+                        <div class="report-stat">
+                            <div class="value" id="reportLowPriority">0</div>
+                            <div class="label">Low Priority</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h4>Category Distribution</h4>
+                    <div id="categoryDistribution" class="report-stats"></div>
+                </div>
+
+                <div class="report-section">
+                    <h4>Recent Tasks</h4>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Task Title</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Due Date</th>
+                                <th>Assigned To</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTasksTable">
+                            <!-- Tasks will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="report-section">
+                    <h4>Export Options</h4>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-outline" onclick="exportReport('pdf')"><i class="fas fa-file-pdf"></i> Export as PDF</button>
+                        <button class="btn btn-outline" onclick="exportReport('csv')"><i class="fas fa-file-csv"></i> Export as CSV</button>
+                        <button class="btn btn-outline" onclick="exportReport('print')"><i class="fas fa-print"></i> Print</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="closeReportModalBtn2">Close</button>
             </div>
         </div>
     </div>
@@ -1193,7 +1510,7 @@
         <div class="modal-content" style="width: 400px;">
             <div class="modal-header">
                 <h3><i class="fas fa-exclamation-triangle"></i> Confirm Delete</h3>
-                <button class="close-modal" onclick="closeModal('deleteModal')">&times;</button>
+                <button class="close-modal" id="closeDeleteModalBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete "<span id="deleteTaskTitle"></span>"?</p>
@@ -1201,7 +1518,40 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-danger" id="confirmDeleteBtn"><i class="fas fa-trash"></i> Delete</button>
-                <button class="btn" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn" id="cancelDeleteModalBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Progress Modal -->
+    <div class="modal" id="progressModal">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-line"></i> Update Progress</h3>
+                <button class="close-modal" id="closeProgressModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="updateProgress">Progress (%)</label>
+                    <input type="range" id="updateProgress" class="form-control" min="0" max="100" value="0">
+                    <span id="updateProgressValue">0%</span>
+                </div>
+                <div class="form-group">
+                    <label for="updateStatus">Status</label>
+                    <select id="updateStatus" class="form-control">
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="updateNotes">Add Note</label>
+                    <textarea id="updateNotes" class="form-control" placeholder="Add a progress note..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveProgressBtn"><i class="fas fa-save"></i> Update</button>
+                <button class="btn" id="cancelProgressModalBtn">Cancel</button>
             </div>
         </div>
     </div>
@@ -1236,9 +1586,11 @@
         const welcomeName = document.getElementById('welcomeName');
         const logoutBtn = document.getElementById('logoutBtn');
         const addTaskBtn = document.getElementById('addTaskBtn');
+        const generateReportBtn = document.getElementById('generateReportBtn');
         const refreshTasks = document.getElementById('refreshTasks');
         const searchInput = document.getElementById('searchInput');
         const priorityFilter = document.getElementById('priorityFilter');
+        const assigneeFilter = document.getElementById('assigneeFilter');
         const sortFilter = document.getElementById('sortFilter');
         const clearFilters = document.getElementById('clearFilters');
         const gridViewBtn = document.getElementById('gridViewBtn');
@@ -1252,10 +1604,11 @@
 
         // Stats elements
         const totalTasksEl = document.getElementById('totalTasks');
-        const completedTasksEl = document.getElementById('completedTasks');
         const pendingTasksEl = document.getElementById('pendingTasks');
+        const inProgressTasksEl = document.getElementById('inProgressTasks');
+        const completedTasksEl = document.getElementById('completedTasks');
         const overdueTasksEl = document.getElementById('overdueTasks');
-        const completionRateEl = document.getElementById('completionRate');
+        const assignedTasksEl = document.getElementById('assignedTasks');
 
         // Alert elements
         const successAlert = document.getElementById('successAlert');
@@ -1268,14 +1621,79 @@
         // Modal elements
         const taskModal = document.getElementById('taskModal');
         const viewTaskModal = document.getElementById('viewTaskModal');
+        const reportModal = document.getElementById('reportModal');
         const deleteModal = document.getElementById('deleteModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const taskForm = document.getElementById('taskForm');
+        const progressModal = document.getElementById('progressModal');
+
+        // Modal close buttons
+        const closeTaskModalBtn = document.getElementById('closeTaskModalBtn');
+        const cancelTaskModalBtn = document.getElementById('cancelTaskModalBtn');
+        const closeViewModalBtn = document.getElementById('closeViewModalBtn');
+        const closeViewModalBtn2 = document.getElementById('closeViewModalBtn2');
+        const closeReportModalBtn = document.getElementById('closeReportModalBtn');
+        const closeReportModalBtn2 = document.getElementById('closeReportModalBtn2');
+        const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
+        const cancelDeleteModalBtn = document.getElementById('cancelDeleteModalBtn');
+        const closeProgressModalBtn = document.getElementById('closeProgressModalBtn');
+        const cancelProgressModalBtn = document.getElementById('cancelProgressModalBtn');
+
+        // Modal action buttons
         const saveTaskBtn = document.getElementById('saveTaskBtn');
         const editFromViewBtn = document.getElementById('editFromViewBtn');
         const completeFromViewBtn = document.getElementById('completeFromViewBtn');
+        const progressFromViewBtn = document.getElementById('progressFromViewBtn');
         const deleteFromViewBtn = document.getElementById('deleteFromViewBtn');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const saveProgressBtn = document.getElementById('saveProgressBtn');
+
+        // Form elements
+        const modalTitle = document.getElementById('modalTitle');
+        const taskForm = document.getElementById('taskForm');
+        const taskTitle = document.getElementById('taskTitle');
+        const taskDescription = document.getElementById('taskDescription');
+        const taskNotes = document.getElementById('taskNotes');
+        const taskPriority = document.getElementById('taskPriority');
+        const taskCategory = document.getElementById('taskCategory');
+        const taskStatus = document.getElementById('taskStatus');
+        const taskProgress = document.getElementById('taskProgress');
+        const progressValue = document.getElementById('progressValue');
+        const taskDueDate = document.getElementById('taskDueDate');
+        const taskDueTime = document.getElementById('taskDueTime');
+        const taskDuration = document.getElementById('taskDuration');
+        const taskAssignedTo = document.getElementById('taskAssignedTo');
+        const taskAssignedBy = document.getElementById('taskAssignedBy');
+        const taskTags = document.getElementById('taskTags');
+        const reminderEmail = document.getElementById('reminderEmail');
+        const reminderNotification = document.getElementById('reminderNotification');
+        const reminderSMS = document.getElementById('reminderSMS');
+        const taskRepeat = document.getElementById('taskRepeat');
+
+        // View task elements
+        const viewTaskTitle = document.getElementById('viewTaskTitle');
+        const viewTaskPriority = document.getElementById('viewTaskPriority');
+        const viewTaskCategory = document.getElementById('viewTaskCategory');
+        const viewTaskStatus = document.getElementById('viewTaskStatus');
+        const viewTaskCreated = document.getElementById('viewTaskCreated');
+        const viewTaskDue = document.getElementById('viewTaskDue');
+        const viewTaskDuration = document.getElementById('viewTaskDuration');
+        const viewTaskAssignedBy = document.getElementById('viewTaskAssignedBy');
+        const viewTaskAssignedTo = document.getElementById('viewTaskAssignedTo');
+        const viewTaskDescription = document.getElementById('viewTaskDescription');
+        const viewTaskNotes = document.getElementById('viewTaskNotes');
+        const viewTaskProgress = document.getElementById('viewTaskProgress');
+        const viewTaskProgressText = document.getElementById('viewTaskProgressText');
+        const viewTaskTags = document.getElementById('viewTaskTags');
+        const viewTaskReminders = document.getElementById('viewTaskReminders');
+        const viewTaskRepeat = document.getElementById('viewTaskRepeat');
+        const viewTaskAttachments = document.getElementById('viewTaskAttachments');
+
+        // Progress modal elements
+        const updateProgress = document.getElementById('updateProgress');
+        const updateProgressValue = document.getElementById('updateProgressValue');
+        const updateStatus = document.getElementById('updateStatus');
+        const updateNotes = document.getElementById('updateNotes');
+
+        // Delete modal elements
         const deleteTaskTitle = document.getElementById('deleteTaskTitle');
 
         // Global variables
@@ -1288,6 +1706,7 @@
         let currentViewMode = 'grid';
         let currentEditingTask = null;
         let taskToDelete = null;
+        let taskToUpdate = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -1300,6 +1719,7 @@
             auth.onAuthStateChanged(user => {
                 if (user) {
                     currentUser = user;
+                    document.getElementById('taskAssignedBy').value = user.email || 'Self';
                     loadUserData();
                     loadTasks();
                 } else {
@@ -1358,23 +1778,24 @@
 
         function updateStats() {
             const total = allTasks.length;
-            const completed = allTasks.filter(t => t.status === 'completed').length;
             const pending = allTasks.filter(t => t.status === 'pending').length;
+            const inProgress = allTasks.filter(t => t.status === 'in-progress').length;
+            const completed = allTasks.filter(t => t.status === 'completed').length;
             const overdue = allTasks.filter(t => {
-                if (t.status === 'pending' && t.dueDate) {
+                if (t.status !== 'completed' && t.dueDate) {
                     const dueDate = new Date(t.dueDate);
                     return dueDate < new Date();
                 }
                 return false;
             }).length;
-            
-            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const assigned = allTasks.filter(t => t.assignedTo === currentUser?.email || t.assignedTo === currentUser?.uid).length;
             
             totalTasksEl.textContent = total;
-            completedTasksEl.textContent = completed;
             pendingTasksEl.textContent = pending;
+            inProgressTasksEl.textContent = inProgress;
+            completedTasksEl.textContent = completed;
             overdueTasksEl.textContent = overdue;
-            completionRateEl.textContent = completionRate + '%';
+            assignedTasksEl.textContent = assigned;
         }
 
         function filterAndSortTasks() {
@@ -1384,13 +1805,17 @@
                     filteredTasks = allTasks.filter(t => t.status === 'pending');
                     currentViewTitle.textContent = 'Pending Tasks';
                     break;
+                case 'in-progress':
+                    filteredTasks = allTasks.filter(t => t.status === 'in-progress');
+                    currentViewTitle.textContent = 'In Progress Tasks';
+                    break;
                 case 'completed':
                     filteredTasks = allTasks.filter(t => t.status === 'completed');
                     currentViewTitle.textContent = 'Completed Tasks';
                     break;
                 case 'overdue':
                     filteredTasks = allTasks.filter(t => {
-                        if (t.status === 'pending' && t.dueDate) {
+                        if (t.status !== 'completed' && t.dueDate) {
                             return new Date(t.dueDate) < new Date();
                         }
                         return false;
@@ -1400,6 +1825,10 @@
                 case 'high':
                     filteredTasks = allTasks.filter(t => t.priority === 'high');
                     currentViewTitle.textContent = 'High Priority Tasks';
+                    break;
+                case 'assigned':
+                    filteredTasks = allTasks.filter(t => t.assignedTo === currentUser?.email || t.assignedTo === currentUser?.uid);
+                    currentViewTitle.textContent = 'Assigned to Me';
                     break;
                 default:
                     filteredTasks = [...allTasks];
@@ -1411,7 +1840,8 @@
             if (searchTerm) {
                 filteredTasks = filteredTasks.filter(t => 
                     (t.title?.toLowerCase().includes(searchTerm)) ||
-                    (t.description?.toLowerCase().includes(searchTerm))
+                    (t.description?.toLowerCase().includes(searchTerm)) ||
+                    (t.notes?.toLowerCase().includes(searchTerm))
                 );
             }
             
@@ -1419,6 +1849,14 @@
             const priority = priorityFilter.value;
             if (priority !== 'all') {
                 filteredTasks = filteredTasks.filter(t => t.priority === priority);
+            }
+            
+            // Apply assignee filter
+            const assignee = assigneeFilter.value;
+            if (assignee === 'me') {
+                filteredTasks = filteredTasks.filter(t => t.assignedTo === currentUser?.email || t.assignedTo === currentUser?.uid);
+            } else if (assignee === 'others') {
+                filteredTasks = filteredTasks.filter(t => t.assignedTo && t.assignedTo !== currentUser?.email && t.assignedTo !== currentUser?.uid);
             }
             
             // Apply sorting
@@ -1483,18 +1921,33 @@
             pageTasks.forEach(task => {
                 const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
                 if (taskElement) {
-                    taskElement.querySelector('.view-task')?.addEventListener('click', () => viewTask(task.id));
-                    taskElement.querySelector('.edit-task')?.addEventListener('click', () => editTask(task.id));
-                    taskElement.querySelector('.complete-task')?.addEventListener('click', () => completeTask(task.id));
-                    taskElement.querySelector('.delete-task')?.addEventListener('click', () => showDeleteModal(task.id, task.title));
+                    taskElement.querySelector('.view-task')?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        viewTask(task.id);
+                    });
+                    taskElement.querySelector('.edit-task')?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        editTask(task.id);
+                    });
+                    taskElement.querySelector('.complete-task')?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        completeTask(task.id);
+                    });
+                    taskElement.querySelector('.delete-task')?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showDeleteModal(task.id, task.title);
+                    });
                 }
             });
         }
 
         function createTaskHTML(task) {
             const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date';
-            const isOverdue = task.status === 'pending' && task.dueDate && new Date(task.dueDate) < new Date();
-            const statusClass = isOverdue ? 'status-overdue' : task.status === 'completed' ? 'status-completed' : 'status-pending';
+            const dueTime = task.dueTime || 'Anytime';
+            const isOverdue = task.status !== 'completed' && task.dueDate && new Date(task.dueDate) < new Date();
+            const statusClass = isOverdue ? 'status-overdue' : 
+                               task.status === 'completed' ? 'status-completed' : 
+                               task.status === 'in-progress' ? 'status-in-progress' : 'status-pending';
             const priorityClass = `priority-${task.priority || 'medium'}`;
             
             return `
@@ -1517,15 +1970,27 @@
                         
                         <div class="task-meta">
                             <span class="meta-item">
-                                <i class="far fa-calendar-alt"></i> Due: ${dueDate}
-                            </span>
-                            <span class="meta-item">
-                                <i class="far fa-clock"></i> ${task.dueTime || 'Anytime'}
+                                <i class="far fa-calendar-alt"></i> Due: ${dueDate} ${dueTime !== 'Anytime' ? dueTime : ''}
                             </span>
                             <span class="meta-item">
                                 <i class="fas fa-tag"></i> ${task.category || 'general'}
                             </span>
                         </div>
+                        
+                        ${task.assignedTo ? `
+                            <div class="assigned-info">
+                                <div class="assigned-by">
+                                    <i class="fas fa-user-check"></i>
+                                    Assigned to: ${task.assignedTo}
+                                </div>
+                                ${task.assignedBy ? `
+                                    <div class="assigned-by">
+                                        <i class="fas fa-user-plus"></i>
+                                        By: ${task.assignedBy}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
                         
                         ${task.progress !== undefined ? `
                             <div class="task-progress">
@@ -1533,6 +1998,12 @@
                                     <div class="progress-fill" style="width: ${task.progress}%;"></div>
                                 </div>
                                 <div class="progress-text">${task.progress}% complete</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${task.notes ? `
+                            <div class="task-notes">
+                                <i class="fas fa-sticky-note"></i> ${task.notes.substring(0, 50)}${task.notes.length > 50 ? '...' : ''}
                             </div>
                         ` : ''}
                         
@@ -1593,34 +2064,65 @@
             updatePagination();
         }
 
+        function filterByStatus(status) {
+            navTabs.forEach(t => t.classList.remove('active'));
+            const tab = Array.from(navTabs).find(t => t.dataset.view === status);
+            if (tab) tab.classList.add('active');
+            currentView = status;
+            filterAndSortTasks();
+        }
+
         function viewTask(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
-            document.getElementById('viewTaskTitle').textContent = task.title;
-            document.getElementById('viewTaskDescription').textContent = task.description || 'No description';
-            document.getElementById('viewTaskPriority').textContent = (task.priority || 'medium').toUpperCase();
-            document.getElementById('viewTaskPriority').className = `task-priority priority-${task.priority || 'medium'}`;
-            document.getElementById('viewTaskCategory').textContent = task.category || 'general';
-            document.getElementById('viewTaskCreated').textContent = task.createdAtDate ? task.createdAtDate.toLocaleString() : 'Unknown';
-            document.getElementById('viewTaskDue').textContent = task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No due date';
-            document.getElementById('viewTaskProgress').style.width = (task.progress || 0) + '%';
-            document.getElementById('viewTaskProgressText').textContent = (task.progress || 0) + '%';
-            document.getElementById('viewTaskStatus').textContent = task.status || 'pending';
+            viewTaskTitle.textContent = task.title;
+            viewTaskPriority.textContent = (task.priority || 'medium').toUpperCase();
+            viewTaskPriority.className = `task-priority priority-${task.priority || 'medium'}`;
+            viewTaskCategory.textContent = task.category || 'general';
+            viewTaskStatus.textContent = (task.status || 'pending').replace('-', ' ').toUpperCase();
             
-            const tagsContainer = document.getElementById('viewTaskTags');
-            tagsContainer.innerHTML = '';
+            viewTaskCreated.textContent = task.createdAtDate ? task.createdAtDate.toLocaleString() : 'Unknown';
+            viewTaskDue.textContent = task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No due date';
+            viewTaskDuration.textContent = task.duration ? `${task.duration} hours` : 'Not specified';
+            
+            viewTaskAssignedBy.textContent = task.assignedBy || 'Self';
+            viewTaskAssignedTo.textContent = task.assignedTo || 'Not assigned';
+            
+            viewTaskDescription.textContent = task.description || 'No description';
+            viewTaskNotes.innerHTML = task.notes || 'No notes';
+            
+            const progress = task.progress || 0;
+            viewTaskProgress.style.width = progress + '%';
+            viewTaskProgressText.textContent = progress + '%';
+            
+            // Tags
+            viewTaskTags.innerHTML = '';
             if (task.tags) {
                 task.tags.split(',').forEach(tag => {
                     const span = document.createElement('span');
                     span.className = 'tag';
                     span.textContent = tag.trim();
-                    tagsContainer.appendChild(span);
+                    viewTaskTags.appendChild(span);
                 });
             }
             
+            // Reminders
+            const reminders = [];
+            if (task.reminderEmail) reminders.push('Email');
+            if (task.reminderNotification) reminders.push('Push Notification');
+            if (task.reminderSMS) reminders.push('SMS');
+            viewTaskReminders.textContent = reminders.length ? reminders.join(', ') : 'No reminders set';
+            
+            // Repeat
+            viewTaskRepeat.textContent = task.repeat ? task.repeat.charAt(0).toUpperCase() + task.repeat.slice(1) : 'Does not repeat';
+            
+            // Attachments
+            viewTaskAttachments.innerHTML = task.attachments ? 'Files attached' : 'No attachments';
+            
             currentEditingTask = task;
-            openModal('viewTaskModal');
+            taskModal.style.display = 'none';
+            viewTaskModal.style.display = 'flex';
         }
 
         function editTask(taskId) {
@@ -1630,23 +2132,32 @@
             currentEditingTask = task;
             modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Task';
             
-            document.getElementById('taskTitle').value = task.title || '';
-            document.getElementById('taskDescription').value = task.description || '';
-            document.getElementById('taskPriority').value = task.priority || 'medium';
-            document.getElementById('taskCategory').value = task.category || 'work';
-            document.getElementById('taskDueDate').value = task.dueDate || '';
-            document.getElementById('taskDueTime').value = task.dueTime || '';
-            document.getElementById('taskProgress').value = task.progress || 0;
-            document.getElementById('progressValue').textContent = (task.progress || 0) + '%';
-            document.getElementById('taskTags').value = task.tags || '';
+            taskTitle.value = task.title || '';
+            taskDescription.value = task.description || '';
+            taskNotes.value = task.notes || '';
+            taskPriority.value = task.priority || 'medium';
+            taskCategory.value = task.category || 'work';
+            taskStatus.value = task.status || 'pending';
+            taskProgress.value = task.progress || 0;
+            progressValue.textContent = (task.progress || 0) + '%';
+            taskDueDate.value = task.dueDate || '';
+            taskDueTime.value = task.dueTime || '';
+            taskDuration.value = task.duration || '';
+            taskAssignedTo.value = task.assignedTo || '';
+            taskAssignedBy.value = task.assignedBy || currentUser?.email || 'Self';
+            taskTags.value = task.tags || '';
+            reminderEmail.checked = task.reminderEmail || false;
+            reminderNotification.checked = task.reminderNotification || false;
+            reminderSMS.checked = task.reminderSMS || false;
+            taskRepeat.value = task.repeat || 'none';
             
-            openModal('taskModal');
-            closeModal('viewTaskModal');
+            viewTaskModal.style.display = 'none';
+            taskModal.style.display = 'flex';
         }
 
         function saveTask() {
-            const title = document.getElementById('taskTitle').value.trim();
-            const dueDate = document.getElementById('taskDueDate').value;
+            const title = taskTitle.value.trim();
+            const dueDate = taskDueDate.value;
             
             if (!title) {
                 showError("Please enter a task title");
@@ -1660,13 +2171,22 @@
             
             const taskData = {
                 title: title,
-                description: document.getElementById('taskDescription').value.trim(),
-                priority: document.getElementById('taskPriority').value,
-                category: document.getElementById('taskCategory').value,
+                description: taskDescription.value.trim(),
+                notes: taskNotes.value.trim(),
+                priority: taskPriority.value,
+                category: taskCategory.value,
+                status: taskStatus.value,
+                progress: parseInt(taskProgress.value) || 0,
                 dueDate: dueDate,
-                dueTime: document.getElementById('taskDueTime').value,
-                progress: parseInt(document.getElementById('taskProgress').value) || 0,
-                tags: document.getElementById('taskTags').value,
+                dueTime: taskDueTime.value,
+                duration: taskDuration.value ? parseFloat(taskDuration.value) : null,
+                assignedTo: taskAssignedTo.value,
+                assignedBy: taskAssignedBy.value,
+                tags: taskTags.value,
+                reminderEmail: reminderEmail.checked,
+                reminderNotification: reminderNotification.checked,
+                reminderSMS: reminderSMS.checked,
+                repeat: taskRepeat.value,
                 userId: currentUser.uid,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
@@ -1676,7 +2196,7 @@
                 db.collection('tasks').doc(currentEditingTask.id).update(taskData)
                     .then(() => {
                         showSuccess("Task updated successfully!");
-                        closeModal('taskModal');
+                        taskModal.style.display = 'none';
                         loadTasks();
                     })
                     .catch(err => {
@@ -1691,7 +2211,7 @@
                 db.collection('tasks').add(taskData)
                     .then(() => {
                         showSuccess("Task created successfully!");
-                        closeModal('taskModal');
+                        taskModal.style.display = 'none';
                         loadTasks();
                     })
                     .catch(err => {
@@ -1710,7 +2230,7 @@
             })
             .then(() => {
                 showSuccess("Task completed! 🎉");
-                closeModal('viewTaskModal');
+                viewTaskModal.style.display = 'none';
                 loadTasks();
             })
             .catch(err => {
@@ -1719,10 +2239,62 @@
             });
         }
 
+        function showProgressModal(taskId) {
+            const task = allTasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            taskToUpdate = taskId;
+            updateProgress.value = task.progress || 0;
+            updateProgressValue.textContent = (task.progress || 0) + '%';
+            updateStatus.value = task.status || 'pending';
+            updateNotes.value = '';
+            
+            viewTaskModal.style.display = 'none';
+            progressModal.style.display = 'flex';
+        }
+
+        function saveProgress() {
+            if (!taskToUpdate) return;
+            
+            const progress = parseInt(updateProgress.value);
+            const status = updateStatus.value;
+            const notes = updateNotes.value.trim();
+            
+            const updateData = {
+                progress: progress,
+                status: status,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            if (status === 'completed') {
+                updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+                updateData.progress = 100;
+            }
+            
+            if (notes) {
+                // Append to existing notes or create new
+                const task = allTasks.find(t => t.id === taskToUpdate);
+                const existingNotes = task?.notes || '';
+                updateData.notes = existingNotes + (existingNotes ? '\n\n' : '') + `[${new Date().toLocaleString()}] ${notes}`;
+            }
+            
+            db.collection('tasks').doc(taskToUpdate).update(updateData)
+                .then(() => {
+                    showSuccess("Progress updated!");
+                    progressModal.style.display = 'none';
+                    loadTasks();
+                })
+                .catch(err => {
+                    console.error("Error updating progress:", err);
+                    showError("Failed to update progress");
+                });
+        }
+
         function showDeleteModal(taskId, taskTitle) {
             taskToDelete = taskId;
             deleteTaskTitle.textContent = taskTitle;
-            openModal('deleteModal');
+            viewTaskModal.style.display = 'none';
+            deleteModal.style.display = 'flex';
         }
 
         function deleteTask() {
@@ -1731,8 +2303,7 @@
             db.collection('tasks').doc(taskToDelete).delete()
                 .then(() => {
                     showSuccess("Task deleted successfully");
-                    closeModal('deleteModal');
-                    closeModal('viewTaskModal');
+                    deleteModal.style.display = 'none';
                     loadTasks();
                 })
                 .catch(err => {
@@ -1741,32 +2312,137 @@
                 });
         }
 
+        function generateReport() {
+            // Update report statistics
+            const total = allTasks.length;
+            const completed = allTasks.filter(t => t.status === 'completed').length;
+            const pending = allTasks.filter(t => t.status === 'pending').length;
+            const inProgress = allTasks.filter(t => t.status === 'in-progress').length;
+            const overdue = allTasks.filter(t => {
+                if (t.status !== 'completed' && t.dueDate) {
+                    return new Date(t.dueDate) < new Date();
+                }
+                return false;
+            }).length;
+            
+            const highPriority = allTasks.filter(t => t.priority === 'high').length;
+            const mediumPriority = allTasks.filter(t => t.priority === 'medium').length;
+            const lowPriority = allTasks.filter(t => t.priority === 'low').length;
+            
+            document.getElementById('reportTotalTasks').textContent = total;
+            document.getElementById('reportCompletedTasks').textContent = completed;
+            document.getElementById('reportPendingTasks').textContent = pending + inProgress;
+            document.getElementById('reportOverdueTasks').textContent = overdue;
+            document.getElementById('reportCompletionRate').textContent = total > 0 ? Math.round((completed / total) * 100) + '%' : '0%';
+            
+            document.getElementById('reportHighPriority').textContent = highPriority;
+            document.getElementById('reportMediumPriority').textContent = mediumPriority;
+            document.getElementById('reportLowPriority').textContent = lowPriority;
+            
+            // Category distribution
+            const categories = {};
+            allTasks.forEach(task => {
+                const cat = task.category || 'other';
+                categories[cat] = (categories[cat] || 0) + 1;
+            });
+            
+            const categoryDiv = document.getElementById('categoryDistribution');
+            categoryDiv.innerHTML = '';
+            Object.entries(categories).forEach(([cat, count]) => {
+                categoryDiv.innerHTML += `
+                    <div class="report-stat">
+                        <div class="value">${count}</div>
+                        <div class="label">${cat.charAt(0).toUpperCase() + cat.slice(1)}</div>
+                    </div>
+                `;
+            });
+            
+            // Recent tasks table
+            const recentTasks = allTasks.slice(0, 10);
+            const tableBody = document.getElementById('reportTasksTable');
+            tableBody.innerHTML = recentTasks.map(task => `
+                <tr>
+                    <td>${task.title}</td>
+                    <td><span class="status-badge status-${task.status || 'pending'}">${task.status || 'pending'}</span></td>
+                    <td><span class="task-priority priority-${task.priority || 'medium'}">${task.priority || 'medium'}</span></td>
+                    <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A'}</td>
+                    <td>${task.assignedTo || 'Unassigned'}</td>
+                </tr>
+            `).join('');
+            
+            reportModal.style.display = 'flex';
+        }
+
+        function exportReport(type) {
+            if (type === 'csv') {
+                // Create CSV
+                const headers = ['Title', 'Status', 'Priority', 'Category', 'Due Date', 'Assigned To', 'Progress'];
+                const rows = allTasks.map(task => [
+                    task.title,
+                    task.status,
+                    task.priority,
+                    task.category,
+                    task.dueDate || '',
+                    task.assignedTo || '',
+                    task.progress || 0
+                ]);
+                
+                const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `task_report_${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                showSuccess("Report exported as CSV");
+            } else if (type === 'print') {
+                window.print();
+            } else {
+                showInfo("PDF export coming soon!");
+            }
+        }
+
         function setupEventListeners() {
+            // Logout
             logoutBtn.addEventListener('click', () => {
                 auth.signOut().then(() => window.location.href = 'index.html');
             });
             
+            // Add task
             addTaskBtn.addEventListener('click', () => {
                 currentEditingTask = null;
                 modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Create New Task';
                 taskForm.reset();
-                document.getElementById('taskDueDate').valueAsDate = new Date();
-                openModal('taskModal');
+                const today = new Date().toISOString().split('T')[0];
+                taskDueDate.value = today;
+                taskDueDate.min = today;
+                taskAssignedBy.value = currentUser?.email || 'Self';
+                progressValue.textContent = '0%';
+                taskModal.style.display = 'flex';
             });
             
+            // Generate report
+            generateReportBtn.addEventListener('click', generateReport);
+            
+            // Refresh
             refreshTasks.addEventListener('click', loadTasks);
             
+            // Filters
             searchInput.addEventListener('input', filterAndSortTasks);
             priorityFilter.addEventListener('change', filterAndSortTasks);
+            assigneeFilter.addEventListener('change', filterAndSortTasks);
             sortFilter.addEventListener('change', filterAndSortTasks);
             
+            // Clear filters
             clearFilters.addEventListener('click', () => {
                 searchInput.value = '';
                 priorityFilter.value = 'all';
+                assigneeFilter.value = 'all';
                 sortFilter.value = 'newest';
                 filterAndSortTasks();
             });
             
+            // View toggle
             gridViewBtn.addEventListener('click', () => {
                 currentViewMode = 'grid';
                 gridViewBtn.classList.add('active');
@@ -1781,6 +2457,7 @@
                 renderTasks();
             });
             
+            // Navigation tabs
             navTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     navTabs.forEach(t => t.classList.remove('active'));
@@ -1790,8 +2467,19 @@
                 });
             });
             
+            // Progress slider
+            taskProgress.addEventListener('input', function() {
+                progressValue.textContent = this.value + '%';
+            });
+            
+            updateProgress.addEventListener('input', function() {
+                updateProgressValue.textContent = this.value + '%';
+            });
+            
+            // Save task
             saveTaskBtn.addEventListener('click', saveTask);
             
+            // View task actions
             editFromViewBtn.addEventListener('click', () => {
                 if (currentEditingTask) {
                     editTask(currentEditingTask.id);
@@ -1804,30 +2492,44 @@
                 }
             });
             
+            progressFromViewBtn.addEventListener('click', () => {
+                if (currentEditingTask) {
+                    showProgressModal(currentEditingTask.id);
+                }
+            });
+            
             deleteFromViewBtn.addEventListener('click', () => {
                 if (currentEditingTask) {
                     showDeleteModal(currentEditingTask.id, currentEditingTask.title);
                 }
             });
             
+            // Save progress
+            saveProgressBtn.addEventListener('click', saveProgress);
+            
+            // Confirm delete
             confirmDeleteBtn.addEventListener('click', deleteTask);
             
-            document.getElementById('taskProgress').addEventListener('input', function() {
-                document.getElementById('progressValue').textContent = this.value + '%';
-            });
+            // Modal close buttons - Manual close only (no outside click)
+            closeTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
+            cancelTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
+            
+            closeViewModalBtn.addEventListener('click', () => viewTaskModal.style.display = 'none');
+            closeViewModalBtn2.addEventListener('click', () => viewTaskModal.style.display = 'none');
+            
+            closeReportModalBtn.addEventListener('click', () => reportModal.style.display = 'none');
+            closeReportModalBtn2.addEventListener('click', () => reportModal.style.display = 'none');
+            
+            closeDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
+            cancelDeleteModalBtn.addEventListener('click', () => deleteModal.style.display = 'none');
+            
+            closeProgressModalBtn.addEventListener('click', () => progressModal.style.display = 'none');
+            cancelProgressModalBtn.addEventListener('click', () => progressModal.style.display = 'none');
         }
 
         function setCurrentDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
         }
 
         function showLoading() {
@@ -1856,12 +2558,10 @@
             setTimeout(() => infoAlert.style.display = 'none', 3000);
         }
 
-        // Close modals on outside click
-        window.onclick = (e) => {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        };
+        // Make functions global for onclick handlers
+        window.filterByStatus = filterByStatus;
+        window.changePage = changePage;
+        window.exportReport = exportReport;
     </script>
 </body>
 </html>
