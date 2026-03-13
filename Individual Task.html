@@ -2315,7 +2315,7 @@
                     }, 500);
                 } else {
                     console.log("❌ No user authenticated, redirecting to login");
-                    window.location.href = 'index.html';
+                    window.location.href = 'Dashboard ind.html';
                 }
             });
         }
@@ -3747,7 +3747,7 @@
         // Setup Event Listeners
         function setupEventListeners() {
             logoutBtn.addEventListener('click', () => {
-                auth.signOut().then(() => window.location.href = 'index.html');
+                auth.signOut().then(() => window.location.href = 'Dashboard ind.html');
             });
             
             addTaskBtn.addEventListener('click', () => {
