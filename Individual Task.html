@@ -2109,17 +2109,25 @@
                     <div class="details-description" id="detailsNotes"></div>
                 </div>
 
-                <!-- Time Tracking Summary inside Details Modal -->
+                <!-- Enhanced Time Tracking Summary inside Details Modal -->
                 <div class="details-section">
                     <h4><i class="fas fa-hourglass-half"></i> Time Tracking</h4>
                     <div class="time-details" style="margin:0;">
                         <div class="time-row">
-                            <span class="time-label">Total time spent:</span>
+                            <span class="time-label">First Started:</span>
+                            <span class="time-value" id="detailsFirstStarted">-</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Last Updated:</span>
+                            <span class="time-value" id="detailsTimeUpdated">-</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Total Time:</span>
                             <span class="time-value" id="detailsTotalTime">0h 0m</span>
                         </div>
                         <div class="time-row">
-                            <span class="time-label">Last updated:</span>
-                            <span class="time-value" id="detailsTimeUpdated">-</span>
+                            <span class="time-label">Total Sessions:</span>
+                            <span class="time-value" id="detailsSessionCount">0</span>
                         </div>
                     </div>
                     <div class="timer-display" id="detailsLiveTimer" style="margin-top:15px;">00:00:00</div>
@@ -2395,10 +2403,11 @@
         let deleteType = null;
         let statusChart, priorityChart, recurrenceChart;
 
-        // TIME TRACKING GLOBALS
+        // TIME TRACKING GLOBALS - ENHANCED
         let activeTimers = {};               // { taskId: elapsedSeconds }
         let timerIntervals = {};              // { taskId: intervalId }
-        let timeTrackingData = {};            // { taskId: { totalSeconds, lastUpdated, ... } }
+        let timeTrackingSessions = {};        // { taskId: [sessions] }
+        let timeTrackingData = {};            // { taskId: { totalSeconds, firstStarted, lastUpdated, sessionCount } }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -2596,88 +2605,149 @@
             });
         }
 
-        // Load Tasks – now also load timeTracking data for each task
-        function loadTasks() {
-            showLoading();
-            
-            db.collection('tasks')
-                .where('userId', '==', currentUser.uid)
-                .get()
-                .then(snapshot => {
-                    allTasks = [];
-                    snapshot.forEach(doc => {
-                        const task = doc.data();
-                        task.id = doc.id;
-                        
-                        if (task.createdAt && typeof task.createdAt.toDate === 'function') {
-                            task.createdAtDate = task.createdAt.toDate();
-                        } else {
-                            task.createdAtDate = new Date(task.createdDate || Date.now());
-                        }
-                        
-                        allTasks.push(task);
-                    });
-                    
-                    console.log(`Loaded ${allTasks.length} tasks`);
-                    
-                    allTasks.sort((a, b) => {
-                        const dateA = a.dueDate ? new Date(a.dueDate) : new Date(9999, 11, 31);
-                        const dateB = b.dueDate ? new Date(b.dueDate) : new Date(9999, 11, 31);
-                        return dateA - dateB;
-                    });
-                    
-                    // load time tracking data for each task
-                    loadTimeTrackingData().then(() => {
-                        updateStats();
-                        checkUpcomingTasks();
-                        filterAndSortTasks();
-                        hideLoading();
-                    });
-                })
-                .catch(err => {
-                    console.error("Error loading tasks:", err);
-                    showError("Failed to load tasks");
-                    hideLoading();
-                });
-        }
-
-        // Load time tracking summaries from Firestore
-        function loadTimeTrackingData() {
+        // Load all time tracking sessions
+        function loadTimeTrackingSessions() {
             return db.collection('timeTracking')
                 .where('userId', '==', currentUser.uid)
                 .get()
                 .then(snapshot => {
+                    timeTrackingSessions = {};
                     timeTrackingData = {};
+                    
                     snapshot.forEach(doc => {
-                        const data = doc.data();
-                        const taskId = data.taskId;
+                        const session = doc.data();
+                        session.id = doc.id;
+                        const taskId = session.taskId;
+                        
+                        if (!timeTrackingSessions[taskId]) {
+                            timeTrackingSessions[taskId] = [];
+                        }
+                        timeTrackingSessions[taskId].push(session);
+                        
+                        // Accumulate time tracking data
                         if (!timeTrackingData[taskId]) {
                             timeTrackingData[taskId] = {
                                 totalSeconds: 0,
-                                lastUpdated: null,
-                                status: data.status
+                                firstStarted: session.startedAt,
+                                lastUpdated: session.lastUpdated,
+                                sessionCount: 0
                             };
                         }
-                        // accumulate if multiple sessions
-                        if (data.totalSeconds) {
-                            timeTrackingData[taskId].totalSeconds += data.totalSeconds;
+                        
+                        if (session.totalSeconds) {
+                            timeTrackingData[taskId].totalSeconds += session.totalSeconds;
                         }
-                        if (data.lastUpdated && (!timeTrackingData[taskId].lastUpdated || data.lastUpdated > timeTrackingData[taskId].lastUpdated)) {
-                            timeTrackingData[taskId].lastUpdated = data.lastUpdated;
+                        
+                        timeTrackingData[taskId].sessionCount++;
+                        
+                        // Track first started
+                        if (session.startedAt && (!timeTrackingData[taskId].firstStarted || 
+                            new Date(session.startedAt) < new Date(timeTrackingData[taskId].firstStarted))) {
+                            timeTrackingData[taskId].firstStarted = session.startedAt;
+                        }
+                        
+                        // Track last updated
+                        if (session.lastUpdated) {
+                            const lastUp = session.lastUpdated.toDate ? session.lastUpdated.toDate() : new Date(session.lastUpdated);
+                            const currentLast = timeTrackingData[taskId].lastUpdated ? 
+                                (timeTrackingData[taskId].lastUpdated.toDate ? timeTrackingData[taskId].lastUpdated.toDate() : new Date(timeTrackingData[taskId].lastUpdated)) 
+                                : null;
+                            
+                            if (!currentLast || lastUp > currentLast) {
+                                timeTrackingData[taskId].lastUpdated = session.lastUpdated;
+                            }
                         }
                     });
                     
-                    // For tasks in progress, we might have active timers – load last known active
-                    allTasks.forEach(task => {
-                        if (task.status === 'in-progress') {
-                            // Check if we have a recent timer in memory? Not persisted across refreshes.
-                            // So we start a fresh timer from 0, but we could store in localStorage? 
-                            // For simplicity, we start fresh on page load (timer from 0).
-                            // But we should display total accumulated from timeTrackingData.
-                        }
+                    // Sort sessions by startedAt for each task
+                    Object.keys(timeTrackingSessions).forEach(taskId => {
+                        timeTrackingSessions[taskId].sort((a, b) => {
+                            return new Date(a.startedAt) - new Date(b.startedAt);
+                        });
                     });
+                    
+                    console.log("✅ Loaded time tracking sessions");
                 })
                 .catch(err => console.error("Error loading time tracking:", err));
+        }
+
+        // Get total time for a task including active timer
+        function getTaskTotalTime(taskId) {
+            let totalSeconds = timeTrackingData[taskId]?.totalSeconds || 0;
+            
+            // Add active timer if task is in progress
+            if (activeTimers[taskId]) {
+                totalSeconds += activeTimers[taskId];
+            }
+            
+            return totalSeconds;
+        }
+
+        // Get first started time for a task
+        function getFirstStartedTime(taskId) {
+            if (timeTrackingData[taskId]?.firstStarted) {
+                return new Date(timeTrackingData[taskId].firstStarted);
+            }
+            return null;
+        }
+
+        // Get last updated time for a task
+        function getLastUpdatedTime(taskId) {
+            if (timeTrackingData[taskId]?.lastUpdated) {
+                const lastUp = timeTrackingData[taskId].lastUpdated;
+                return lastUp.toDate ? lastUp.toDate() : new Date(lastUp);
+            }
+            return null;
+        }
+
+        // Get session count for a task
+        function getSessionCount(taskId) {
+            return timeTrackingData[taskId]?.sessionCount || 0;
+        }
+
+        // Load Tasks – now also load timeTracking data for each task
+        function loadTasks() {
+            showLoading();
+            
+            // First load time tracking sessions
+            loadTimeTrackingSessions().then(() => {
+                db.collection('tasks')
+                    .where('userId', '==', currentUser.uid)
+                    .get()
+                    .then(snapshot => {
+                        allTasks = [];
+                        snapshot.forEach(doc => {
+                            const task = doc.data();
+                            task.id = doc.id;
+                            
+                            if (task.createdAt && typeof task.createdAt.toDate === 'function') {
+                                task.createdAtDate = task.createdAt.toDate();
+                            } else {
+                                task.createdAtDate = new Date(task.createdDate || Date.now());
+                            }
+                            
+                            allTasks.push(task);
+                        });
+                        
+                        console.log(`Loaded ${allTasks.length} tasks`);
+                        
+                        allTasks.sort((a, b) => {
+                            const dateA = a.dueDate ? new Date(a.dueDate) : new Date(9999, 11, 31);
+                            const dateB = b.dueDate ? new Date(b.dueDate) : new Date(9999, 11, 31);
+                            return dateA - dateB;
+                        });
+                        
+                        updateStats();
+                        checkUpcomingTasks();
+                        filterAndSortTasks();
+                        hideLoading();
+                    })
+                    .catch(err => {
+                        console.error("Error loading tasks:", err);
+                        showError("Failed to load tasks");
+                        hideLoading();
+                    });
+            });
         }
 
         function checkUpcomingTasks() { /* unchanged */ 
@@ -2910,7 +2980,7 @@
             tasksWrapper.innerHTML = tasks.map(task => createTaskHTML(task, currentDetailLevel)).join('');
         }
 
-        function renderTableView(tasks) { /* unchanged */ 
+        function renderTableView(tasks) {
             tasksWrapper.innerHTML = `
                 <table class="tasks-table">
                     <thead>
@@ -2923,11 +2993,15 @@
                             <th>Due Date</th>
                             <th>Assigned To</th>
                             <th>Time Spent</th>
+                            <th>Sessions</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${tasks.map(task => `
+                        ${tasks.map(task => {
+                            const totalSeconds = getTaskTotalTime(task.id);
+                            const sessionCount = getSessionCount(task.id);
+                            return `
                             <tr>
                                 <td>${task.title}</td>
                                 <td>${task.company || '-'}</td>
@@ -2936,7 +3010,8 @@
                                 <td><span class="task-priority priority-${task.priority || 'medium'}">${task.priority || 'medium'}</span></td>
                                 <td>${task.dueDate || '-'}</td>
                                 <td>${task.assignedTo || '-'}</td>
-                                <td><span class="timer-badge"><i class="fas fa-clock"></i> ${formatDuration(getTaskTotalSeconds(task.id))}</span></td>
+                                <td><span class="timer-badge"><i class="fas fa-clock"></i> ${formatDuration(totalSeconds)}</span></td>
+                                <td>${sessionCount}</td>
                                 <td>
                                     <button class="btn btn-primary btn-sm" onclick="showTaskDetails('${task.id}')"><i class="fas fa-eye"></i></button>
                                     <button class="btn btn-warning btn-sm" onclick="editTask('${task.id}')"><i class="fas fa-edit"></i></button>
@@ -2945,13 +3020,13 @@
                                     ` : ''}
                                 </td>
                             </tr>
-                        `).join('')}
+                        `}).join('')}
                     </tbody>
                 </table>
             `;
         }
 
-        function renderKanbanView() { /* unchanged but with timer display */ 
+        function renderKanbanView() {
             const statuses = ['not-started', 'in-progress', 'on-hold', 'completed'];
             const statusLabels = {
                 'not-started': 'Not Started',
@@ -2971,24 +3046,25 @@
                                     <span class="kanban-count">${statusTasks.length}</span>
                                 </div>
                                 <div class="kanban-items">
-                                    ${statusTasks.map(task => `
+                                    ${statusTasks.map(task => {
+                                        const totalSeconds = getTaskTotalTime(task.id);
+                                        return `
                                         <div class="kanban-item priority-${task.priority || 'medium'}" onclick="showTaskDetails('${task.id}')">
                                             <div class="kanban-item-title">${task.title}</div>
                                             <div class="kanban-item-meta">
                                                 <span><i class="fas fa-building"></i> ${task.company || 'No company'}</span>
                                                 <span><i class="far fa-calendar"></i> ${task.dueDate || 'No due date'}</span>
                                             </div>
+                                            <div class="time-badge" style="margin:5px 0;">
+                                                <i class="fas fa-clock"></i> Total: ${formatDuration(totalSeconds)}
+                                            </div>
                                             ${task.status === 'in-progress' ? `
                                                 <div class="live-timer" id="kanban-timer-${task.id}">
                                                     ${formatTime(activeTimers[task.id] || 0)}
                                                 </div>
-                                            ` : `
-                                                <div class="timer-badge" style="margin-top:8px;">
-                                                    <i class="fas fa-clock"></i> ${formatDuration(getTaskTotalSeconds(task.id))}
-                                                </div>
-                                            `}
+                                            ` : ''}
                                         </div>
-                                    `).join('')}
+                                    `}).join('')}
                                 </div>
                             </div>
                         `;
@@ -2997,7 +3073,7 @@
             `;
         }
 
-        function renderStackView(tasks) { /* unchanged but with time */ 
+        function renderStackView(tasks) {
             const groupedByCompany = tasks.reduce((groups, task) => {
                 const company = task.company || 'Unassigned';
                 if (!groups[company]) groups[company] = [];
@@ -3014,18 +3090,20 @@
                                 <span>${companyTasks.length} tasks <i class="fas fa-chevron-down"></i></span>
                             </div>
                             <div class="stack-items" id="stack-${company.replace(/\s+/g, '-')}">
-                                ${companyTasks.map(task => `
+                                ${companyTasks.map(task => {
+                                    const totalSeconds = getTaskTotalTime(task.id);
+                                    return `
                                     <div class="stack-item" onclick="showTaskDetails('${task.id}')">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <div>
                                                 <strong>${task.title}</strong><br>
                                                 <small>Due: ${task.dueDate || 'No date'} | Priority: ${task.priority || 'medium'}</small>
-                                                <br><small class="timer-badge"><i class="fas fa-clock"></i> ${formatDuration(getTaskTotalSeconds(task.id))}</small>
+                                                <br><small class="timer-badge"><i class="fas fa-clock"></i> ${formatDuration(totalSeconds)}</small>
                                             </div>
                                             <span class="task-status status-${task.status || 'not-started'}"></span>
                                         </div>
                                     </div>
-                                `).join('')}
+                                `}).join('')}
                             </div>
                         </div>
                     `).join('')}
@@ -3054,8 +3132,9 @@
             const department = getDepartmentName(task.department);
             const accountType = getAccountTypeName(task.accountType);
             
-            const totalSecs = getTaskTotalSeconds(task.id);
+            const totalSecs = getTaskTotalTime(task.id);
             const timeDisplay = formatDuration(totalSecs);
+            const sessionCount = getSessionCount(task.id);
             
             if (detailLevel === 'compact') {
                 return `
@@ -3079,6 +3158,7 @@
                                 ` : `
                                     <span class="timer-badge"><i class="fas fa-clock"></i> ${timeDisplay}</span>
                                 `}
+                                <span class="timer-badge" style="background:var(--gray);"><i class="fas fa-history"></i> ${sessionCount} sessions</span>
                             </div>
                             
                             <div class="task-meta">
@@ -3118,6 +3198,7 @@
                                 ` : `
                                     <span class="timer-badge"><i class="fas fa-clock"></i> ${timeDisplay}</span>
                                 `}
+                                <span class="timer-badge" style="background:var(--gray);"><i class="fas fa-history"></i> ${sessionCount} sessions</span>
                             </div>
                             
                             <div class="task-description">
@@ -3183,28 +3264,29 @@
             return type ? type.name : '';
         }
 
-        // ========== TIME TRACKING FUNCTIONS ==========
+        // ========== ENHANCED TIME TRACKING FUNCTIONS ==========
         function getTaskTotalSeconds(taskId) {
-            return timeTrackingData[taskId]?.totalSeconds || 0;
+            return getTaskTotalTime(taskId);
         }
 
         function startTaskTimer(taskId) {
             if (!activeTimers[taskId]) {
                 activeTimers[taskId] = 0;
-                // check if there's existing total from tracking data? we start fresh for live segment
-                // but we show total later combined.
+                
                 timerIntervals[taskId] = setInterval(() => {
                     if (activeTimers[taskId] !== undefined) {
                         activeTimers[taskId] += 1;
-                        // update all timer displays for this task
+                        
+                        // Update all timer displays for this task
                         const timerElements = document.querySelectorAll(`#timer-${taskId}, #kanban-timer-${taskId}`);
                         timerElements.forEach(el => {
                             if (el) el.textContent = formatTime(activeTimers[taskId]);
                         });
-                        // also update details modal if open for this task
+                        
+                        // Also update details modal if open for this task
                         if (currentViewingTask && currentViewingTask.id === taskId) {
                             document.getElementById('detailsLiveTimer').textContent = formatTime(activeTimers[taskId]);
-                            const totalSecs = (timeTrackingData[taskId]?.totalSeconds || 0) + activeTimers[taskId];
+                            const totalSecs = getTaskTotalTime(taskId);
                             document.getElementById('detailsTotalTime').textContent = formatDuration(totalSecs);
                         }
                     }
@@ -3217,55 +3299,90 @@
                 clearInterval(timerIntervals[taskId]);
                 delete timerIntervals[taskId];
             }
-            // save the elapsed seconds to firestore before deleting
-            if (activeTimers[taskId] > 0) {
+            
+            // Save the elapsed seconds to firestore before deleting
+            if (activeTimers[taskId] && activeTimers[taskId] > 0) {
                 saveTimeSegment(taskId, activeTimers[taskId]);
             }
+            
             delete activeTimers[taskId];
         }
 
         function saveTimeSegment(taskId, seconds) {
             if (!seconds || seconds <= 0) return;
-            // create a timeTracking record
+            
+            const now = new Date();
+            const startedAt = new Date(now.getTime() - seconds * 1000);
+            
+            // Create a timeTracking record
             const trackData = {
                 taskId: taskId,
                 userId: currentUser.uid,
                 status: 'completed', // segment completed (paused or completed)
-                startedAt: new Date(Date.now() - seconds*1000).toISOString(),
-                pausedAt: new Date().toISOString(),
+                startedAt: startedAt.toISOString(),
+                pausedAt: now.toISOString(),
                 totalSeconds: seconds,
                 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
             };
+            
             db.collection('timeTracking').add(trackData)
-                .then(() => {
-                    // update local timeTrackingData
-                    if (!timeTrackingData[taskId]) timeTrackingData[taskId] = { totalSeconds: 0 };
+                .then((docRef) => {
+                    // Update local timeTrackingSessions and timeTrackingData
+                    if (!timeTrackingSessions[taskId]) {
+                        timeTrackingSessions[taskId] = [];
+                    }
+                    
+                    const newSession = {
+                        id: docRef.id,
+                        ...trackData,
+                        lastUpdated: new Date()
+                    };
+                    timeTrackingSessions[taskId].push(newSession);
+                    
+                    // Update timeTrackingData
+                    if (!timeTrackingData[taskId]) {
+                        timeTrackingData[taskId] = {
+                            totalSeconds: 0,
+                            firstStarted: startedAt.toISOString(),
+                            lastUpdated: new Date(),
+                            sessionCount: 0
+                        };
+                    }
+                    
                     timeTrackingData[taskId].totalSeconds += seconds;
+                    timeTrackingData[taskId].sessionCount++;
                     timeTrackingData[taskId].lastUpdated = new Date();
+                    
+                    // Update first started if needed
+                    const firstStart = new Date(timeTrackingData[taskId].firstStarted || startedAt);
+                    if (startedAt < firstStart) {
+                        timeTrackingData[taskId].firstStarted = startedAt.toISOString();
+                    }
                 })
                 .catch(err => console.error("Error saving time segment:", err));
         }
 
         function startPeriodicTimeSave() {
             setInterval(() => {
-                // save each active timer's accumulated seconds to firestore (as a new segment, then reset timer)
+                // Save each active timer's accumulated seconds to firestore
                 Object.keys(activeTimers).forEach(taskId => {
-                    if (activeTimers[taskId] > 0) {
+                    if (!taskId.includes('_interval') && activeTimers[taskId] > 5) { // Save if >5 seconds
                         const seconds = activeTimers[taskId];
                         saveTimeSegment(taskId, seconds);
-                        activeTimers[taskId] = 0; // reset after saving
-                        // update timer displays to 0
+                        activeTimers[taskId] = 0; // Reset after saving
+                        
+                        // Update timer displays to 0
                         const timerElements = document.querySelectorAll(`#timer-${taskId}, #kanban-timer-${taskId}`);
                         timerElements.forEach(el => {
                             if (el) el.textContent = formatTime(0);
                         });
                     }
                 });
-            }, 60000); // every minute
+            }, 30000); // Every 30 seconds
         }
 
         // ========== TASK ACTIONS with time tracking ==========
-        function saveTask() { /* unchanged but ensure new tasks get default time tracking? */ 
+        function saveTask() {
             const title = taskTitle.value.trim();
             const dueDate = taskDueDate.value;
             
@@ -3329,8 +3446,14 @@
                     .then((docRef) => {
                         showSuccess("Task created successfully!");
                         taskModal.style.display = 'none';
-                        // initialize time tracking data for new task
-                        timeTrackingData[docRef.id] = { totalSeconds: 0, lastUpdated: null };
+                        // Initialize time tracking data for new task
+                        timeTrackingData[docRef.id] = { 
+                            totalSeconds: 0, 
+                            firstStarted: null, 
+                            lastUpdated: null, 
+                            sessionCount: 0 
+                        };
+                        timeTrackingSessions[docRef.id] = [];
                         loadTasks();
                     })
                     .catch(err => {
@@ -3344,12 +3467,12 @@
             }
         }
 
-        // Override completeTask to stop timer and save final segment
+        // Complete Task with time tracking
         function completeTask(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
-            // stop timer if running
+            // Stop timer if running and save final segment
             if (activeTimers[taskId] !== undefined) {
                 saveTimeSegment(taskId, activeTimers[taskId]);
                 stopTaskTimer(taskId);
@@ -3371,42 +3494,7 @@
             });
         }
 
-        // New function to start a task (if needed, but we integrate with status changes)
-        // We'll keep original but add timer start when status becomes in-progress.
-        // We need to detect status changes in edit or quick actions.
-        // For simplicity, we add a method to handle status update with time.
-        function updateTaskStatusWithTime(taskId, newStatus) {
-            const task = allTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            const oldStatus = task.status;
-            
-            // Handle timer start/stop
-            if (newStatus === 'in-progress' && oldStatus !== 'in-progress') {
-                startTaskTimer(taskId);
-            } else if (oldStatus === 'in-progress' && newStatus !== 'in-progress') {
-                // save current segment
-                if (activeTimers[taskId] > 0) {
-                    saveTimeSegment(taskId, activeTimers[taskId]);
-                }
-                stopTaskTimer(taskId);
-            }
-            
-            db.collection('tasks').doc(taskId).update({
-                status: newStatus,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                showSuccess(`Task status updated to ${newStatus}`);
-                task.status = newStatus;
-                updateStats();
-                filterAndSortTasks();
-            }).catch(err => {
-                console.error("Error updating status:", err);
-                showError("Failed to update status");
-            });
-        }
-
-        // Override showTaskDetails to include time info
+        // Enhanced showTaskDetails with complete time info
         function showTaskDetails(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
@@ -3454,16 +3542,16 @@
             document.getElementById('timelineDue').textContent = task.dueDate || 'N/A';
             document.getElementById('timelineStatus').textContent = (task.status || 'not-started').replace('-', ' ');
             
-            // Time details
-            const totalSecs = getTaskTotalSeconds(taskId) + (activeTimers[taskId] || 0);
+            // Enhanced Time details
+            const totalSecs = getTaskTotalTime(taskId);
+            const firstStarted = getFirstStartedTime(taskId);
+            const lastUpdated = getLastUpdatedTime(taskId);
+            const sessionCount = getSessionCount(taskId);
+            
+            document.getElementById('detailsFirstStarted').textContent = firstStarted ? firstStarted.toLocaleString() : 'Not started yet';
+            document.getElementById('detailsTimeUpdated').textContent = lastUpdated ? lastUpdated.toLocaleString() : '-';
             document.getElementById('detailsTotalTime').textContent = formatDuration(totalSecs);
-            if (timeTrackingData[taskId]?.lastUpdated) {
-                let lu = timeTrackingData[taskId].lastUpdated;
-                if (lu.toDate) lu = lu.toDate();
-                document.getElementById('detailsTimeUpdated').textContent = lu ? new Date(lu).toLocaleString() : '-';
-            } else {
-                document.getElementById('detailsTimeUpdated').textContent = '-';
-            }
+            document.getElementById('detailsSessionCount').textContent = sessionCount;
             
             if (task.status === 'in-progress' && activeTimers[taskId] !== undefined) {
                 document.getElementById('detailsLiveTimer').textContent = formatTime(activeTimers[taskId]);
@@ -3476,13 +3564,14 @@
 
         // ========== UTILITIES ==========
         function formatDuration(seconds) {
-            if (!seconds) return '0h 0m';
+            if (!seconds || seconds < 0) return '0h 0m';
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             return `${hours}h ${minutes}m`;
         }
 
         function formatTime(seconds) {
+            if (!seconds) seconds = 0;
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const secs = seconds % 60;
@@ -3490,7 +3579,7 @@
         }
 
         // Save Department, Account Type, etc. unchanged
-        function saveDepartment() { /* unchanged */ 
+        function saveDepartment() {
             const name = document.getElementById('deptName').value.trim();
             const code = document.getElementById('deptCode').value.trim();
             const description = document.getElementById('deptDescription').value.trim();
@@ -3537,7 +3626,7 @@
                 });
         }
 
-        function saveAccountType() { /* unchanged */ 
+        function saveAccountType() {
             const name = document.getElementById('accountTypeName').value.trim();
             const format = document.getElementById('accountNumberFormat').value.trim();
             const description = document.getElementById('accountTypeDesc').value.trim();
@@ -3584,9 +3673,11 @@
                 });
         }
 
-        function quickCompleteTask(taskId) { completeTask(taskId); }
+        function quickCompleteTask(taskId) { 
+            completeTask(taskId); 
+        }
 
-        function editTask(taskId) { /* unchanged */ 
+        function editTask(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
@@ -3615,7 +3706,7 @@
             taskModal.style.display = 'flex';
         }
 
-        function showDeleteTaskModal(taskId, taskTitle) { /* unchanged */ 
+        function showDeleteTaskModal(taskId, taskTitle) {
             itemToDelete = taskId;
             deleteType = 'task';
             document.getElementById('deleteItemTitle').textContent = taskTitle;
@@ -3623,21 +3714,21 @@
             deleteModal.style.display = 'flex';
         }
 
-        function showDeleteDepartmentModal(deptId, deptName) { /* unchanged */ 
+        function showDeleteDepartmentModal(deptId, deptName) {
             itemToDelete = deptId;
             deleteType = 'department';
             document.getElementById('deleteItemTitle').textContent = deptName;
             deleteModal.style.display = 'flex';
         }
 
-        function showDeleteAccountModal(accountId, accountName) { /* unchanged */ 
+        function showDeleteAccountModal(accountId, accountName) {
             itemToDelete = accountId;
             deleteType = 'account';
             document.getElementById('deleteItemTitle').textContent = accountName;
             deleteModal.style.display = 'flex';
         }
 
-        function confirmDelete() { /* unchanged */ 
+        function confirmDelete() {
             if (!itemToDelete) return;
             
             let collection;
@@ -3674,7 +3765,7 @@
                 });
         }
 
-        // REPORT GENERATION (unchanged)
+        // REPORT GENERATION (unchanged but with time data)
         function generatePDFReport() {
             if (allTasks.length === 0) {
                 showWarning("No tasks to generate report");
@@ -3693,7 +3784,7 @@
                 'Title', 'Company', 'Department', 'Account Type', 'Account Number',
                 'Status', 'Priority', 'Recurrence', 'Due Date', 'Due Time',
                 'Assigned To', 'Assigned By', 'Source', 'Created Date',
-                'Description', 'Notes', 'Tags', 'Time Spent (hours)'
+                'Description', 'Notes', 'Tags', 'Time Spent (hours)', 'Sessions Count'
             ];
             
             const rows = allTasks.map(task => [
@@ -3714,7 +3805,8 @@
                 task.description || '',
                 task.notes || '',
                 task.tags || '',
-                (getTaskTotalSeconds(task.id) / 3600).toFixed(1)
+                (getTaskTotalTime(task.id) / 3600).toFixed(2),
+                getSessionCount(task.id)
             ]);
             
             const csv = [headers, ...rows].map(row => 
@@ -3738,7 +3830,7 @@
             }, 100);
         }
 
-        function createCharts() { /* unchanged */ 
+        function createCharts() {
             if (statusChart) statusChart.destroy();
             if (priorityChart) priorityChart.destroy();
             if (recurrenceChart) recurrenceChart.destroy();
@@ -3833,7 +3925,7 @@
             });
         }
 
-        function downloadFullPDF() { /* unchanged */ 
+        function downloadFullPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({
                 orientation: 'portrait',
@@ -3899,12 +3991,13 @@
                 task.priority || 'medium',
                 task.dueDate || '-',
                 task.assignedTo || '-',
-                formatDuration(getTaskTotalSeconds(task.id))
+                formatDuration(getTaskTotalTime(task.id)),
+                getSessionCount(task.id).toString()
             ]);
             
             doc.autoTable({
                 startY: 25,
-                head: [['Title', 'Company', 'Dept', 'Status', 'Priority', 'Due Date', 'Assigned To', 'Time Spent']],
+                head: [['Title', 'Company', 'Dept', 'Status', 'Priority', 'Due Date', 'Assigned To', 'Time Spent', 'Sessions']],
                 body: tableData,
                 theme: 'striped',
                 headStyles: { fillColor: [30, 60, 114] },
@@ -3915,21 +4008,21 @@
             showSuccess("PDF report downloaded successfully!");
         }
 
-        function showAddDepartmentModal() { /* unchanged */ 
+        function showAddDepartmentModal() {
             document.getElementById('deptName').value = '';
             document.getElementById('deptCode').value = '';
             document.getElementById('deptDescription').value = '';
             departmentModal.style.display = 'flex';
         }
 
-        function showAddAccountTypeModal() { /* unchanged */ 
+        function showAddAccountTypeModal() {
             document.getElementById('accountTypeName').value = '';
             document.getElementById('accountNumberFormat').value = '';
             document.getElementById('accountTypeDesc').value = '';
             accountTypeModal.style.display = 'flex';
         }
 
-        function setViewType(type) { /* unchanged */ 
+        function setViewType(type) {
             currentViewType = type;
             document.querySelectorAll('.view-type-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -3940,59 +4033,59 @@
             renderTasks();
         }
 
-        function filterByDepartment(deptId) { /* unchanged */ 
+        function filterByDepartment(deptId) {
             deptFilter.value = deptId;
             filterAndSortTasks();
         }
 
-        function setCurrentDate() { /* unchanged */ 
+        function setCurrentDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
         }
 
-        function toggleDeptManagement() { /* unchanged */ 
+        function toggleDeptManagement() {
             const panel = document.getElementById('deptManagement');
             panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
         }
 
-        function toggleAccountTypes() { /* unchanged */ 
+        function toggleAccountTypes() {
             const panel = document.getElementById('accountTypesPanel');
             panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         }
 
-        function showLoading() { /* unchanged */ 
+        function showLoading() {
             loadingSpinner.style.display = 'block';
         }
 
-        function hideLoading() { /* unchanged */ 
+        function hideLoading() {
             loadingSpinner.style.display = 'none';
         }
 
-        function showSuccess(message) { /* unchanged */ 
+        function showSuccess(message) {
             successMessage.textContent = message;
             successAlert.style.display = 'flex';
             setTimeout(() => successAlert.style.display = 'none', 3000);
         }
 
-        function showError(message) { /* unchanged */ 
+        function showError(message) {
             errorMessage.textContent = message;
             errorAlert.style.display = 'flex';
             setTimeout(() => errorAlert.style.display = 'none', 3000);
         }
 
-        function showInfo(message) { /* unchanged */ 
+        function showInfo(message) {
             infoMessage.textContent = message;
             infoAlert.style.display = 'flex';
             setTimeout(() => infoAlert.style.display = 'none', 3000);
         }
 
-        function showWarning(message) { /* unchanged */ 
+        function showWarning(message) {
             warningMessage.textContent = message;
             warningAlert.style.display = 'flex';
             setTimeout(() => warningAlert.style.display = 'none', 3000);
         }
 
-        function updatePagination() { /* unchanged */ 
+        function updatePagination() {
             const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
             if (totalPages <= 1) {
                 pagination.innerHTML = '';
@@ -4014,13 +4107,13 @@
             pagination.innerHTML = html;
         }
 
-        function changePage(page) { /* unchanged */ 
+        function changePage(page) {
             currentPage = page;
             renderTasks();
             updatePagination();
         }
 
-        function filterByStatus(status) { /* unchanged */ 
+        function filterByStatus(status) {
             navTabs.forEach(t => t.classList.remove('active'));
             const tab = Array.from(navTabs).find(t => t.dataset.view === status);
             if (tab) tab.classList.add('active');
@@ -4028,7 +4121,7 @@
             filterAndSortTasks();
         }
 
-        function setupEventListeners() { /* unchanged except we add time-related actions? */ 
+        function setupEventListeners() {
             logoutBtn.addEventListener('click', () => {
                 auth.signOut().then(() => window.location.href = 'index.html');
             });
@@ -4155,10 +4248,9 @@
         window.toggleAccountTypes = toggleAccountTypes;
         window.setViewType = setViewType;
         window.toggleStack = toggleStack;
-        // time-related
+        // Time-related
         window.startTaskTimer = startTaskTimer;
         window.stopTaskTimer = stopTaskTimer;
-        window.updateTaskStatusWithTime = updateTaskStatusWithTime;
     </script>
 </body>
 </html>
