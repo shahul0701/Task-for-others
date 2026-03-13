@@ -410,6 +410,39 @@
             font-size: 0.85rem;
         }
 
+        /* View Type Selector */
+        .view-type-selector {
+            display: flex;
+            gap: 10px;
+            background: var(--light);
+            padding: 5px;
+            border-radius: 50px;
+            margin-left: 15px;
+        }
+
+        .view-type-btn {
+            padding: 8px 15px;
+            border: none;
+            background: transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .view-type-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .view-type-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
         /* Department Management */
         .dept-management {
             background: var(--light);
@@ -540,18 +573,26 @@
             color: var(--danger);
         }
 
-        /* Filter Bar */
+        /* Advanced Filter Bar */
         .filter-bar {
             background: white;
             border-radius: var(--radius);
             padding: 20px;
             margin-bottom: 25px;
             box-shadow: var(--shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        .filter-row {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
             align-items: center;
-            border: 1px solid var(--light-gray);
+            margin-bottom: 15px;
+        }
+
+        .filter-row:last-child {
+            margin-bottom: 0;
         }
 
         .search-box {
@@ -582,7 +623,7 @@
             min-width: 150px;
         }
 
-        .filter-select {
+        .filter-select, .filter-input {
             width: 100%;
             padding: 10px 15px;
             border: 1px solid var(--light-gray);
@@ -593,8 +634,23 @@
             cursor: pointer;
         }
 
-        .filter-select:focus {
+        .filter-select:focus, .filter-input:focus {
             border-color: var(--primary);
+        }
+
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .date-range input {
+            padding: 10px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 50px;
+            outline: none;
+            font-size: 0.95rem;
         }
 
         /* Tasks Container */
@@ -661,6 +717,150 @@
             grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
             gap: 20px;
             padding: 20px;
+        }
+
+        /* Table View */
+        .tasks-table {
+            width: 100%;
+            border-collapse: collapse;
+            padding: 20px;
+        }
+
+        .tasks-table th {
+            background: var(--light);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .tasks-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .tasks-table tr:hover {
+            background: var(--light);
+        }
+
+        /* Kanban View */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .kanban-column {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 15px;
+        }
+
+        .kanban-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .kanban-header h3 {
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .kanban-count {
+            background: var(--primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+        }
+
+        .kanban-items {
+            min-height: 200px;
+        }
+
+        .kanban-item {
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .kanban-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .kanban-item.priority-high { border-left-color: var(--danger); }
+        .kanban-item.priority-medium { border-left-color: var(--warning); }
+        .kanban-item.priority-low { border-left-color: var(--success); }
+
+        .kanban-item-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .kanban-item-meta {
+            font-size: 0.85rem;
+            color: var(--gray);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Stack View */
+        .stack-view {
+            padding: 20px;
+        }
+
+        .stack-group {
+            margin-bottom: 20px;
+        }
+
+        .stack-header {
+            background: var(--light);
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stack-header:hover {
+            background: var(--light-gray);
+        }
+
+        .stack-items {
+            padding: 10px 0 10px 20px;
+        }
+
+        .stack-item {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .stack-item:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
         }
 
         /* Task Item */
@@ -927,6 +1127,190 @@
             background: white;
         }
 
+        /* Task Details Modal - Beautiful Design */
+        .task-details {
+            max-width: 800px;
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .details-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .details-badges {
+            display: flex;
+            gap: 10px;
+        }
+
+        .details-badge {
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .details-badge.priority-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .details-badge.priority-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .details-badge.priority-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .details-badge.status {
+            background: var(--primary);
+            color: white;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .details-card {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .details-card h4 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .details-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .details-label {
+            min-width: 100px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .details-value {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .details-section {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .details-section h4 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details-description {
+            background: white;
+            padding: 15px;
+            border-radius: var(--radius);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .details-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .details-tag {
+            background: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .timeline-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: -10px;
+            width: 20px;
+            height: 2px;
+            background: var(--light-gray);
+        }
+
+        .timeline-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .timeline-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .timeline-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
         /* Form Styles */
         .form-group {
             margin-bottom: 20px;
@@ -1099,6 +1483,10 @@
             
             .dept-filter {
                 margin-left: 0;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1275,40 +1663,73 @@
                 <div class="account-types-grid" id="accountTypesGrid"></div>
             </div>
 
-            <!-- Filter Bar -->
+            <!-- Advanced Filter Bar -->
             <div class="filter-bar">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search tasks...">
+                <div class="filter-row">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by title, description, tags...">
+                    </div>
+                    <div class="filter-group">
+                        <input type="text" id="companyFilter" class="filter-input" placeholder="Filter by company...">
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <select id="accountTypeFilter" class="filter-select">
-                        <option value="all">All Account Types</option>
-                    </select>
+                
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <select id="accountTypeFilter" class="filter-select">
+                            <option value="all">All Account Types</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="priorityFilter" class="filter-select">
+                            <option value="all">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="recurrenceFilter" class="filter-select">
+                            <option value="all">All Recurrence</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                            <option value="one-time">One Time</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <select id="priorityFilter" class="filter-select">
-                        <option value="all">All Priorities</option>
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                    </select>
+                
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <select id="monthFilter" class="filter-select">
+                            <option value="all">All Months</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="date-range">
+                        <input type="date" id="startDateFilter" placeholder="Start Date">
+                        <span>to</span>
+                        <input type="date" id="endDateFilter" placeholder="End Date">
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="clearFilters">
+                        <i class="fas fa-times"></i> Clear All Filters
+                    </button>
                 </div>
-                <div class="filter-group">
-                    <select id="recurrenceFilter" class="filter-select">
-                        <option value="all">All Recurrence</option>
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="biweekly">Bi-Weekly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="quarterly">Quarterly</option>
-                        <option value="yearly">Yearly</option>
-                        <option value="one-time">One Time</option>
-                    </select>
-                </div>
-                <button class="btn btn-outline btn-sm" id="clearFilters">
-                    <i class="fas fa-times"></i> Clear
-                </button>
             </div>
 
             <!-- Tasks Container -->
@@ -1320,12 +1741,26 @@
                     </h2>
                     <div style="display: flex; gap: 15px; align-items: center;">
                         <span class="tasks-count" id="displayedTasksCount">0 tasks</span>
-                        <div class="view-toggle">
-                            <button class="view-btn active" id="gridViewBtn">
-                                <i class="fas fa-th-large"></i>
+                        <div class="view-type-selector">
+                            <button class="view-type-btn active" onclick="setViewType('grid')" title="Grid View">
+                                <i class="fas fa-th-large"></i> Grid
                             </button>
-                            <button class="view-btn" id="listViewBtn">
-                                <i class="fas fa-list"></i>
+                            <button class="view-type-btn" onclick="setViewType('table')" title="Table View">
+                                <i class="fas fa-table"></i> Table
+                            </button>
+                            <button class="view-type-btn" onclick="setViewType('kanban')" title="Kanban View">
+                                <i class="fas fa-columns"></i> Kanban
+                            </button>
+                            <button class="view-type-btn" onclick="setViewType('stack')" title="Stack View">
+                                <i class="fas fa-layer-group"></i> Stack
+                            </button>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-btn active" id="compactViewBtn" title="Compact View">
+                                <i class="fas fa-compress"></i>
+                            </button>
+                            <button class="view-btn" id="detailedViewBtn" title="Detailed View">
+                                <i class="fas fa-expand"></i>
                             </button>
                         </div>
                     </div>
@@ -1425,10 +1860,6 @@
                             <input type="text" id="taskAssignedBy" class="form-control" placeholder="Who assigned this?">
                         </div>
                         <div class="form-group">
-                            <label>Task Given By</label>
-                            <input type="text" id="taskGivenBy" class="form-control" placeholder="Who gave this task?">
-                        </div>
-                        <div class="form-group">
                             <label>Task Source</label>
                             <select id="taskSource" class="form-control">
                                 <option value="">Select Source</option>
@@ -1438,6 +1869,10 @@
                                 <option value="compliance">Compliance</option>
                                 <option value="internal">Internal</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Task Created Date</label>
+                            <input type="date" id="taskCreatedDate" class="form-control" value="<?php echo date('Y-m-d'); ?>">
                         </div>
                     </div>
 
@@ -1467,6 +1902,139 @@
             <div class="modal-footer">
                 <button class="btn btn-primary" id="saveTaskBtn"><i class="fas fa-save"></i> Save Task</button>
                 <button class="btn" id="cancelTaskModalBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beautiful Task Details Modal -->
+    <div class="modal" id="taskDetailsModal">
+        <div class="modal-content task-details">
+            <div class="modal-header">
+                <h3><i class="fas fa-eye"></i> Task Details</h3>
+                <button class="close-modal" id="closeDetailsModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="details-header">
+                    <div class="details-title" id="detailsTitle"></div>
+                    <div class="details-badges">
+                        <span class="details-badge" id="detailsPriority"></span>
+                        <span class="details-badge status" id="detailsStatus"></span>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="details-card">
+                        <h4><i class="fas fa-building"></i> Company & Department</h4>
+                        <div class="details-info">
+                            <div class="details-row">
+                                <span class="details-label">Company:</span>
+                                <span class="details-value" id="detailsCompany"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Department:</span>
+                                <span class="details-value" id="detailsDepartment"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Account Type:</span>
+                                <span class="details-value" id="detailsAccountType"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Account #:</span>
+                                <span class="details-value" id="detailsAccountNumber"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="details-card">
+                        <h4><i class="fas fa-clock"></i> Dates & Times</h4>
+                        <div class="details-info">
+                            <div class="details-row">
+                                <span class="details-label">Created:</span>
+                                <span class="details-value" id="detailsCreated"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Due Date:</span>
+                                <span class="details-value" id="detailsDueDate"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Due Time:</span>
+                                <span class="details-value" id="detailsDueTime"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Recurrence:</span>
+                                <span class="details-value" id="detailsRecurrence"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="details-card">
+                        <h4><i class="fas fa-users"></i> Assignment</h4>
+                        <div class="details-info">
+                            <div class="details-row">
+                                <span class="details-label">Assigned To:</span>
+                                <span class="details-value" id="detailsAssignedTo"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Assigned By:</span>
+                                <span class="details-value" id="detailsAssignedBy"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Source:</span>
+                                <span class="details-value" id="detailsSource"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="details-card">
+                        <h4><i class="fas fa-tags"></i> Tags & Priority</h4>
+                        <div class="details-info">
+                            <div class="details-row">
+                                <span class="details-label">Priority:</span>
+                                <span class="details-value" id="detailsPriorityValue"></span>
+                            </div>
+                            <div class="details-row">
+                                <span class="details-label">Tags:</span>
+                                <div class="details-tags" id="detailsTags"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h4><i class="fas fa-align-left"></i> Description</h4>
+                    <div class="details-description" id="detailsDescription"></div>
+                </div>
+
+                <div class="details-section">
+                    <h4><i class="fas fa-sticky-note"></i> Notes</h4>
+                    <div class="details-description" id="detailsNotes"></div>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-icon"><i class="fas fa-plus"></i></div>
+                        <div class="timeline-label">Created</div>
+                        <div class="timeline-value" id="timelineCreated"></div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon"><i class="fas fa-clock"></i></div>
+                        <div class="timeline-label">Due</div>
+                        <div class="timeline-value" id="timelineDue"></div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon"><i class="fas fa-check"></i></div>
+                        <div class="timeline-label">Status</div>
+                        <div class="timeline-value" id="timelineStatus"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="editFromDetailsBtn"><i class="fas fa-edit"></i> Edit Task</button>
+                <button class="btn btn-success" id="completeFromDetailsBtn"><i class="fas fa-check"></i> Complete</button>
+                <button class="btn btn-danger" id="deleteFromDetailsBtn"><i class="fas fa-trash"></i> Delete</button>
+                <button class="btn" id="closeDetailsModalBtn2">Close</button>
             </div>
         </div>
     </div>
@@ -1618,10 +2186,14 @@
         const manageAccountsBtn = document.getElementById('manageAccountsBtn');
         const refreshTasks = document.getElementById('refreshTasks');
         const searchInput = document.getElementById('searchInput');
+        const companyFilter = document.getElementById('companyFilter');
         const deptFilter = document.getElementById('deptFilter');
         const accountTypeFilter = document.getElementById('accountTypeFilter');
         const priorityFilter = document.getElementById('priorityFilter');
         const recurrenceFilter = document.getElementById('recurrenceFilter');
+        const monthFilter = document.getElementById('monthFilter');
+        const startDateFilter = document.getElementById('startDateFilter');
+        const endDateFilter = document.getElementById('endDateFilter');
         const clearFilters = document.getElementById('clearFilters');
         const gridViewBtn = document.getElementById('gridViewBtn');
         const listViewBtn = document.getElementById('listViewBtn');
@@ -1634,6 +2206,8 @@
         const upcomingPanel = document.getElementById('upcomingPanel');
         const upcomingCount = document.getElementById('upcomingCount');
         const upcomingTasks = document.getElementById('upcomingTasks');
+        const compactViewBtn = document.getElementById('compactViewBtn');
+        const detailedViewBtn = document.getElementById('detailedViewBtn');
 
         // Stats elements
         const totalTasksEl = document.getElementById('totalTasks');
@@ -1654,6 +2228,7 @@
 
         // Modal elements
         const taskModal = document.getElementById('taskModal');
+        const taskDetailsModal = document.getElementById('taskDetailsModal');
         const departmentModal = document.getElementById('departmentModal');
         const accountTypeModal = document.getElementById('accountTypeModal');
         const reportModal = document.getElementById('reportModal');
@@ -1672,8 +2247,8 @@
         const taskDueTime = document.getElementById('taskDueTime');
         const taskAssignedTo = document.getElementById('taskAssignedTo');
         const taskAssignedBy = document.getElementById('taskAssignedBy');
-        const taskGivenBy = document.getElementById('taskGivenBy');
         const taskSource = document.getElementById('taskSource');
+        const taskCreatedDate = document.getElementById('taskCreatedDate');
         const taskDescription = document.getElementById('taskDescription');
         const taskNotes = document.getElementById('taskNotes');
         const taskTags = document.getElementById('taskTags');
@@ -1682,6 +2257,8 @@
         // Modal close buttons
         const closeTaskModalBtn = document.getElementById('closeTaskModalBtn');
         const cancelTaskModalBtn = document.getElementById('cancelTaskModalBtn');
+        const closeDetailsModalBtn = document.getElementById('closeDetailsModalBtn');
+        const closeDetailsModalBtn2 = document.getElementById('closeDetailsModalBtn2');
         const closeDeptModalBtn = document.getElementById('closeDeptModalBtn');
         const cancelDeptModalBtn = document.getElementById('cancelDeptModalBtn');
         const closeAccountModalBtn = document.getElementById('closeAccountModalBtn');
@@ -1700,8 +2277,10 @@
         let currentPage = 1;
         let tasksPerPage = 12;
         let currentView = 'not-started';
-        let currentViewMode = 'grid';
+        let currentViewType = 'grid';
+        let currentDetailLevel = 'compact';
         let currentEditingTask = null;
+        let currentViewingTask = null;
         let itemToDelete = null;
         let deleteType = null;
         let statusChart, priorityChart, recurrenceChart;
@@ -1923,7 +2502,7 @@
                         if (task.createdAt && typeof task.createdAt.toDate === 'function') {
                             task.createdAtDate = task.createdAt.toDate();
                         } else {
-                            task.createdAtDate = new Date();
+                            task.createdAtDate = new Date(task.createdDate || Date.now());
                         }
                         
                         allTasks.push(task);
@@ -1995,7 +2574,7 @@
                             ${dueDate.toLocaleDateString()} (${daysLeft} day${daysLeft !== 1 ? 's' : ''})
                         </div>
                         <div class="upcoming-actions">
-                            <button class="btn btn-primary btn-sm" onclick="viewTask('${task.id}')">
+                            <button class="btn btn-primary btn-sm" onclick="showTaskDetails('${task.id}')">
                                 <i class="fas fa-eye"></i>
                             </button>
                             <button class="btn btn-success btn-sm" onclick="quickCompleteTask('${task.id}')">
@@ -2038,6 +2617,7 @@
 
         // Filter and Sort Tasks
         function filterAndSortTasks() {
+            // Apply view filter
             switch(currentView) {
                 case 'not-started':
                     filteredTasks = allTasks.filter(t => t.status === 'not-started');
@@ -2069,35 +2649,78 @@
                     currentViewTitle.textContent = 'All Tasks';
             }
             
+            // Apply search
             const searchTerm = searchInput.value.toLowerCase();
             if (searchTerm) {
                 filteredTasks = filteredTasks.filter(t => 
                     (t.title?.toLowerCase().includes(searchTerm)) ||
                     (t.description?.toLowerCase().includes(searchTerm)) ||
-                    (t.company?.toLowerCase().includes(searchTerm)) ||
-                    (t.accountNumber?.toLowerCase().includes(searchTerm)) ||
                     (t.tags?.toLowerCase().includes(searchTerm))
                 );
             }
             
+            // Apply company filter
+            const companyTerm = companyFilter.value.toLowerCase();
+            if (companyTerm) {
+                filteredTasks = filteredTasks.filter(t => 
+                    t.company?.toLowerCase().includes(companyTerm)
+                );
+            }
+            
+            // Apply department filter
             const deptId = deptFilter.value;
             if (deptId !== 'all') {
                 filteredTasks = filteredTasks.filter(t => t.department === deptId);
             }
             
+            // Apply account type filter
             const accountId = accountTypeFilter.value;
             if (accountId !== 'all') {
                 filteredTasks = filteredTasks.filter(t => t.accountType === accountId);
             }
             
+            // Apply priority filter
             const priority = priorityFilter.value;
             if (priority !== 'all') {
                 filteredTasks = filteredTasks.filter(t => t.priority === priority);
             }
             
+            // Apply recurrence filter
             const recurrence = recurrenceFilter.value;
             if (recurrence !== 'all') {
                 filteredTasks = filteredTasks.filter(t => t.recurrence === recurrence);
+            }
+            
+            // Apply month filter
+            const month = monthFilter.value;
+            if (month !== 'all') {
+                filteredTasks = filteredTasks.filter(t => {
+                    if (!t.dueDate) return false;
+                    const dueMonth = new Date(t.dueDate).getMonth() + 1;
+                    return dueMonth == month;
+                });
+            }
+            
+            // Apply date range filter
+            if (startDateFilter.value) {
+                const startDate = new Date(startDateFilter.value);
+                startDate.setHours(0, 0, 0, 0);
+                filteredTasks = filteredTasks.filter(t => {
+                    if (!t.dueDate) return false;
+                    const dueDate = new Date(t.dueDate);
+                    dueDate.setHours(0, 0, 0, 0);
+                    return dueDate >= startDate;
+                });
+            }
+            
+            if (endDateFilter.value) {
+                const endDate = new Date(endDateFilter.value);
+                endDate.setHours(23, 59, 59, 999);
+                filteredTasks = filteredTasks.filter(t => {
+                    if (!t.dueDate) return false;
+                    const dueDate = new Date(t.dueDate);
+                    return dueDate <= endDate;
+                });
             }
             
             currentPage = 1;
@@ -2105,7 +2728,7 @@
             updatePagination();
         }
 
-        // Render Tasks
+        // Render Tasks based on view type
         function renderTasks() {
             const start = (currentPage - 1) * tasksPerPage;
             const end = start + tasksPerPage;
@@ -2127,12 +2750,152 @@
                 return;
             }
             
-            tasksWrapper.className = currentViewMode === 'grid' ? 'tasks-grid' : 'tasks-list';
-            tasksWrapper.innerHTML = pageTasks.map(task => createTaskHTML(task)).join('');
+            switch(currentViewType) {
+                case 'grid':
+                    renderGridView(pageTasks);
+                    break;
+                case 'table':
+                    renderTableView(pageTasks);
+                    break;
+                case 'kanban':
+                    renderKanbanView();
+                    break;
+                case 'stack':
+                    renderStackView(pageTasks);
+                    break;
+                default:
+                    renderGridView(pageTasks);
+            }
+        }
+
+        // Render Grid View
+        function renderGridView(tasks) {
+            tasksWrapper.className = 'tasks-grid';
+            tasksWrapper.innerHTML = tasks.map(task => createTaskHTML(task, currentDetailLevel)).join('');
+        }
+
+        // Render Table View
+        function renderTableView(tasks) {
+            tasksWrapper.innerHTML = `
+                <table class="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Company</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Due Date</th>
+                            <th>Assigned To</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tasks.map(task => `
+                            <tr>
+                                <td>${task.title}</td>
+                                <td>${task.company || '-'}</td>
+                                <td>${getDepartmentName(task.department)}</td>
+                                <td><span class="task-status status-${task.status || 'not-started'}"></span> ${task.status || 'not-started'}</td>
+                                <td><span class="task-priority priority-${task.priority || 'medium'}">${task.priority || 'medium'}</span></td>
+                                <td>${task.dueDate || '-'}</td>
+                                <td>${task.assignedTo || '-'}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" onclick="showTaskDetails('${task.id}')"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-warning btn-sm" onclick="editTask('${task.id}')"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')"><i class="fas fa-check"></i></button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Render Kanban View
+        function renderKanbanView() {
+            const statuses = ['not-started', 'in-progress', 'on-hold', 'completed'];
+            const statusLabels = {
+                'not-started': 'Not Started',
+                'in-progress': 'In Progress',
+                'on-hold': 'On Hold',
+                'completed': 'Completed'
+            };
+            
+            tasksWrapper.innerHTML = `
+                <div class="kanban-board">
+                    ${statuses.map(status => {
+                        const statusTasks = filteredTasks.filter(t => t.status === status);
+                        return `
+                            <div class="kanban-column">
+                                <div class="kanban-header">
+                                    <h3>${statusLabels[status]}</h3>
+                                    <span class="kanban-count">${statusTasks.length}</span>
+                                </div>
+                                <div class="kanban-items">
+                                    ${statusTasks.map(task => `
+                                        <div class="kanban-item priority-${task.priority || 'medium'}" onclick="showTaskDetails('${task.id}')">
+                                            <div class="kanban-item-title">${task.title}</div>
+                                            <div class="kanban-item-meta">
+                                                <span><i class="fas fa-building"></i> ${task.company || 'No company'}</span>
+                                                <span><i class="far fa-calendar"></i> ${task.dueDate || 'No due date'}</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // Render Stack View
+        function renderStackView(tasks) {
+            const groupedByCompany = tasks.reduce((groups, task) => {
+                const company = task.company || 'Unassigned';
+                if (!groups[company]) groups[company] = [];
+                groups[company].push(task);
+                return groups;
+            }, {});
+            
+            tasksWrapper.innerHTML = `
+                <div class="stack-view">
+                    ${Object.entries(groupedByCompany).map(([company, companyTasks]) => `
+                        <div class="stack-group">
+                            <div class="stack-header" onclick="toggleStack('${company}')">
+                                <span><i class="fas fa-building"></i> ${company}</span>
+                                <span>${companyTasks.length} tasks <i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="stack-items" id="stack-${company.replace(/\s+/g, '-')}">
+                                ${companyTasks.map(task => `
+                                    <div class="stack-item" onclick="showTaskDetails('${task.id}')">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <strong>${task.title}</strong><br>
+                                                <small>Due: ${task.dueDate || 'No date'} | Priority: ${task.priority || 'medium'}</small>
+                                            </div>
+                                            <span class="task-status status-${task.status || 'not-started'}"></span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Toggle Stack Group
+        function toggleStack(company) {
+            const element = document.getElementById(`stack-${company.replace(/\s+/g, '-')}`);
+            if (element) {
+                element.style.display = element.style.display === 'none' ? 'block' : 'none';
+            }
         }
 
         // Create Task HTML
-        function createTaskHTML(task) {
+        function createTaskHTML(task, detailLevel) {
             const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date';
             const dueTime = task.dueTime || '';
             const isOverdue = task.status !== 'completed' && task.dueDate && new Date(task.dueDate) < new Date();
@@ -2145,95 +2908,108 @@
             const department = getDepartmentName(task.department);
             const accountType = getAccountTypeName(task.accountType);
             
-            const recurrenceIcons = {
-                daily: 'fa-calendar-day',
-                weekly: 'fa-calendar-week',
-                biweekly: 'fa-calendar-alt',
-                monthly: 'fa-calendar',
-                quarterly: 'fa-calendar',
-                yearly: 'fa-calendar',
-                'one-time': 'fa-clock'
-            };
-            
-            return `
-                <div class="task-item ${priorityClass}" data-task-id="${task.id}">
-                    <div class="task-content">
-                        <div class="task-header">
-                            <div class="task-title">
-                                <span class="task-status ${statusClass}"></span>
-                                ${task.title}
+            if (detailLevel === 'compact') {
+                return `
+                    <div class="task-item ${priorityClass}" onclick="showTaskDetails('${task.id}')">
+                        <div class="task-content">
+                            <div class="task-header">
+                                <div class="task-title">
+                                    <span class="task-status ${statusClass}"></span>
+                                    ${task.title}
+                                </div>
+                                <span class="task-priority ${priorityClass}">
+                                    ${(task.priority || 'medium').toUpperCase()}
+                                </span>
                             </div>
-                            <span class="task-priority ${priorityClass}">
-                                ${(task.priority || 'medium').toUpperCase()}
-                            </span>
-                        </div>
-                        
-                        <div style="display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;">
-                            ${task.company ? `<span class="company-badge"><i class="fas fa-building"></i> ${task.company}</span>` : ''}
-                            ${department ? `<span class="task-dept"><i class="fas fa-building"></i> ${department}</span>` : ''}
-                            ${accountType ? `<span class="task-account"><i class="fas fa-book"></i> ${accountType}</span>` : ''}
-                            ${task.accountNumber ? `<span class="task-dept"><i class="fas fa-hashtag"></i> ${task.accountNumber}</span>` : ''}
-                            ${task.recurrence && task.recurrence !== 'one-time' ? `
-                                <span class="recurrence-badge">
-                                    <i class="fas ${recurrenceIcons[task.recurrence]}"></i> 
-                                    ${task.recurrence.charAt(0).toUpperCase() + task.recurrence.slice(1)}
-                                </span>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="task-description">
-                            ${task.description?.substring(0, 100) || 'No description'}
-                            ${task.description?.length > 100 ? '...' : ''}
-                        </div>
-                        
-                        <div class="task-meta">
-                            <span class="meta-item">
-                                <i class="far fa-calendar-alt"></i> Due: ${dueDate} ${dueTime}
-                            </span>
-                            ${task.assignedTo ? `
+                            
+                            <div style="display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;">
+                                ${task.company ? `<span class="company-badge"><i class="fas fa-building"></i> ${task.company}</span>` : ''}
+                                ${department ? `<span class="task-dept"><i class="fas fa-building"></i> ${department}</span>` : ''}
+                            </div>
+                            
+                            <div class="task-meta">
                                 <span class="meta-item">
-                                    <i class="fas fa-user"></i> Assigned: ${task.assignedTo}
+                                    <i class="far fa-calendar-alt"></i> ${dueDate} ${dueTime}
                                 </span>
-                            ` : ''}
-                            ${task.assignedBy ? `
-                                <span class="meta-item">
-                                    <i class="fas fa-user-tie"></i> By: ${task.assignedBy}
-                                </span>
-                            ` : ''}
-                            ${task.givenBy ? `
-                                <span class="meta-item">
-                                    <i class="fas fa-user-check"></i> Given: ${task.givenBy}
-                                </span>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="task-tags">
-                            ${task.tags ? task.tags.split(',').map(tag => 
-                                `<span class="tag">${tag.trim()}</span>`
-                            ).join('') : ''}
-                        </div>
-                        
-                        <div class="task-footer">
-                            <div class="task-actions">
-                                <button class="btn btn-primary btn-sm view-task" onclick="viewTask('${task.id}')" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-warning btn-sm edit-task" onclick="editTask('${task.id}')" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                ${task.status !== 'completed' ? `
-                                    <button class="btn btn-success btn-sm complete-task" onclick="completeTask('${task.id}')" title="Complete">
-                                        <i class="fas fa-check"></i>
-                                    </button>
+                                ${task.assignedTo ? `
+                                    <span class="meta-item">
+                                        <i class="fas fa-user"></i> ${task.assignedTo}
+                                    </span>
                                 ` : ''}
-                                <button class="btn btn-danger btn-sm delete-task" onclick="showDeleteTaskModal('${task.id}', '${task.title}')" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                return `
+                    <div class="task-item ${priorityClass}" onclick="showTaskDetails('${task.id}')">
+                        <div class="task-content">
+                            <div class="task-header">
+                                <div class="task-title">
+                                    <span class="task-status ${statusClass}"></span>
+                                    ${task.title}
+                                </div>
+                                <span class="task-priority ${priorityClass}">
+                                    ${(task.priority || 'medium').toUpperCase()}
+                                </span>
+                            </div>
+                            
+                            <div style="display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;">
+                                ${task.company ? `<span class="company-badge"><i class="fas fa-building"></i> ${task.company}</span>` : ''}
+                                ${department ? `<span class="task-dept"><i class="fas fa-building"></i> ${department}</span>` : ''}
+                                ${accountType ? `<span class="task-account"><i class="fas fa-book"></i> ${accountType}</span>` : ''}
+                                ${task.accountNumber ? `<span class="task-dept"><i class="fas fa-hashtag"></i> ${task.accountNumber}</span>` : ''}
+                            </div>
+                            
+                            <div class="task-description">
+                                ${task.description?.substring(0, 100) || 'No description'}
+                                ${task.description?.length > 100 ? '...' : ''}
+                            </div>
+                            
+                            <div class="task-meta">
+                                <span class="meta-item">
+                                    <i class="far fa-calendar-alt"></i> Due: ${dueDate} ${dueTime}
+                                </span>
+                                ${task.assignedTo ? `
+                                    <span class="meta-item">
+                                        <i class="fas fa-user"></i> To: ${task.assignedTo}
+                                    </span>
+                                ` : ''}
+                                ${task.assignedBy ? `
+                                    <span class="meta-item">
+                                        <i class="fas fa-user-tie"></i> By: ${task.assignedBy}
+                                    </span>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="task-tags">
+                                ${task.tags ? task.tags.split(',').map(tag => 
+                                    `<span class="tag">${tag.trim()}</span>`
+                                ).join('') : ''}
+                            </div>
+                            
+                            <div class="task-footer">
+                                <div class="task-actions" onclick="event.stopPropagation()">
+                                    <button class="btn btn-primary btn-sm" onclick="showTaskDetails('${task.id}')" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="editTask('${task.id}')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    ${task.status !== 'completed' ? `
+                                        <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')" title="Complete">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn btn-danger btn-sm" onclick="showDeleteTaskModal('${task.id}', '${task.title}')" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         // Helper Functions
@@ -2282,8 +3058,8 @@
                 dueTime: taskDueTime.value,
                 assignedTo: taskAssignedTo.value.trim(),
                 assignedBy: taskAssignedBy.value.trim() || currentUser?.email || 'Self',
-                givenBy: taskGivenBy.value.trim(),
                 source: taskSource.value,
+                createdDate: taskCreatedDate.value || new Date().toISOString().split('T')[0],
                 description: taskDescription.value.trim(),
                 notes: taskNotes.value.trim(),
                 tags: taskTags.value,
@@ -2432,6 +3208,7 @@
             })
             .then(() => {
                 showSuccess("Task completed! 🎉");
+                taskDetailsModal.style.display = 'none';
                 loadTasks();
             })
             .catch(err => {
@@ -2445,23 +3222,55 @@
             completeTask(taskId);
         }
 
-        // View Task
-        function viewTask(taskId) {
+        // Show Task Details in Beautiful Modal
+        function showTaskDetails(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
-            alert(`Task: ${task.title}\n\n` +
-                  `Company: ${task.company || 'N/A'}\n` +
-                  `Department: ${getDepartmentName(task.department)}\n` +
-                  `Account: ${getAccountTypeName(task.accountType)} ${task.accountNumber || ''}\n` +
-                  `Status: ${task.status}\n` +
-                  `Priority: ${task.priority}\n` +
-                  `Due: ${task.dueDate} ${task.dueTime || ''}\n` +
-                  `Assigned To: ${task.assignedTo || 'Unassigned'}\n` +
-                  `Assigned By: ${task.assignedBy || 'N/A'}\n` +
-                  `Given By: ${task.givenBy || 'N/A'}\n` +
-                  `Source: ${task.source || 'N/A'}\n\n` +
-                  `Description: ${task.description || 'No description'}`);
+            currentViewingTask = task;
+            
+            document.getElementById('detailsTitle').textContent = task.title;
+            
+            const priorityEl = document.getElementById('detailsPriority');
+            priorityEl.textContent = (task.priority || 'medium').toUpperCase();
+            priorityEl.className = `details-badge priority-${task.priority || 'medium'}`;
+            
+            document.getElementById('detailsStatus').textContent = (task.status || 'not-started').replace('-', ' ').toUpperCase();
+            document.getElementById('detailsCompany').textContent = task.company || 'Not specified';
+            document.getElementById('detailsDepartment').textContent = getDepartmentName(task.department) || 'Not specified';
+            document.getElementById('detailsAccountType').textContent = getAccountTypeName(task.accountType) || 'Not specified';
+            document.getElementById('detailsAccountNumber').textContent = task.accountNumber || 'Not specified';
+            document.getElementById('detailsCreated').textContent = task.createdDate || 'Not specified';
+            document.getElementById('detailsDueDate').textContent = task.dueDate || 'Not specified';
+            document.getElementById('detailsDueTime').textContent = task.dueTime || 'Not specified';
+            document.getElementById('detailsRecurrence').textContent = task.recurrence ? task.recurrence.charAt(0).toUpperCase() + task.recurrence.slice(1) : 'One Time';
+            document.getElementById('detailsAssignedTo').textContent = task.assignedTo || 'Not assigned';
+            document.getElementById('detailsAssignedBy').textContent = task.assignedBy || 'Not specified';
+            document.getElementById('detailsSource').textContent = task.source ? task.source.charAt(0).toUpperCase() + task.source.slice(1) : 'Not specified';
+            document.getElementById('detailsPriorityValue').textContent = (task.priority || 'medium').toUpperCase();
+            document.getElementById('detailsDescription').textContent = task.description || 'No description provided';
+            document.getElementById('detailsNotes').textContent = task.notes || 'No notes';
+            
+            // Tags
+            const tagsContainer = document.getElementById('detailsTags');
+            tagsContainer.innerHTML = '';
+            if (task.tags) {
+                task.tags.split(',').forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'details-tag';
+                    span.textContent = tag.trim();
+                    tagsContainer.appendChild(span);
+                });
+            } else {
+                tagsContainer.innerHTML = '<span class="details-tag">No tags</span>';
+            }
+            
+            // Timeline
+            document.getElementById('timelineCreated').textContent = task.createdDate || 'N/A';
+            document.getElementById('timelineDue').textContent = task.dueDate || 'N/A';
+            document.getElementById('timelineStatus').textContent = (task.status || 'not-started').replace('-', ' ');
+            
+            taskDetailsModal.style.display = 'flex';
         }
 
         // Edit Task
@@ -2484,12 +3293,13 @@
             taskDueTime.value = task.dueTime || '';
             taskAssignedTo.value = task.assignedTo || '';
             taskAssignedBy.value = task.assignedBy || '';
-            taskGivenBy.value = task.givenBy || '';
             taskSource.value = task.source || '';
+            taskCreatedDate.value = task.createdDate || new Date().toISOString().split('T')[0];
             taskDescription.value = task.description || '';
             taskNotes.value = task.notes || '';
             taskTags.value = task.tags || '';
             
+            taskDetailsModal.style.display = 'none';
             taskModal.style.display = 'flex';
         }
 
@@ -2498,6 +3308,7 @@
             itemToDelete = taskId;
             deleteType = 'task';
             document.getElementById('deleteItemTitle').textContent = taskTitle;
+            taskDetailsModal.style.display = 'none';
             deleteModal.style.display = 'flex';
         }
 
@@ -2579,8 +3390,8 @@
             const headers = [
                 'Title', 'Company', 'Department', 'Account Type', 'Account Number',
                 'Status', 'Priority', 'Recurrence', 'Due Date', 'Due Time',
-                'Assigned To', 'Assigned By', 'Given By', 'Source',
-                'Description', 'Notes', 'Tags', 'Created Date'
+                'Assigned To', 'Assigned By', 'Source', 'Created Date',
+                'Description', 'Notes', 'Tags'
             ];
             
             const rows = allTasks.map(task => [
@@ -2596,12 +3407,11 @@
                 task.dueTime || '',
                 task.assignedTo || '',
                 task.assignedBy || '',
-                task.givenBy || '',
                 task.source || '',
+                task.createdDate || '',
                 task.description || '',
                 task.notes || '',
-                task.tags || '',
-                task.createdAtDate ? task.createdAtDate.toLocaleDateString() : ''
+                task.tags || ''
             ]);
             
             const csv = [headers, ...rows].map(row => 
@@ -2793,7 +3603,6 @@
                 task.title,
                 task.company || '-',
                 getDepartmentName(task.department),
-                getAccountTypeName(task.accountType),
                 task.status || 'not-started',
                 task.priority || 'medium',
                 task.dueDate || '-',
@@ -2802,7 +3611,7 @@
             
             doc.autoTable({
                 startY: 25,
-                head: [['Title', 'Company', 'Dept', 'Account Type', 'Status', 'Priority', 'Due Date', 'Assigned To']],
+                head: [['Title', 'Company', 'Dept', 'Status', 'Priority', 'Due Date', 'Assigned To']],
                 body: tableData,
                 theme: 'striped',
                 headStyles: { fillColor: [30, 60, 114] },
@@ -2828,6 +3637,18 @@
             document.getElementById('accountNumberFormat').value = '';
             document.getElementById('accountTypeDesc').value = '';
             accountTypeModal.style.display = 'flex';
+        }
+
+        // Set View Type
+        function setViewType(type) {
+            currentViewType = type;
+            document.querySelectorAll('.view-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerHTML.includes(type)) {
+                    btn.classList.add('active');
+                }
+            });
+            renderTasks();
         }
 
         // Filter by Department
@@ -2935,6 +3756,7 @@
                 taskForm.reset();
                 const today = new Date().toISOString().split('T')[0];
                 taskDueDate.value = today;
+                taskCreatedDate.value = today;
                 taskAssignedBy.value = currentUser?.email || '';
                 taskModal.style.display = 'flex';
             });
@@ -2946,32 +3768,42 @@
             manageDeptsBtn.addEventListener('click', toggleDeptManagement);
             manageAccountsBtn.addEventListener('click', toggleAccountTypes);
             
+            // Search and filter events
             searchInput.addEventListener('input', filterAndSortTasks);
+            companyFilter.addEventListener('input', filterAndSortTasks);
             deptFilter.addEventListener('change', filterAndSortTasks);
             accountTypeFilter.addEventListener('change', filterAndSortTasks);
             priorityFilter.addEventListener('change', filterAndSortTasks);
             recurrenceFilter.addEventListener('change', filterAndSortTasks);
+            monthFilter.addEventListener('change', filterAndSortTasks);
+            startDateFilter.addEventListener('change', filterAndSortTasks);
+            endDateFilter.addEventListener('change', filterAndSortTasks);
             
             clearFilters.addEventListener('click', () => {
                 searchInput.value = '';
+                companyFilter.value = '';
                 deptFilter.value = 'all';
                 accountTypeFilter.value = 'all';
                 priorityFilter.value = 'all';
                 recurrenceFilter.value = 'all';
+                monthFilter.value = 'all';
+                startDateFilter.value = '';
+                endDateFilter.value = '';
                 filterAndSortTasks();
             });
             
-            gridViewBtn.addEventListener('click', () => {
-                currentViewMode = 'grid';
-                gridViewBtn.classList.add('active');
-                listViewBtn.classList.remove('active');
+            // View toggle
+            compactViewBtn.addEventListener('click', () => {
+                currentDetailLevel = 'compact';
+                compactViewBtn.classList.add('active');
+                detailedViewBtn.classList.remove('active');
                 renderTasks();
             });
             
-            listViewBtn.addEventListener('click', () => {
-                currentViewMode = 'list';
-                listViewBtn.classList.add('active');
-                gridViewBtn.classList.remove('active');
+            detailedViewBtn.addEventListener('click', () => {
+                currentDetailLevel = 'detailed';
+                detailedViewBtn.classList.add('active');
+                compactViewBtn.classList.remove('active');
                 renderTasks();
             });
             
@@ -2984,15 +3816,37 @@
                 });
             });
             
+            // Save buttons
             document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
             document.getElementById('saveDeptBtn').addEventListener('click', saveDepartment);
             document.getElementById('saveAccountTypeBtn').addEventListener('click', saveAccountType);
+            
+            // Details modal buttons
+            document.getElementById('editFromDetailsBtn').addEventListener('click', () => {
+                if (currentViewingTask) editTask(currentViewingTask.id);
+            });
+            
+            document.getElementById('completeFromDetailsBtn').addEventListener('click', () => {
+                if (currentViewingTask) completeTask(currentViewingTask.id);
+            });
+            
+            document.getElementById('deleteFromDetailsBtn').addEventListener('click', () => {
+                if (currentViewingTask) showDeleteTaskModal(currentViewingTask.id, currentViewingTask.title);
+            });
+            
+            // Confirm delete
             document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+            
+            // Download buttons
             document.getElementById('downloadPDFBtn').addEventListener('click', downloadFullPDF);
             document.getElementById('downloadCSVBtn').addEventListener('click', generateCSVReport);
             
+            // Close modals
             closeTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
             cancelTaskModalBtn.addEventListener('click', () => taskModal.style.display = 'none');
+            
+            closeDetailsModalBtn.addEventListener('click', () => taskDetailsModal.style.display = 'none');
+            closeDetailsModalBtn2.addEventListener('click', () => taskDetailsModal.style.display = 'none');
             
             closeDeptModalBtn.addEventListener('click', () => departmentModal.style.display = 'none');
             cancelDeptModalBtn.addEventListener('click', () => departmentModal.style.display = 'none');
@@ -3011,7 +3865,7 @@
         window.filterByStatus = filterByStatus;
         window.filterByDepartment = filterByDepartment;
         window.changePage = changePage;
-        window.viewTask = viewTask;
+        window.showTaskDetails = showTaskDetails;
         window.editTask = editTask;
         window.completeTask = completeTask;
         window.quickCompleteTask = quickCompleteTask;
@@ -3023,6 +3877,8 @@
         window.toggleUpcomingPanel = toggleUpcomingPanel;
         window.toggleDeptManagement = toggleDeptManagement;
         window.toggleAccountTypes = toggleAccountTypes;
+        window.setViewType = setViewType;
+        window.toggleStack = toggleStack;
     </script>
 </body>
 </html>
