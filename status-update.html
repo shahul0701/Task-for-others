@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AccountFlow Pro | Status Update</title>
+    <title>AccountFlow Pro | Task Status</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -41,7 +41,7 @@
         }
 
         .app-container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
             border-radius: var(--radius);
@@ -129,10 +129,44 @@
             align-items: center;
             gap: 5px;
             text-decoration: none;
+            font-size: 0.9rem;
         }
 
         .back-btn:hover {
             background: rgba(255,255,255,0.3);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            padding: 15px 30px;
+            background: var(--light);
+            border-bottom: 1px solid var(--light-gray);
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .nav-tab {
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            background: white;
+            border: 1px solid var(--light-gray);
+        }
+
+        .nav-tab:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         /* Main Content */
@@ -192,6 +226,13 @@
             gap: 20px;
             transition: var(--transition);
             border: 1px solid var(--light-gray);
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: var(--primary);
         }
 
         .stat-icon {
@@ -209,6 +250,7 @@
         .stat-icon.info { background: var(--info); }
         .stat-icon.success { background: var(--success); }
         .stat-icon.primary { background: var(--primary); }
+        .stat-icon.gray { background: var(--gray); }
 
         .stat-info h3 {
             font-size: 2rem;
@@ -219,6 +261,114 @@
         .stat-info p {
             color: var(--gray);
             font-size: 0.9rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #0ca678;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e07b0b;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2563eb;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+        }
+
+        /* View Type Selector */
+        .view-type-selector {
+            display: flex;
+            gap: 10px;
+            background: var(--light);
+            padding: 5px;
+            border-radius: 50px;
+            margin-left: auto;
+        }
+
+        .view-type-btn {
+            padding: 8px 15px;
+            border: none;
+            background: transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .view-type-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .view-type-btn.active {
+            background: var(--primary);
+            color: white;
         }
 
         /* Filter Bar */
@@ -309,12 +459,125 @@
             font-size: 0.85rem;
         }
 
-        /* Tasks Grid */
+        /* Grid View */
         .tasks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
             gap: 20px;
             padding: 20px;
+        }
+
+        /* Table View */
+        .tasks-table {
+            width: 100%;
+            border-collapse: collapse;
+            padding: 20px;
+        }
+
+        .tasks-table th {
+            background: var(--light);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .tasks-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .tasks-table tr:hover {
+            background: var(--light);
+        }
+
+        .tasks-table .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Kanban View */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .kanban-column {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 15px;
+            min-width: 300px;
+        }
+
+        .kanban-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .kanban-header h3 {
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .kanban-count {
+            background: var(--primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+        }
+
+        .kanban-items {
+            min-height: 200px;
+        }
+
+        .kanban-item {
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .kanban-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .kanban-item.priority-high { border-left-color: var(--danger); }
+        .kanban-item.priority-medium { border-left-color: var(--warning); }
+        .kanban-item.priority-low { border-left-color: var(--success); }
+
+        .kanban-item-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .kanban-item-meta {
+            font-size: 0.85rem;
+            color: var(--gray);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .kanban-item-actions {
+            display: flex;
+            gap: 5px;
+            justify-content: flex-end;
         }
 
         /* Task Item */
@@ -376,6 +639,7 @@
         .status-not-started { background: var(--gray); }
         .status-in-progress { background: var(--info); }
         .status-pending { background: var(--warning); }
+        .status-on-hold { background: var(--warning); }
         .status-completed { background: var(--success); }
 
         .task-priority {
@@ -408,144 +672,42 @@
             color: white;
         }
 
-        /* Time Tracking */
-        .time-tracking {
-            background: var(--light);
-            border-radius: var(--radius);
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .time-row {
+        .task-meta {
             display: flex;
-            justify-content: space-between;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
             align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed var(--light-gray);
-        }
-
-        .time-label {
+            gap: 5px;
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
-        .time-value {
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .time-status {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .time-status.active {
-            background: var(--success);
-            color: white;
-        }
-
-        .time-status.paused {
-            background: var(--warning);
-            color: white;
-        }
-
-        .time-status.stopped {
-            background: var(--gray);
-            color: white;
-        }
-
-        .timer-display {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .meta-item i {
             color: var(--primary);
-            text-align: center;
-            margin: 10px 0;
         }
 
-        /* Action Buttons */
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-top: 15px;
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #0ca678;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #e07b0b;
-        }
-
-        .btn-info {
-            background: var(--info);
-            color: white;
-        }
-
-        .btn-info:hover {
-            background: #2563eb;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
+        /* Time Tracking */
+        .timer-display {
+            font-size: 1.2rem;
+            font-weight: 600;
             color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.8rem;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: var(--light);
+            border-radius: var(--radius);
         }
 
         /* Modal Styles */
@@ -566,7 +728,7 @@
         .modal-content {
             background: white;
             border-radius: var(--radius);
-            width: 500px;
+            width: 600px;
             max-width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -627,38 +789,30 @@
             gap: 10px;
         }
 
-        /* Time Summary */
-        .time-summary {
-            background: linear-gradient(135deg, #667eea10, #764ba210);
+        .time-details {
+            background: var(--light);
             border-radius: var(--radius);
             padding: 20px;
             margin: 20px 0;
         }
 
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            text-align: center;
+        .time-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--light-gray);
         }
 
-        .summary-item {
-            padding: 15px;
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
-
-        .summary-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .summary-label {
+        .time-label {
             color: var(--gray);
-            font-size: 0.85rem;
-            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .time-value {
+            font-weight: 600;
+            color: var(--dark);
         }
 
         /* Alert Styles */
@@ -741,13 +895,25 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .kanban-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .tasks-grid {
                 grid-template-columns: 1fr;
             }
             
-            .summary-grid {
+            .kanban-board {
                 grid-template-columns: 1fr;
+            }
+            
+            .view-type-selector {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -758,7 +924,7 @@
         <div class="header">
             <div class="logo">
                 <i class="fas fa-clock"></i>
-                <span>Status Update</span>
+                <span>Task Status</span>
             </div>
             <div class="user-profile">
                 <a href="index.html" class="back-btn">
@@ -774,13 +940,22 @@
             </div>
         </div>
 
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-view="all">All Active</button>
+            <button class="nav-tab" data-view="not-started">Not Started</button>
+            <button class="nav-tab" data-view="in-progress">In Progress</button>
+            <button class="nav-tab" data-view="pending">Pending</button>
+            <button class="nav-tab" data-view="on-hold">On Hold</button>
+        </div>
+
         <!-- Main Content -->
         <div class="main-content">
             <!-- Welcome Banner -->
             <div class="welcome-banner">
                 <div class="welcome-text">
                     <h1>Task Status Update</h1>
-                    <p>Track your time and update task status</p>
+                    <p>Track and update your active tasks</p>
                 </div>
                 <div class="date-display">
                     <i class="far fa-calendar-alt"></i>
@@ -788,20 +963,42 @@
                 </div>
             </div>
 
-            <!-- Time Summary -->
-            <div class="time-summary">
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <div class="summary-value" id="totalPendingTime">0h</div>
-                        <div class="summary-label">Total Pending Time</div>
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card" onclick="filterByStatus('all')">
+                    <div class="stat-icon primary">
+                        <i class="fas fa-tasks"></i>
                     </div>
-                    <div class="summary-item">
-                        <div class="summary-value" id="totalInProgressTime">0h</div>
-                        <div class="summary-label">Total In Progress Time</div>
+                    <div class="stat-info">
+                        <h3 id="totalActive">0</h3>
+                        <p>Active Tasks</p>
                     </div>
-                    <div class="summary-item">
-                        <div class="summary-value" id="totalCompletedTime">0h</div>
-                        <div class="summary-label">Total Completed Time</div>
+                </div>
+                <div class="stat-card" onclick="filterByStatus('not-started')">
+                    <div class="stat-icon gray">
+                        <i class="fas fa-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalNotStarted">0</h3>
+                        <p>Not Started</p>
+                    </div>
+                </div>
+                <div class="stat-card" onclick="filterByStatus('in-progress')">
+                    <div class="stat-icon info">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalInProgress">0</h3>
+                        <p>In Progress</p>
+                    </div>
+                </div>
+                <div class="stat-card" onclick="filterByStatus('pending')">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-pause-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalPending">0</h3>
+                        <p>Pending</p>
                     </div>
                 </div>
             </div>
@@ -823,19 +1020,29 @@
                 <p>Loading your tasks...</p>
             </div>
 
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="btn btn-primary" onclick="refreshTasks()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <div class="view-type-selector">
+                    <button class="view-type-btn active" onclick="setViewType('grid')">
+                        <i class="fas fa-th-large"></i> Grid
+                    </button>
+                    <button class="view-type-btn" onclick="setViewType('table')">
+                        <i class="fas fa-table"></i> Table
+                    </button>
+                    <button class="view-type-btn" onclick="setViewType('kanban')">
+                        <i class="fas fa-columns"></i> Kanban
+                    </button>
+                </div>
+            </div>
+
             <!-- Filter Bar -->
             <div class="filter-bar">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" id="searchInput" placeholder="Search tasks...">
-                </div>
-                <div class="filter-group">
-                    <select id="statusFilter" class="filter-select">
-                        <option value="all">All Status</option>
-                        <option value="not-started">Not Started</option>
-                        <option value="pending">Pending</option>
-                        <option value="in-progress">In Progress</option>
-                    </select>
                 </div>
                 <div class="filter-group">
                     <select id="priorityFilter" class="filter-select">
@@ -845,6 +1052,11 @@
                         <option value="low">Low</option>
                     </select>
                 </div>
+                <div class="filter-group">
+                    <select id="companyFilter" class="filter-select">
+                        <option value="all">All Companies</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Tasks Container -->
@@ -852,7 +1064,7 @@
                 <div class="tasks-header">
                     <h2>
                         <i class="fas fa-tasks"></i>
-                        Active Tasks
+                        <span id="currentViewTitle">All Active Tasks</span>
                     </h2>
                     <span class="tasks-count" id="displayedTasksCount">0 tasks</span>
                 </div>
@@ -869,41 +1081,28 @@
                 <button class="close-modal" id="closeTimeModalBtn">&times;</button>
             </div>
             <div class="modal-body">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h2 id="modalTaskTitle" style="color: var(--primary);"></h2>
-                </div>
+                <h3 id="modalTaskTitle" style="color: var(--primary); margin-bottom: 20px;"></h3>
                 
-                <div class="time-summary" style="margin: 0 0 20px 0;">
-                    <div class="summary-grid" style="grid-template-columns: 1fr 1fr;">
-                        <div class="summary-item">
-                            <div class="summary-value" id="modalStartedTime">-</div>
-                            <div class="summary-label">Started On</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-value" id="modalPendingTime">-</div>
-                            <div class="summary-label">Pending Since</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background: var(--light); padding: 20px; border-radius: var(--radius);">
-                    <h4 style="margin-bottom: 15px; color: var(--primary);">Time Breakdown</h4>
-                    
+                <div class="time-details">
                     <div class="time-row">
-                        <span class="time-label">In Progress Duration:</span>
-                        <span class="time-value" id="modalInProgressTime">0h 0m</span>
+                        <span class="time-label">Started:</span>
+                        <span class="time-value" id="modalStarted">-</span>
                     </div>
                     <div class="time-row">
-                        <span class="time-label">Pending Duration:</span>
-                        <span class="time-value" id="modalPendingDuration">0h 0m</span>
+                        <span class="time-label">Last Updated:</span>
+                        <span class="time-value" id="modalUpdated">-</span>
+                    </div>
+                    <div class="time-row">
+                        <span class="time-label">Status:</span>
+                        <span class="time-value" id="modalStatus">-</span>
                     </div>
                     <div class="time-row">
                         <span class="time-label">Total Time:</span>
                         <span class="time-value" id="modalTotalTime">0h 0m</span>
                     </div>
-                    
-                    <div class="timer-display" id="modalCurrentTimer">00:00:00</div>
                 </div>
+
+                <div class="timer-display" id="modalTimer">00:00:00</div>
             </div>
             <div class="modal-footer">
                 <button class="btn" id="closeTimeModalBtn2">Close</button>
@@ -946,16 +1145,19 @@
         const userDisplayName = document.getElementById('userDisplayName');
         const logoutBtn = document.getElementById('logoutBtn');
         const searchInput = document.getElementById('searchInput');
-        const statusFilter = document.getElementById('statusFilter');
         const priorityFilter = document.getElementById('priorityFilter');
+        const companyFilter = document.getElementById('companyFilter');
         const tasksWrapper = document.getElementById('tasksWrapper');
         const loadingSpinner = document.getElementById('loadingSpinner');
         const displayedTasksCount = document.getElementById('displayedTasksCount');
+        const currentViewTitle = document.getElementById('currentViewTitle');
+        const navTabs = document.querySelectorAll('.nav-tab');
 
         // Stats elements
-        const totalPendingTime = document.getElementById('totalPendingTime');
-        const totalInProgressTime = document.getElementById('totalInProgressTime');
-        const totalCompletedTime = document.getElementById('totalCompletedTime');
+        const totalActive = document.getElementById('totalActive');
+        const totalNotStarted = document.getElementById('totalNotStarted');
+        const totalInProgress = document.getElementById('totalInProgress');
+        const totalPending = document.getElementById('totalPending');
 
         // Modal elements
         const timeModal = document.getElementById('timeModal');
@@ -976,6 +1178,9 @@
         let filteredTasks = [];
         let departments = [];
         let accountTypes = [];
+        let companies = new Set();
+        let currentViewType = 'grid';
+        let currentStatusFilter = 'all';
         let activeTimers = {};
         let currentViewingTask = null;
 
@@ -997,10 +1202,9 @@
                     currentUser = user;
                     
                     loadUserData();
+                    loadDepartments();
+                    loadAccountTypes();
                     loadTasks();
-                    
-                    // Load time tracking data
-                    loadTimeTrackingData();
                 } else {
                     console.log("❌ No user authenticated, redirecting to login");
                     window.location.href = 'index.html';
@@ -1018,35 +1222,39 @@
             userAvatar.textContent = displayName.charAt(0).toUpperCase();
         }
 
-        // Load Time Tracking Data
-        function loadTimeTrackingData() {
-            db.collection('timeTracking')
+        function loadDepartments() {
+            db.collection('departments')
                 .where('userId', '==', currentUser.uid)
                 .get()
                 .then(snapshot => {
-                    let totalPending = 0;
-                    let totalInProgress = 0;
-                    let totalCompleted = 0;
-                    
+                    departments = [];
                     snapshot.forEach(doc => {
-                        const track = doc.data();
-                        if (track.status === 'pending') {
-                            totalPending += track.pendingDuration || 0;
-                        } else if (track.status === 'in-progress') {
-                            totalInProgress += track.inProgressDuration || 0;
-                        } else if (track.status === 'completed') {
-                            totalCompleted += track.completedDuration || 0;
-                        }
+                        departments.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
                     });
-                    
-                    totalPendingTime.textContent = formatHours(totalPending);
-                    totalInProgressTime.textContent = formatHours(totalInProgress);
-                    totalCompletedTime.textContent = formatHours(totalCompleted);
                 })
-                .catch(err => console.error("Error loading time tracking:", err));
+                .catch(err => console.error("Error loading departments:", err));
         }
 
-        // Load Tasks (only non-completed)
+        function loadAccountTypes() {
+            db.collection('accountTypes')
+                .where('userId', '==', currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    accountTypes = [];
+                    snapshot.forEach(doc => {
+                        accountTypes.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                })
+                .catch(err => console.error("Error loading account types:", err));
+        }
+
+        // Load Tasks (excluding completed)
         function loadTasks() {
             showLoading();
             
@@ -1055,6 +1263,8 @@
                 .get()
                 .then(snapshot => {
                     allTasks = [];
+                    companies.clear();
+                    
                     snapshot.forEach(doc => {
                         const task = doc.data();
                         task.id = doc.id;
@@ -1062,11 +1272,18 @@
                         // Only include non-completed tasks
                         if (task.status !== 'completed') {
                             allTasks.push(task);
+                            
+                            // Collect unique companies for filter
+                            if (task.company) {
+                                companies.add(task.company);
+                            }
                         }
                     });
                     
                     console.log(`Loaded ${allTasks.length} active tasks`);
                     
+                    updateCompanyFilter();
+                    updateStats();
                     filterAndSortTasks();
                     hideLoading();
                 })
@@ -1077,23 +1294,44 @@
                 });
         }
 
+        function updateCompanyFilter() {
+            companyFilter.innerHTML = '<option value="all">All Companies</option>';
+            Array.from(companies).sort().forEach(company => {
+                companyFilter.innerHTML += `<option value="${company}">${company}</option>`;
+            });
+        }
+
+        function updateStats() {
+            totalActive.textContent = allTasks.length;
+            totalNotStarted.textContent = allTasks.filter(t => t.status === 'not-started').length;
+            totalInProgress.textContent = allTasks.filter(t => t.status === 'in-progress').length;
+            totalPending.textContent = allTasks.filter(t => t.status === 'pending' || t.status === 'on-hold').length;
+        }
+
         // Filter and Sort Tasks
         function filterAndSortTasks() {
-            filteredTasks = [...allTasks];
+            // Apply status filter from nav tabs
+            if (currentStatusFilter === 'all') {
+                filteredTasks = [...allTasks];
+                currentViewTitle.textContent = 'All Active Tasks';
+            } else if (currentStatusFilter === 'pending') {
+                filteredTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'on-hold');
+                currentViewTitle.textContent = 'Pending Tasks';
+            } else {
+                filteredTasks = allTasks.filter(t => t.status === currentStatusFilter);
+                currentViewTitle.textContent = currentStatusFilter.split('-').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' ') + ' Tasks';
+            }
             
             // Apply search
             const searchTerm = searchInput.value.toLowerCase();
             if (searchTerm) {
                 filteredTasks = filteredTasks.filter(t => 
                     (t.title?.toLowerCase().includes(searchTerm)) ||
+                    (t.description?.toLowerCase().includes(searchTerm)) ||
                     (t.company?.toLowerCase().includes(searchTerm))
                 );
-            }
-            
-            // Apply status filter
-            const status = statusFilter.value;
-            if (status !== 'all') {
-                filteredTasks = filteredTasks.filter(t => t.status === status);
             }
             
             // Apply priority filter
@@ -1102,10 +1340,16 @@
                 filteredTasks = filteredTasks.filter(t => t.priority === priority);
             }
             
+            // Apply company filter
+            const company = companyFilter.value;
+            if (company !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.company === company);
+            }
+            
             renderTasks();
         }
 
-        // Render Tasks
+        // Render Tasks based on view type
         function renderTasks() {
             displayedTasksCount.textContent = `${filteredTasks.length} task${filteredTasks.length !== 1 ? 's' : ''}`;
             
@@ -1113,39 +1357,125 @@
                 tasksWrapper.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-check-circle"></i>
-                        <h3>No active tasks</h3>
+                        <h3>No active tasks found</h3>
                         <p>All tasks are completed! Great job!</p>
                     </div>
                 `;
                 return;
             }
             
-            tasksWrapper.className = 'tasks-grid';
-            tasksWrapper.innerHTML = filteredTasks.map(task => createTaskHTML(task)).join('');
-            
-            // Initialize timers for in-progress tasks
-            filteredTasks.forEach(task => {
-                if (task.status === 'in-progress') {
-                    startTaskTimer(task.id);
-                }
-            });
+            switch(currentViewType) {
+                case 'grid':
+                    renderGridView();
+                    break;
+                case 'table':
+                    renderTableView();
+                    break;
+                case 'kanban':
+                    renderKanbanView();
+                    break;
+                default:
+                    renderGridView();
+            }
         }
 
-        // Create Task HTML
-        function createTaskHTML(task) {
-            const timeTrack = getTimeTracking(task.id);
-            const statusClass = `status-${task.status || 'not-started'}`;
-            const priorityClass = `priority-${task.priority || 'medium'}`;
+        // Render Grid View
+        function renderGridView() {
+            tasksWrapper.className = 'tasks-grid';
+            tasksWrapper.innerHTML = filteredTasks.map(task => createTaskHTML(task)).join('');
+        }
+
+        // Render Table View
+        function renderTableView() {
+            tasksWrapper.innerHTML = `
+                <table class="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Company</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredTasks.map(task => `
+                            <tr>
+                                <td>${task.title}</td>
+                                <td>${task.company || '-'}</td>
+                                <td><span class="task-status status-${task.status || 'not-started'}"></span> ${task.status || 'not-started'}</td>
+                                <td><span class="task-priority priority-${task.priority || 'medium'}">${task.priority || 'medium'}</span></td>
+                                <td>${task.dueDate || '-'}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        ${getActionButtons(task, 'icon')}
+                                        <button class="btn btn-info btn-sm" onclick="showTimeDetails('${task.id}')" title="Time Details">
+                                            <i class="fas fa-clock"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Render Kanban View
+        function renderKanbanView() {
+            const columns = {
+                'not-started': 'Not Started',
+                'in-progress': 'In Progress',
+                'pending': 'Pending',
+                'on-hold': 'On Hold'
+            };
             
+            tasksWrapper.innerHTML = `
+                <div class="kanban-board">
+                    ${Object.entries(columns).map(([status, label]) => {
+                        const columnTasks = filteredTasks.filter(t => t.status === status);
+                        return `
+                            <div class="kanban-column">
+                                <div class="kanban-header">
+                                    <h3>${label}</h3>
+                                    <span class="kanban-count">${columnTasks.length}</span>
+                                </div>
+                                <div class="kanban-items">
+                                    ${columnTasks.map(task => `
+                                        <div class="kanban-item priority-${task.priority || 'medium'}">
+                                            <div class="kanban-item-title">${task.title}</div>
+                                            <div class="kanban-item-meta">
+                                                <span><i class="fas fa-building"></i> ${task.company || 'No company'}</span>
+                                                <span><i class="far fa-calendar"></i> ${task.dueDate || 'No date'}</span>
+                                            </div>
+                                            <div class="kanban-item-actions">
+                                                ${getActionButtons(task, 'icon')}
+                                                <button class="btn btn-info btn-sm" onclick="showTimeDetails('${task.id}')" title="Time Details">
+                                                    <i class="fas fa-clock"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // Create Task HTML for Grid View
+        function createTaskHTML(task) {
             return `
-                <div class="task-item ${priorityClass}" data-task-id="${task.id}">
+                <div class="task-item priority-${task.priority || 'medium'}" data-task-id="${task.id}">
                     <div class="task-content">
                         <div class="task-header">
                             <div class="task-title">
-                                <span class="task-status ${statusClass}"></span>
+                                <span class="task-status status-${task.status || 'not-started'}"></span>
                                 ${task.title}
                             </div>
-                            <span class="task-priority ${priorityClass}">
+                            <span class="task-priority priority-${task.priority || 'medium'}">
                                 ${(task.priority || 'medium').toUpperCase()}
                             </span>
                         </div>
@@ -1156,38 +1486,25 @@
                             </div>
                         ` : ''}
                         
-                        <div class="time-tracking">
-                            <div class="time-row">
-                                <span class="time-label">Status:</span>
-                                <span class="time-value">${task.status?.replace('-', ' ') || 'Not Started'}</span>
-                            </div>
-                            
-                            ${timeTrack ? `
-                                <div class="time-row">
-                                    <span class="time-label">Started:</span>
-                                    <span class="time-value">${formatDate(timeTrack.startedAt)}</span>
-                                </div>
-                                <div class="time-row">
-                                    <span class="time-label">In Progress:</span>
-                                    <span class="time-value">${formatDuration(timeTrack.inProgressDuration || 0)}</span>
-                                </div>
-                                <div class="time-row">
-                                    <span class="time-label">Pending:</span>
-                                    <span class="time-value">${formatDuration(timeTrack.pendingDuration || 0)}</span>
-                                </div>
-                            ` : ''}
-                            
-                            ${task.status === 'in-progress' ? `
-                                <div class="timer-display" id="timer-${task.id}">
-                                    ${formatTime(activeTimers[task.id] || 0)}
-                                </div>
-                            ` : ''}
+                        <div class="task-meta">
+                            <span class="meta-item">
+                                <i class="far fa-calendar-alt"></i> Due: ${task.dueDate || 'No date'}
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-tag"></i> ${task.status || 'not-started'}
+                            </span>
                         </div>
+                        
+                        ${task.status === 'in-progress' ? `
+                            <div class="timer-display" id="timer-${task.id}">
+                                ${formatTime(activeTimers[task.id] || 0)}
+                            </div>
+                        ` : ''}
                         
                         <div class="action-buttons">
                             ${getActionButtons(task)}
                             <button class="btn btn-info btn-sm" onclick="showTimeDetails('${task.id}')">
-                                <i class="fas fa-clock"></i> Time Details
+                                <i class="fas fa-clock"></i> Details
                             </button>
                         </div>
                     </div>
@@ -1196,51 +1513,51 @@
         }
 
         // Get Action Buttons based on status
-        function getActionButtons(task) {
-            switch(task.status) {
-                case 'not-started':
-                    return `
-                        <button class="btn btn-primary btn-sm" onclick="startTask('${task.id}')">
-                            <i class="fas fa-play"></i> Start
-                        </button>
-                    `;
-                case 'in-progress':
-                    return `
-                        <button class="btn btn-warning btn-sm" onclick="pauseTask('${task.id}')">
-                            <i class="fas fa-pause"></i> Pause
-                        </button>
-                        <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')">
-                            <i class="fas fa-check"></i> Complete
-                        </button>
-                    `;
-                case 'pending':
-                case 'on-hold':
-                    return `
-                        <button class="btn btn-primary btn-sm" onclick="resumeTask('${task.id}')">
-                            <i class="fas fa-play"></i> Resume
-                        </button>
-                        <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')">
-                            <i class="fas fa-check"></i> Complete
-                        </button>
-                    `;
-                default:
-                    return '';
+        function getActionButtons(task, type = 'full') {
+            if (type === 'icon') {
+                switch(task.status) {
+                    case 'not-started':
+                        return `<button class="btn btn-primary btn-sm" onclick="startTask('${task.id}')" title="Start"><i class="fas fa-play"></i></button>`;
+                    case 'in-progress':
+                        return `
+                            <button class="btn btn-warning btn-sm" onclick="pauseTask('${task.id}')" title="Pause"><i class="fas fa-pause"></i></button>
+                            <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')" title="Complete"><i class="fas fa-check"></i></button>
+                        `;
+                    case 'pending':
+                    case 'on-hold':
+                        return `
+                            <button class="btn btn-primary btn-sm" onclick="resumeTask('${task.id}')" title="Resume"><i class="fas fa-play"></i></button>
+                            <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')" title="Complete"><i class="fas fa-check"></i></button>
+                        `;
+                    default:
+                        return '';
+                }
+            } else {
+                switch(task.status) {
+                    case 'not-started':
+                        return `<button class="btn btn-primary btn-sm" onclick="startTask('${task.id}')"><i class="fas fa-play"></i> Start</button>`;
+                    case 'in-progress':
+                        return `
+                            <button class="btn btn-warning btn-sm" onclick="pauseTask('${task.id}')"><i class="fas fa-pause"></i> Pause</button>
+                            <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')"><i class="fas fa-check"></i> Complete</button>
+                        `;
+                    case 'pending':
+                    case 'on-hold':
+                        return `
+                            <button class="btn btn-primary btn-sm" onclick="resumeTask('${task.id}')"><i class="fas fa-play"></i> Resume</button>
+                            <button class="btn btn-success btn-sm" onclick="completeTask('${task.id}')"><i class="fas fa-check"></i> Complete</button>
+                        `;
+                    default:
+                        return '';
+                }
             }
         }
 
-        // Time Tracking Functions
-        function getTimeTracking(taskId) {
-            // This would come from Firestore in real implementation
-            return null;
-        }
-
+        // Task Action Functions
         function startTask(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
-            const now = new Date();
-            
-            // Update task status
             db.collection('tasks').doc(taskId).update({
                 status: 'in-progress',
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1250,16 +1567,16 @@
                     taskId: taskId,
                     userId: currentUser.uid,
                     status: 'in-progress',
-                    startedAt: now.toISOString(),
-                    inProgressDuration: 0,
-                    pendingDuration: 0,
-                    completedDuration: 0,
+                    startedAt: new Date().toISOString(),
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
-                    showSuccess(`Started working on: ${task.title}`);
+                    showSuccess(`Started: ${task.title}`);
                     startTaskTimer(taskId);
                     loadTasks();
                 });
+            }).catch(err => {
+                console.error("Error starting task:", err);
+                showError("Failed to start task");
             });
         }
 
@@ -1268,26 +1585,26 @@
             if (!task) return;
             
             const now = new Date();
-            const timeTrack = activeTimers[taskId] || 0;
+            const elapsedSeconds = activeTimers[taskId] || 0;
             
-            // Update task status
             db.collection('tasks').doc(taskId).update({
                 status: 'pending',
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 // Update time tracking
-                db.collection('timeTracking').where('taskId', '==', taskId)
+                db.collection('timeTracking')
+                    .where('taskId', '==', taskId)
                     .where('status', '==', 'in-progress')
                     .get()
                     .then(snapshot => {
                         snapshot.forEach(doc => {
                             const track = doc.data();
-                            const newDuration = (track.inProgressDuration || 0) + timeTrack;
+                            const totalSeconds = (track.totalSeconds || 0) + elapsedSeconds;
                             
                             doc.ref.update({
                                 status: 'pending',
-                                inProgressDuration: newDuration,
-                                pendingStartedAt: now.toISOString(),
+                                totalSeconds: totalSeconds,
+                                pausedAt: now.toISOString(),
                                 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                             });
                         });
@@ -1296,6 +1613,9 @@
                 showSuccess(`Paused: ${task.title}`);
                 stopTaskTimer(taskId);
                 loadTasks();
+            }).catch(err => {
+                console.error("Error pausing task:", err);
+                showError("Failed to pause task");
             });
         }
 
@@ -1303,27 +1623,20 @@
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
-            const now = new Date();
-            
-            // Update task status
             db.collection('tasks').doc(taskId).update({
                 status: 'in-progress',
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 // Update time tracking
-                db.collection('timeTracking').where('taskId', '==', taskId)
+                db.collection('timeTracking')
+                    .where('taskId', '==', taskId)
                     .where('status', '==', 'pending')
                     .get()
                     .then(snapshot => {
                         snapshot.forEach(doc => {
-                            const track = doc.data();
-                            const pendingTime = track.pendingStartedAt ? 
-                                (now - new Date(track.pendingStartedAt)) / 1000 : 0;
-                            
                             doc.ref.update({
                                 status: 'in-progress',
-                                pendingDuration: (track.pendingDuration || 0) + pendingTime,
-                                startedAt: now.toISOString(),
+                                resumedAt: new Date().toISOString(),
                                 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                             });
                         });
@@ -1332,6 +1645,9 @@
                 showSuccess(`Resumed: ${task.title}`);
                 startTaskTimer(taskId);
                 loadTasks();
+            }).catch(err => {
+                console.error("Error resuming task:", err);
+                showError("Failed to resume task");
             });
         }
 
@@ -1340,46 +1656,39 @@
             if (!task) return;
             
             const now = new Date();
-            const timeTrack = activeTimers[taskId] || 0;
+            const elapsedSeconds = activeTimers[taskId] || 0;
             
-            // Update task status
             db.collection('tasks').doc(taskId).update({
                 status: 'completed',
                 completedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 // Update time tracking
-                db.collection('timeTracking').where('taskId', '==', taskId)
+                db.collection('timeTracking')
+                    .where('taskId', '==', taskId)
                     .where('status', 'in', ['in-progress', 'pending'])
                     .get()
                     .then(snapshot => {
                         snapshot.forEach(doc => {
                             const track = doc.data();
-                            
-                            let inProgressDuration = track.inProgressDuration || 0;
-                            let pendingDuration = track.pendingDuration || 0;
-                            
-                            if (track.status === 'in-progress') {
-                                inProgressDuration += timeTrack;
-                            } else if (track.status === 'pending' && track.pendingStartedAt) {
-                                pendingDuration += (now - new Date(track.pendingStartedAt)) / 1000;
-                            }
+                            const totalSeconds = (track.totalSeconds || 0) + 
+                                (track.status === 'in-progress' ? elapsedSeconds : 0);
                             
                             doc.ref.update({
                                 status: 'completed',
-                                inProgressDuration: inProgressDuration,
-                                pendingDuration: pendingDuration,
-                                completedDuration: inProgressDuration,
+                                totalSeconds: totalSeconds,
                                 completedAt: now.toISOString(),
                                 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                             });
                         });
                     });
                 
-                showSuccess(`🎉 Task completed: ${task.title}`);
+                showSuccess(`✅ Task completed: ${task.title}`);
                 stopTaskTimer(taskId);
                 loadTasks();
-                loadTimeTrackingData();
+            }).catch(err => {
+                console.error("Error completing task:", err);
+                showError("Failed to complete task");
             });
         }
 
@@ -1388,7 +1697,6 @@
             if (!activeTimers[taskId]) {
                 activeTimers[taskId] = 0;
                 
-                // Update timer every second
                 const interval = setInterval(() => {
                     if (activeTimers[taskId] !== undefined) {
                         activeTimers[taskId] += 1;
@@ -1401,7 +1709,6 @@
                     }
                 }, 1000);
                 
-                // Store interval ID to clear later
                 activeTimers[`${taskId}_interval`] = interval;
             }
         }
@@ -1415,18 +1722,18 @@
         }
 
         function startTimerUpdates() {
-            // Check for active tasks every minute and update durations in Firestore
             setInterval(() => {
                 Object.keys(activeTimers).forEach(taskId => {
                     if (!taskId.includes('_interval') && activeTimers[taskId] > 0) {
                         // Update time tracking in Firestore periodically
-                        db.collection('timeTracking').where('taskId', '==', taskId)
+                        db.collection('timeTracking')
+                            .where('taskId', '==', taskId)
                             .where('status', '==', 'in-progress')
                             .get()
                             .then(snapshot => {
                                 snapshot.forEach(doc => {
                                     doc.ref.update({
-                                        inProgressDuration: firebase.firestore.FieldValue.increment(activeTimers[taskId]),
+                                        totalSeconds: firebase.firestore.FieldValue.increment(activeTimers[taskId]),
                                         lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                                     });
                                 });
@@ -1447,32 +1754,65 @@
             document.getElementById('modalTaskTitle').textContent = task.title;
             
             // Load time tracking data
-            db.collection('timeTracking').where('taskId', '==', taskId).get()
+            db.collection('timeTracking')
+                .where('taskId', '==', taskId)
+                .orderBy('startedAt', 'desc')
+                .limit(1)
+                .get()
                 .then(snapshot => {
                     if (!snapshot.empty) {
                         const track = snapshot.docs[0].data();
                         
-                        document.getElementById('modalStartedTime').textContent = 
+                        document.getElementById('modalStarted').textContent = 
                             track.startedAt ? new Date(track.startedAt).toLocaleString() : '-';
-                        document.getElementById('modalPendingTime').textContent = 
-                            track.pendingStartedAt ? new Date(track.pendingStartedAt).toLocaleString() : '-';
+                        document.getElementById('modalUpdated').textContent = 
+                            track.lastUpdated ? new Date(track.lastUpdated.toDate()).toLocaleString() : '-';
+                        document.getElementById('modalStatus').textContent = track.status || '-';
                         
-                        const inProgress = track.inProgressDuration || 0;
-                        const pending = track.pendingDuration || 0;
-                        
-                        document.getElementById('modalInProgressTime').textContent = formatDuration(inProgress);
-                        document.getElementById('modalPendingDuration').textContent = formatDuration(pending);
-                        document.getElementById('modalTotalTime').textContent = formatDuration(inProgress + pending);
+                        const totalSeconds = track.totalSeconds || 0;
+                        document.getElementById('modalTotalTime').textContent = formatDuration(totalSeconds);
                         
                         if (task.status === 'in-progress' && activeTimers[taskId]) {
-                            document.getElementById('modalCurrentTimer').textContent = formatTime(activeTimers[taskId]);
+                            document.getElementById('modalTimer').textContent = formatTime(activeTimers[taskId]);
                         } else {
-                            document.getElementById('modalCurrentTimer').textContent = '00:00:00';
+                            document.getElementById('modalTimer').textContent = formatTime(0);
                         }
+                    } else {
+                        document.getElementById('modalStarted').textContent = '-';
+                        document.getElementById('modalUpdated').textContent = '-';
+                        document.getElementById('modalStatus').textContent = task.status || '-';
+                        document.getElementById('modalTotalTime').textContent = '0h 0m';
+                        document.getElementById('modalTimer').textContent = '00:00:00';
                     }
                 });
             
             timeModal.style.display = 'flex';
+        }
+
+        // Refresh Tasks
+        function refreshTasks() {
+            loadTasks();
+        }
+
+        // Set View Type
+        function setViewType(type) {
+            currentViewType = type;
+            document.querySelectorAll('.view-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerHTML.includes(type)) {
+                    btn.classList.add('active');
+                }
+            });
+            renderTasks();
+        }
+
+        // Filter by Status
+        function filterByStatus(status) {
+            navTabs.forEach(t => t.classList.remove('active'));
+            const tab = Array.from(navTabs).find(t => t.dataset.view === status);
+            if (tab) tab.classList.add('active');
+            currentStatusFilter = status;
+            filterAndSortTasks();
         }
 
         // Utility Functions
@@ -1490,17 +1830,6 @@
             return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function formatHours(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            return `${hours}h`;
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            return new Date(dateString).toLocaleString();
-        }
-
-        // Set Current Date
         function setCurrentDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
@@ -1540,14 +1869,26 @@
             });
             
             searchInput.addEventListener('input', filterAndSortTasks);
-            statusFilter.addEventListener('change', filterAndSortTasks);
             priorityFilter.addEventListener('change', filterAndSortTasks);
+            companyFilter.addEventListener('change', filterAndSortTasks);
+            
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentStatusFilter = tab.dataset.view;
+                    filterAndSortTasks();
+                });
+            });
             
             closeTimeModalBtn.addEventListener('click', () => timeModal.style.display = 'none');
             closeTimeModalBtn2.addEventListener('click', () => timeModal.style.display = 'none');
         }
 
         // Make functions global
+        window.filterByStatus = filterByStatus;
+        window.setViewType = setViewType;
+        window.refreshTasks = refreshTasks;
         window.startTask = startTask;
         window.pauseTask = pauseTask;
         window.resumeTask = resumeTask;
