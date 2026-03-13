@@ -99,6 +99,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            text-transform: uppercase;
         }
 
         .logout-btn {
@@ -1098,7 +1099,7 @@
                     <span class="badge-count" id="upcomingCount">0</span>
                 </div>
                 <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-avatar" id="userAvatar">...</div>
                     <span id="userDisplayName">Loading...</span>
                 </div>
                 <button class="logout-btn" id="logoutBtn">
@@ -1234,7 +1235,7 @@
                 </button>
             </div>
 
-            <!-- Department Management (Collapsible) -->
+            <!-- Department Management -->
             <div class="dept-management" id="deptManagement">
                 <div class="dept-tags" id="deptTags"></div>
                 <button class="add-dept-btn" onclick="showAddDepartmentModal()">
@@ -1383,7 +1384,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Due Date</label>
+                            <label>Due Date <span style="color: var(--danger);">*</span></label>
                             <input type="date" id="taskDueDate" class="form-control" required>
                         </div>
                     </div>
@@ -1651,169 +1652,212 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM loaded, checking auth...");
             checkAuth();
             setCurrentDate();
             setupEventListeners();
         });
 
+        // ===========================================
+        // AUTHENTICATION & USER DATA - FIXED
+        // ===========================================
         function checkAuth() {
+            // Show loading state
+            userDisplayName.textContent = 'Loading...';
+            welcomeName.textContent = 'User';
+            userAvatar.textContent = '...';
+            
             auth.onAuthStateChanged(user => {
                 if (user) {
+                    console.log("✅ User authenticated:", user.email);
+                    console.log("User UID:", user.uid);
                     currentUser = user;
-                    document.getElementById('taskAssignedBy').value = user.email || 'Self';
+                    
+                    // Set assigned by field
+                    const assignedByField = document.getElementById('taskAssignedBy');
+                    if (assignedByField) {
+                        assignedByField.value = user.email || 'Self';
+                    }
+                    
+                    // Load user data first
                     loadUserData();
-                    initializeCollections();
+                    
+                    // Then load other data
+                    setTimeout(() => {
+                        loadDepartments();
+                        loadAccountTypes();
+                        loadTasks();
+                    }, 500);
                 } else {
+                    console.log("❌ No user authenticated, redirecting to login");
                     window.location.href = 'index.html';
                 }
             });
         }
 
-        function initializeCollections() {
-            // Show loading
-            showLoading();
-            
-            // Create a batch to initialize collections
-            const batch = db.batch();
-            
-            // Check and initialize departments collection
-            db.collection('departments').limit(1).get()
-                .then(snapshot => {
-                    if (snapshot.empty) {
-                        // Add sample departments
-                        const sampleDepts = [
-                            { name: 'Accounts Payable', code: 'AP', description: 'Manage vendor payments and invoices', isSample: true },
-                            { name: 'Accounts Receivable', code: 'AR', description: 'Manage customer payments and collections', isSample: true },
-                            { name: 'General Ledger', code: 'GL', description: 'Maintain chart of accounts and journal entries', isSample: true },
-                            { name: 'Tax Department', code: 'TAX', description: 'Handle tax compliance and reporting', isSample: true },
-                            { name: 'Payroll', code: 'PR', description: 'Process employee salaries and benefits', isSample: true }
-                        ];
-                        
-                        sampleDepts.forEach(dept => {
-                            const docRef = db.collection('departments').doc();
-                            batch.set(docRef, {
-                                ...dept,
-                                userId: currentUser.uid,
-                                userEmail: currentUser.email,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    }
-                })
-                .catch(err => console.log('Departments collection check:', err));
-
-            // Check and initialize accountTypes collection
-            db.collection('accountTypes').limit(1).get()
-                .then(snapshot => {
-                    if (snapshot.empty) {
-                        // Add sample account types
-                        const sampleAccounts = [
-                            { name: 'Cash', format: 'CASH-{number}', description: 'Cash and bank accounts', isSample: true },
-                            { name: 'Accounts Receivable', format: 'AR-{number}', description: 'Customer receivables', isSample: true },
-                            { name: 'Inventory', format: 'INV-{number}', description: 'Product inventory', isSample: true },
-                            { name: 'Fixed Assets', format: 'FA-{number}', description: 'Property, plant and equipment', isSample: true },
-                            { name: 'Accounts Payable', format: 'AP-{number}', description: 'Vendor payables', isSample: true },
-                            { name: 'Accrued Liabilities', format: 'AL-{number}', description: 'Accrued expenses', isSample: true },
-                            { name: 'Equity', format: 'EQ-{number}', description: 'Owner\'s equity', isSample: true },
-                            { name: 'Revenue', format: 'REV-{number}', description: 'Sales and revenue', isSample: true },
-                            { name: 'Cost of Goods Sold', format: 'COGS-{number}', description: 'Direct costs', isSample: true },
-                            { name: 'Operating Expenses', format: 'EXP-{number}', description: 'Operating expenses', isSample: true }
-                        ];
-                        
-                        sampleAccounts.forEach(account => {
-                            const docRef = db.collection('accountTypes').doc();
-                            batch.set(docRef, {
-                                ...account,
-                                userId: currentUser.uid,
-                                userEmail: currentUser.email,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    }
-                })
-                .catch(err => console.log('AccountTypes collection check:', err));
-
-            // Commit the batch
-            batch.commit()
-                .then(() => {
-                    console.log('Collections initialized');
-                    // Load data
-                    loadDepartments();
-                    loadAccountTypes();
-                    loadTasks();
-                })
-                .catch(err => {
-                    console.error('Error initializing collections:', err);
-                    // Still try to load data
-                    loadDepartments();
-                    loadAccountTypes();
-                    loadTasks();
-                });
-        }
-
+        // Load User Data - FIXED VERSION
         function loadUserData() {
+            // First check if we have user email
+            if (!currentUser || !currentUser.email) {
+                console.log("No user email available");
+                return;
+            }
+            
+            console.log("Loading user data for:", currentUser.email);
+            
+            // Get display name from email first (fallback)
+            const emailName = currentUser.email.split('@')[0];
+            const displayName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+            
+            // Set temporary name while loading
+            userDisplayName.textContent = displayName;
+            welcomeName.textContent = displayName.split(' ')[0];
+            userAvatar.textContent = displayName.charAt(0).toUpperCase();
+            
+            // Try to get user data from Firestore
             db.collection('users').doc(currentUser.uid).get()
                 .then(doc => {
                     if (doc.exists) {
                         const userData = doc.data();
-                        const name = userData.name || userData.adminName || userData.email?.split('@')[0] || 'User';
+                        console.log("User data found:", userData);
+                        
+                        // Get name from various possible fields
+                        let name = userData.displayName || 
+                                  userData.name || 
+                                  userData.adminName || 
+                                  userData.fullName || 
+                                  displayName;
+                        
+                        // Update display
                         userDisplayName.textContent = name;
                         welcomeName.textContent = name.split(' ')[0];
                         
-                        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                        userAvatar.textContent = initials || 'U';
+                        // Set avatar initials
+                        const initials = name.split(' ')
+                            .map(n => n.charAt(0))
+                            .join('')
+                            .toUpperCase()
+                            .substring(0, 2);
+                        userAvatar.textContent = initials || name.charAt(0).toUpperCase();
+                        
+                        showSuccess(`Welcome back, ${name}!`);
                     } else {
+                        console.log("No user document found, creating one...");
+                        
                         // Create user document if it doesn't exist
-                        db.collection('users').doc(currentUser.uid).set({
+                        const userData = {
                             email: currentUser.email,
-                            name: currentUser.email.split('@')[0],
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        }).then(() => {
-                            userDisplayName.textContent = currentUser.email.split('@')[0];
-                            welcomeName.textContent = currentUser.email.split('@')[0];
-                            userAvatar.textContent = currentUser.email.charAt(0).toUpperCase();
-                        });
+                            displayName: displayName,
+                            name: displayName,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                            uid: currentUser.uid
+                        };
+                        
+                        db.collection('users').doc(currentUser.uid).set(userData)
+                            .then(() => {
+                                console.log("User document created");
+                                userDisplayName.textContent = displayName;
+                                welcomeName.textContent = displayName.split(' ')[0];
+                                userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                                showSuccess(`Welcome, ${displayName}!`);
+                            })
+                            .catch(err => {
+                                console.error("Error creating user document:", err);
+                                // Keep using email-based name
+                                userDisplayName.textContent = displayName;
+                                welcomeName.textContent = displayName.split(' ')[0];
+                            });
                     }
                 })
-                .catch(err => console.error("Error loading user:", err));
+                .catch(err => {
+                    console.error("Error loading user data:", err);
+                    // Fallback to email-based name
+                    userDisplayName.textContent = displayName;
+                    welcomeName.textContent = displayName.split(' ')[0];
+                });
+        }
+
+        // Initialize collections with sample data
+        function initializeCollections() {
+            // Check if departments exist
+            db.collection('departments').where('userId', '==', currentUser.uid).limit(1).get()
+                .then(snapshot => {
+                    if (snapshot.empty) {
+                        console.log("Adding sample departments...");
+                        // Add sample departments
+                        const sampleDepts = [
+                            { name: 'Accounts Payable', code: 'AP', description: 'Manage vendor payments and invoices' },
+                            { name: 'Accounts Receivable', code: 'AR', description: 'Manage customer payments and collections' },
+                            { name: 'General Ledger', code: 'GL', description: 'Maintain chart of accounts and journal entries' },
+                            { name: 'Tax Department', code: 'TAX', description: 'Handle tax compliance and reporting' },
+                            { name: 'Payroll', code: 'PR', description: 'Process employee salaries and benefits' }
+                        ];
+                        
+                        sampleDepts.forEach(dept => {
+                            db.collection('departments').add({
+                                ...dept,
+                                userId: currentUser.uid,
+                                userEmail: currentUser.email,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            }).catch(err => console.log("Error adding sample dept:", err));
+                        });
+                    }
+                });
+
+            // Check if account types exist
+            db.collection('accountTypes').where('userId', '==', currentUser.uid).limit(1).get()
+                .then(snapshot => {
+                    if (snapshot.empty) {
+                        console.log("Adding sample account types...");
+                        // Add sample account types
+                        const sampleAccounts = [
+                            { name: 'Cash', format: 'CASH-{number}', description: 'Cash and bank accounts' },
+                            { name: 'Accounts Receivable', format: 'AR-{number}', description: 'Customer receivables' },
+                            { name: 'Inventory', format: 'INV-{number}', description: 'Product inventory' },
+                            { name: 'Fixed Assets', format: 'FA-{number}', description: 'Property, plant and equipment' },
+                            { name: 'Accounts Payable', format: 'AP-{number}', description: 'Vendor payables' },
+                            { name: 'Revenue', format: 'REV-{number}', description: 'Sales and revenue' }
+                        ];
+                        
+                        sampleAccounts.forEach(account => {
+                            db.collection('accountTypes').add({
+                                ...account,
+                                userId: currentUser.uid,
+                                userEmail: currentUser.email,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            }).catch(err => console.log("Error adding sample account:", err));
+                        });
+                    }
+                });
         }
 
         // Load Departments
         function loadDepartments() {
             db.collection('departments')
                 .where('userId', '==', currentUser.uid)
-                .orderBy('name')
                 .get()
                 .then(snapshot => {
                     departments = [];
                     snapshot.forEach(doc => {
-                        // Skip sample documents if they exist
-                        const data = doc.data();
-                        if (!data.isSample) {
-                            departments.push({
-                                id: doc.id,
-                                ...data
-                            });
-                        }
+                        departments.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
                     });
                     
-                    // If no real departments, show sample ones
-                    if (departments.length === 0) {
-                        snapshot.forEach(doc => {
-                            const data = doc.data();
-                            departments.push({
-                                id: doc.id,
-                                ...data
-                            });
-                        });
-                    }
-                    
+                    console.log(`Loaded ${departments.length} departments`);
                     updateDepartmentFilters();
                     renderDepartmentTags();
                 })
                 .catch(err => {
                     console.error("Error loading departments:", err);
-                    showError("Failed to load departments");
+                    // Try to initialize if empty
+                    if (err.code === 'permission-denied') {
+                        showError("Permission denied. Check Firebase rules.");
+                    } else {
+                        initializeCollections();
+                    }
                 });
         }
 
@@ -1821,38 +1865,25 @@
         function loadAccountTypes() {
             db.collection('accountTypes')
                 .where('userId', '==', currentUser.uid)
-                .orderBy('name')
                 .get()
                 .then(snapshot => {
                     accountTypes = [];
                     snapshot.forEach(doc => {
-                        // Skip sample documents if they exist
-                        const data = doc.data();
-                        if (!data.isSample) {
-                            accountTypes.push({
-                                id: doc.id,
-                                ...data
-                            });
-                        }
+                        accountTypes.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
                     });
                     
-                    // If no real account types, show sample ones
-                    if (accountTypes.length === 0) {
-                        snapshot.forEach(doc => {
-                            const data = doc.data();
-                            accountTypes.push({
-                                id: doc.id,
-                                ...data
-                            });
-                        });
-                    }
-                    
+                    console.log(`Loaded ${accountTypes.length} account types`);
                     updateAccountTypeFilters();
                     renderAccountTypesGrid();
                 })
                 .catch(err => {
                     console.error("Error loading account types:", err);
-                    showError("Failed to load account types");
+                    if (err.code === 'permission-denied') {
+                        showError("Permission denied. Check Firebase rules.");
+                    }
                 });
         }
 
@@ -1945,6 +1976,8 @@
                         allTasks.push(task);
                     });
                     
+                    console.log(`Loaded ${allTasks.length} tasks`);
+                    
                     // Sort by due date
                     allTasks.sort((a, b) => {
                         const dateA = a.dueDate ? new Date(a.dueDate) : new Date(9999, 11, 31);
@@ -1956,7 +1989,6 @@
                     checkUpcomingTasks();
                     filterAndSortTasks();
                     hideLoading();
-                    showSuccess(`Loaded ${allTasks.length} tasks`);
                 })
                 .catch(err => {
                     console.error("Error loading tasks:", err);
@@ -2260,36 +2292,6 @@
             return type ? type.name : '';
         }
 
-        // Calculate Next Due Date based on recurrence
-        function calculateNextDueDate(currentDate, recurrence) {
-            const date = new Date(currentDate);
-            
-            switch(recurrence) {
-                case 'daily':
-                    date.setDate(date.getDate() + 1);
-                    break;
-                case 'weekly':
-                    date.setDate(date.getDate() + 7);
-                    break;
-                case 'biweekly':
-                    date.setDate(date.getDate() + 14);
-                    break;
-                case 'monthly':
-                    date.setMonth(date.getMonth() + 1);
-                    break;
-                case 'quarterly':
-                    date.setMonth(date.getMonth() + 3);
-                    break;
-                case 'yearly':
-                    date.setFullYear(date.getFullYear() + 1);
-                    break;
-                default:
-                    return null;
-            }
-            
-            return date.toISOString().split('T')[0];
-        }
-
         // Save Task
         function saveTask() {
             const title = taskTitle.value.trim();
@@ -2412,19 +2414,13 @@
                 .catch(err => {
                     console.error("Error adding department:", err);
                     
-                    // More specific error messages
                     if (err.code === 'permission-denied') {
                         showError("Permission denied. Please check Firebase security rules.");
-                    } else if (err.code === 'unavailable') {
-                        showError("Network error. Please check your internet connection.");
-                    } else if (err.code === 'not-found') {
-                        showError("Database not found. Please check Firebase configuration.");
                     } else {
                         showError(`Failed to add department: ${err.message}`);
                     }
                 })
                 .finally(() => {
-                    // Restore button
                     saveBtn.innerHTML = originalText;
                     saveBtn.disabled = false;
                 });
@@ -2513,7 +2509,6 @@
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
-            // Simple alert for now - can be enhanced with a detailed modal
             alert(`Task: ${task.title}\n\n` +
                   `Department: ${getDepartmentName(task.department)}\n` +
                   `Account: ${getAccountTypeName(task.accountType)} ${task.accountNumber || ''}\n` +
