@@ -137,6 +137,34 @@
             background: rgba(255,255,255,0.3);
         }
 
+        /* User Session Status */
+        .session-status {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-indicator.online {
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .status-indicator.offline {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+
         /* Main Content */
         .main-content {
             padding: 30px;
@@ -719,6 +747,14 @@
             padding: 10px;
             background: var(--light);
             border-radius: var(--radius);
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .timer-seconds {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 5px;
         }
 
         /* Modal Styles */
@@ -824,6 +860,26 @@
         .time-value {
             font-weight: 600;
             color: var(--dark);
+        }
+
+        .session-log {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .session-entry {
+            padding: 8px;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 0.85rem;
+        }
+
+        .session-entry .login {
+            color: var(--success);
+        }
+
+        .session-entry .logout {
+            color: var(--danger);
         }
 
         /* Alert Styles */
@@ -942,6 +998,10 @@
                 <span>Task Status</span>
             </div>
             <div class="user-profile">
+                <div class="session-status" id="sessionStatus">
+                    <span class="status-indicator online" id="statusIndicator"></span>
+                    <span id="sessionStatusText">Online</span>
+                </div>
                 <a href="individual task.html" class="back-btn">
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
                 </a>
@@ -1118,11 +1178,17 @@
                     </div>
                     <div class="time-row">
                         <span class="time-label">Total Time:</span>
-                        <span class="time-value" id="modalTotalTime">0h 0m</span>
+                        <span class="time-value" id="modalTotalTime">0h 0m 0s</span>
                     </div>
                 </div>
 
                 <div class="timer-display" id="modalTimer">00:00:00</div>
+                
+                <!-- Session Log -->
+                <div class="session-log" id="sessionLog">
+                    <h4>Session History</h4>
+                    <div id="sessionEntries"></div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn" id="closeTimeModalBtn2">Close</button>
@@ -1172,6 +1238,8 @@
         const loadingSpinner = document.getElementById('loadingSpinner');
         const displayedTasksCount = document.getElementById('displayedTasksCount');
         const currentViewTitle = document.getElementById('currentViewTitle');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const sessionStatusText = document.getElementById('sessionStatusText');
 
         // Stats elements
         const totalActive = document.getElementById('totalActive');
@@ -1183,6 +1251,7 @@
         const timeModal = document.getElementById('timeModal');
         const closeTimeModalBtn = document.getElementById('closeTimeModalBtn');
         const closeTimeModalBtn2 = document.getElementById('closeTimeModalBtn2');
+        const sessionEntries = document.getElementById('sessionEntries');
 
         // Alert elements
         const successAlert = document.getElementById('successAlert');
@@ -1203,6 +1272,8 @@
         let activeTimers = {};
         let currentViewingTask = null;
         let sortableInstances = [];
+        let userSessions = {};
+        let isUserOnline = true;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -1210,7 +1281,86 @@
             setCurrentDate();
             setupEventListeners();
             startTimerUpdates();
+            setupBeforeUnload();
         });
+
+        // Setup before unload to handle logout/close
+        function setupBeforeUnload() {
+            window.addEventListener('beforeunload', function(e) {
+                if (currentUser) {
+                    handleLogoff();
+                }
+            });
+        }
+
+        // Handle logoff - pause all in-progress tasks
+        function handleLogoff() {
+            console.log("User logging off - pausing all tasks");
+            
+            // Update UI status
+            statusIndicator.className = 'status-indicator offline';
+            sessionStatusText.textContent = 'Offline';
+            isUserOnline = false;
+            
+            // Pause all in-progress tasks
+            const inProgressTasks = allTasks.filter(t => t.status === 'in-progress');
+            
+            inProgressTasks.forEach(task => {
+                const elapsedSeconds = activeTimers[task.id] || 0;
+                
+                // Update task status to pending
+                db.collection('tasks').doc(task.id).update({
+                    status: 'pending',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(err => console.error("Error pausing task on logoff:", err));
+                
+                // Update time tracking
+                db.collection('timeTracking')
+                    .where('taskId', '==', task.id)
+                    .where('status', '==', 'in-progress')
+                    .get()
+                    .then(snapshot => {
+                        snapshot.forEach(doc => {
+                            const track = doc.data();
+                            const totalSeconds = (track.totalSeconds || 0) + elapsedSeconds;
+                            
+                            doc.ref.update({
+                                status: 'pending',
+                                totalSeconds: totalSeconds,
+                                pausedAt: new Date().toISOString(),
+                                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        });
+                    })
+                    .catch(err => console.error("Error updating time tracking on logoff:", err));
+                
+                // Stop timer locally
+                stopTaskTimer(task.id);
+                
+                // Update local task status
+                task.status = 'pending';
+            });
+            
+            // Show info message
+            showInfo("You've been logged off. All tasks have been paused.");
+            
+            // Update stats and view
+            updateStats();
+            filterAndSortTasks();
+        }
+
+        // Handle login - resume tasks that were in-progress? No, they should remain pending
+        // When user logs in, tasks stay as pending - user must manually resume them
+        function handleLogin() {
+            console.log("User logged in - tasks remain in pending state");
+            
+            // Update UI status
+            statusIndicator.className = 'status-indicator online';
+            sessionStatusText.textContent = 'Online';
+            isUserOnline = true;
+            
+            showInfo("Welcome back! Your tasks are in pending state. Click Resume to continue working.");
+        }
 
         function checkAuth() {
             userDisplayName.textContent = 'Loading...';
@@ -1225,6 +1375,9 @@
                     loadDepartments();
                     loadAccountTypes();
                     loadTasks();
+                    
+                    // Handle login - tasks remain pending
+                    handleLogin();
                 } else {
                     console.log("❌ No user authenticated, redirecting to login");
                     window.location.href = 'index.html';
@@ -1708,25 +1861,31 @@
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
+            // Check if user is online
+            if (!isUserOnline) {
+                showError("You are offline. Please login to start tasks.");
+                return;
+            }
+            
             db.collection('tasks').doc(taskId).update({
                 status: 'in-progress',
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 // Create time tracking record
-                db.collection('timeTracking').add({
+                return db.collection('timeTracking').add({
                     taskId: taskId,
                     userId: currentUser.uid,
                     status: 'in-progress',
                     startedAt: new Date().toISOString(),
                     totalSeconds: 0,
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                }).then(() => {
-                    showSuccess(`Started: ${task.title}`);
-                    task.status = 'in-progress';
-                    startTaskTimer(taskId);
-                    updateStats();
-                    filterAndSortTasks();
                 });
+            }).then(() => {
+                showSuccess(`Started: ${task.title}`);
+                task.status = 'in-progress';
+                startTaskTimer(taskId);
+                updateStats();
+                filterAndSortTasks();
             }).catch(err => {
                 console.error("Error starting task:", err);
                 showError("Failed to start task");
@@ -1744,24 +1903,25 @@
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 // Update time tracking
-                db.collection('timeTracking')
+                return db.collection('timeTracking')
                     .where('taskId', '==', taskId)
                     .where('status', '==', 'in-progress')
-                    .get()
-                    .then(snapshot => {
-                        snapshot.forEach(doc => {
-                            const track = doc.data();
-                            const totalSeconds = (track.totalSeconds || 0) + elapsedSeconds;
-                            
-                            doc.ref.update({
-                                status: 'pending',
-                                totalSeconds: totalSeconds,
-                                pausedAt: new Date().toISOString(),
-                                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    });
-                
+                    .get();
+            }).then(snapshot => {
+                const promises = [];
+                snapshot.forEach(doc => {
+                    const track = doc.data();
+                    const totalSeconds = (track.totalSeconds || 0) + elapsedSeconds;
+                    
+                    promises.push(doc.ref.update({
+                        status: 'pending',
+                        totalSeconds: totalSeconds,
+                        pausedAt: new Date().toISOString(),
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    }));
+                });
+                return Promise.all(promises);
+            }).then(() => {
                 showSuccess(`Paused: ${task.title}`);
                 task.status = 'pending';
                 stopTaskTimer(taskId);
@@ -1777,25 +1937,27 @@
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             
+            // Check if user is online
+            if (!isUserOnline) {
+                showError("You are offline. Please login to resume tasks.");
+                return;
+            }
+            
             db.collection('tasks').doc(taskId).update({
                 status: 'in-progress',
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                // Update time tracking
-                db.collection('timeTracking')
-                    .where('taskId', '==', taskId)
-                    .where('status', '==', 'pending')
-                    .get()
-                    .then(snapshot => {
-                        snapshot.forEach(doc => {
-                            doc.ref.update({
-                                status: 'in-progress',
-                                resumedAt: new Date().toISOString(),
-                                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    });
-                
+                // Create new time tracking record for resumed task
+                return db.collection('timeTracking').add({
+                    taskId: taskId,
+                    userId: currentUser.uid,
+                    status: 'in-progress',
+                    startedAt: new Date().toISOString(),
+                    totalSeconds: 0,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    resumedFrom: 'pending'
+                });
+            }).then(() => {
                 showSuccess(`Resumed: ${task.title}`);
                 task.status = 'in-progress';
                 startTaskTimer(taskId);
@@ -1819,25 +1981,26 @@
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 // Update time tracking
-                db.collection('timeTracking')
+                return db.collection('timeTracking')
                     .where('taskId', '==', taskId)
                     .where('status', 'in', ['in-progress', 'pending'])
-                    .get()
-                    .then(snapshot => {
-                        snapshot.forEach(doc => {
-                            const track = doc.data();
-                            const totalSeconds = (track.totalSeconds || 0) + 
-                                (track.status === 'in-progress' ? elapsedSeconds : 0);
-                            
-                            doc.ref.update({
-                                status: 'completed',
-                                totalSeconds: totalSeconds,
-                                completedAt: new Date().toISOString(),
-                                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    });
-                
+                    .get();
+            }).then(snapshot => {
+                const promises = [];
+                snapshot.forEach(doc => {
+                    const track = doc.data();
+                    const totalSeconds = (track.totalSeconds || 0) + 
+                        (track.status === 'in-progress' ? elapsedSeconds : 0);
+                    
+                    promises.push(doc.ref.update({
+                        status: 'completed',
+                        totalSeconds: totalSeconds,
+                        completedAt: new Date().toISOString(),
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    }));
+                });
+                return Promise.all(promises);
+            }).then(() => {
                 showSuccess(`✅ Task completed: ${task.title}`);
                 
                 // Remove from allTasks (since we filter out completed)
@@ -1855,7 +2018,7 @@
             });
         }
 
-        // Timer Functions
+        // Timer Functions - Updated to track seconds accurately
         function startTaskTimer(taskId) {
             if (!activeTimers[taskId]) {
                 activeTimers[taskId] = 0;
@@ -1869,10 +2032,19 @@
                         timerElements.forEach(el => {
                             if (el) el.textContent = formatTime(activeTimers[taskId]);
                         });
+                        
+                        // Also update modal if open and viewing this task
+                        if (currentViewingTask && currentViewingTask.id === taskId) {
+                            document.getElementById('modalTimer').textContent = formatTime(activeTimers[taskId]);
+                            
+                            // Update total time in modal
+                            const totalSeconds = activeTimers[taskId];
+                            document.getElementById('modalTotalTime').textContent = formatDuration(totalSeconds);
+                        }
                     } else {
                         clearInterval(interval);
                     }
-                }, 1000);
+                }, 1000); // Update every second
                 
                 activeTimers[`${taskId}_interval`] = interval;
             }
@@ -1886,30 +2058,40 @@
             delete activeTimers[taskId];
         }
 
+        // Save timer to Firestore every 30 seconds instead of every minute
         function startTimerUpdates() {
             setInterval(() => {
                 Object.keys(activeTimers).forEach(taskId => {
                     if (!taskId.includes('_interval') && activeTimers[taskId] > 0) {
-                        // Update time tracking in Firestore periodically
+                        const elapsedSeconds = activeTimers[taskId];
+                        
+                        // Update time tracking in Firestore
                         db.collection('timeTracking')
                             .where('taskId', '==', taskId)
                             .where('status', '==', 'in-progress')
                             .get()
                             .then(snapshot => {
+                                const promises = [];
                                 snapshot.forEach(doc => {
-                                    doc.ref.update({
-                                        totalSeconds: firebase.firestore.FieldValue.increment(activeTimers[taskId]),
+                                    promises.push(doc.ref.update({
+                                        totalSeconds: firebase.firestore.FieldValue.increment(elapsedSeconds),
                                         lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                                    });
+                                    }));
                                 });
+                                return Promise.all(promises);
+                            })
+                            .then(() => {
                                 activeTimers[taskId] = 0; // Reset after saving
+                            })
+                            .catch(err => {
+                                console.error("Error updating timer:", err);
                             });
                     }
                 });
-            }, 60000); // Every minute
+            }, 30000); // Every 30 seconds for better accuracy
         }
 
-        // Show Time Details Modal
+        // Show Time Details Modal with session history
         function showTimeDetails(taskId) {
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
@@ -1918,37 +2100,76 @@
             
             document.getElementById('modalTaskTitle').textContent = task.title;
             
-            // Load time tracking data
+            // Load all time tracking records for this task
             db.collection('timeTracking')
                 .where('taskId', '==', taskId)
                 .orderBy('startedAt', 'desc')
-                .limit(1)
                 .get()
                 .then(snapshot => {
+                    let totalSecondsAll = 0;
+                    let sessionHtml = '';
+                    
                     if (!snapshot.empty) {
-                        const track = snapshot.docs[0].data();
+                        // Get the most recent record for current session display
+                        const latestTrack = snapshot.docs[0].data();
                         
                         document.getElementById('modalStarted').textContent = 
-                            track.startedAt ? new Date(track.startedAt).toLocaleString() : '-';
-                        document.getElementById('modalUpdated').textContent = 
-                            track.lastUpdated ? new Date(track.lastUpdated.toDate()).toLocaleString() : '-';
-                        document.getElementById('modalStatus').textContent = track.status || '-';
+                            latestTrack.startedAt ? new Date(latestTrack.startedAt).toLocaleString() : '-';
                         
-                        const totalSeconds = track.totalSeconds || 0;
-                        document.getElementById('modalTotalTime').textContent = formatDuration(totalSeconds);
+                        let lastUpdated = '-';
+                        if (latestTrack.lastUpdated) {
+                            if (latestTrack.lastUpdated.toDate) {
+                                lastUpdated = latestTrack.lastUpdated.toDate().toLocaleString();
+                            } else {
+                                lastUpdated = new Date(latestTrack.lastUpdated).toLocaleString();
+                            }
+                        }
+                        document.getElementById('modalUpdated').textContent = lastUpdated;
+                        document.getElementById('modalStatus').textContent = latestTrack.status || '-';
                         
+                        // Calculate total time from all records
+                        snapshot.forEach(doc => {
+                            const track = doc.data();
+                            totalSecondsAll += track.totalSeconds || 0;
+                            
+                            // Create session entry
+                            const started = track.startedAt ? new Date(track.startedAt).toLocaleString() : 'Unknown';
+                            const status = track.status;
+                            const seconds = track.totalSeconds || 0;
+                            
+                            sessionHtml += `
+                                <div class="session-entry">
+                                    <span class="${status === 'in-progress' ? 'login' : 'logout'}">
+                                        <i class="fas fa-${status === 'in-progress' ? 'play' : 'pause'}"></i>
+                                    </span>
+                                    ${started} - ${status} (${formatDuration(seconds)})
+                                </div>
+                            `;
+                        });
+                        
+                        document.getElementById('modalTotalTime').textContent = formatDuration(totalSecondsAll);
+                        
+                        // Add current session if task is in progress
                         if (task.status === 'in-progress' && activeTimers[taskId]) {
                             document.getElementById('modalTimer').textContent = formatTime(activeTimers[taskId]);
                         } else {
                             document.getElementById('modalTimer').textContent = formatTime(0);
                         }
                     } else {
+                        // Default values
                         document.getElementById('modalStarted').textContent = '-';
                         document.getElementById('modalUpdated').textContent = '-';
                         document.getElementById('modalStatus').textContent = task.status || '-';
-                        document.getElementById('modalTotalTime').textContent = '0h 0m';
+                        document.getElementById('modalTotalTime').textContent = '0h 0m 0s';
                         document.getElementById('modalTimer').textContent = '00:00:00';
+                        sessionHtml = '<div class="session-entry">No session history</div>';
                     }
+                    
+                    sessionEntries.innerHTML = sessionHtml;
+                })
+                .catch(err => {
+                    console.error("Error loading time tracking:", err);
+                    showError("Failed to load time details");
                 });
             
             timeModal.style.display = 'flex';
@@ -1971,12 +2192,25 @@
             renderTasks();
         }
 
-        // Utility Functions
+        // Filter by status (for stat cards)
+        function filterByStatus(status) {
+            if (status === 'all') {
+                statusFilter.value = 'all';
+            } else if (status === 'pending') {
+                statusFilter.value = 'pending';
+            } else {
+                statusFilter.value = status;
+            }
+            filterAndSortTasks();
+        }
+
+        // Utility Functions - Updated for seconds
         function formatDuration(seconds) {
-            if (!seconds) return '0h 0m';
+            if (!seconds) return '0h 0m 0s';
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
-            return `${hours}h ${minutes}m`;
+            const secs = seconds % 60;
+            return `${hours}h ${minutes}m ${secs}s`;
         }
 
         function formatTime(seconds) {
@@ -2021,7 +2255,10 @@
         // Setup Event Listeners
         function setupEventListeners() {
             logoutBtn.addEventListener('click', () => {
-                auth.signOut().then(() => window.location.href = 'index.html');
+                handleLogoff();
+                setTimeout(() => {
+                    auth.signOut().then(() => window.location.href = 'index.html');
+                }, 500);
             });
             
             searchInput.addEventListener('input', filterAndSortTasks);
@@ -2029,13 +2266,21 @@
             companyFilter.addEventListener('change', filterAndSortTasks);
             statusFilter.addEventListener('change', filterAndSortTasks);
             
-            closeTimeModalBtn.addEventListener('click', () => timeModal.style.display = 'none');
-            closeTimeModalBtn2.addEventListener('click', () => timeModal.style.display = 'none');
+            closeTimeModalBtn.addEventListener('click', () => {
+                timeModal.style.display = 'none';
+                currentViewingTask = null;
+            });
+            
+            closeTimeModalBtn2.addEventListener('click', () => {
+                timeModal.style.display = 'none';
+                currentViewingTask = null;
+            });
             
             // Close modal when clicking outside
             window.addEventListener('click', (e) => {
                 if (e.target === timeModal) {
                     timeModal.style.display = 'none';
+                    currentViewingTask = null;
                 }
             });
         }
@@ -2049,6 +2294,7 @@
         window.completeTask = completeTask;
         window.showTimeDetails = showTimeDetails;
         window.clearFilters = clearFilters;
+        window.filterByStatus = filterByStatus;
     </script>
 </body>
 </html>
